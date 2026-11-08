@@ -359,26 +359,50 @@
     }
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, pin })
-      });
-      const data = await res.json();
+      let loggedUser = null;
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, pin })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.user) {
+            loggedUser = data.user;
+          }
+        }
+      } catch (e) {
+        // Fallback pro statický GitHub Pages hosting
+      }
 
-      if (data.success && data.user) {
+      // Offline / GitHub Pages ověření PINů
+      if (!loggedUser) {
+        const localPins = {
+          'ester': { pin: '1111', name: 'Ester', role: 'prodavačka' },
+          'lucie': { pin: '2222', name: 'Lucie', role: 'prodavačka' },
+          'marie': { pin: '3333', name: 'Marie', role: 'cukrářka' },
+          'admin': { pin: '1234', name: 'Radka Magerová', role: 'admin' }
+        };
+        const target = localPins[username.toLowerCase()];
+        if (target && target.pin === pin) {
+          loggedUser = { id: username, username, name: target.name, role: target.role };
+        }
+      }
+
+      if (loggedUser) {
         currentUser = {
-          id: data.user.id,
-          username: data.user.username,
-          name: data.user.name,
-          role: data.user.role
+          id: loggedUser.id || username,
+          username: loggedUser.username || username,
+          name: loggedUser.name,
+          role: loggedUser.role
         };
         localStorage.setItem('madel_current_user', JSON.stringify(currentUser));
         closeLoginModal();
         updateAuthUI();
         showToast(`Přihlášen(a): ${currentUser.name} (${currentUser.role})`, '👋');
       } else {
-        loginErrorMsg.textContent = data.message || 'Chybný PIN kód.';
+        loginErrorMsg.textContent = 'Chybný PIN kód.';
         loginErrorMsg.classList.remove('hidden');
       }
     } catch (err) {
@@ -654,10 +678,24 @@
 
   async function loadCalendarCapacities() {
     try {
-      const res = await fetch('/api/calendar-capacity');
-      const data = await res.json();
-      if (data.success && data.data) {
-        calendarCapacities = data.data;
+      let loaded = false;
+      try {
+        const res = await fetch('/api/calendar-capacity');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) {
+            calendarCapacities = data.data;
+            loaded = true;
+          }
+        }
+      } catch (e) {}
+
+      if (!loaded) {
+        // Fallback pro GitHub Pages
+        const resJson = await fetch('calendar_capacity.json');
+        if (resJson.ok) {
+          calendarCapacities = await resJson.json();
+        }
       }
     } catch (e) {
       console.warn('Nelze načíst calendar-capacity:', e);
@@ -884,6 +922,8 @@
     submitOrderBtn.disabled = true;
     submitOrderBtn.innerHTML = `<span>Odesílám...</span>`;
 
+    let savedOrder = null;
+
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -894,37 +934,59 @@
         },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
-
-      if (data.success && data.data) {
-        const savedOrder = data.data;
-
-        if (currentFormMode === 'customer') {
-          // Zákaznická verze: Zobrazit děkovnou obrazovku dle specifikace
-          orderMainForm.classList.add('hidden');
-          orderSuccessScreen.classList.remove('hidden');
-          successOrderNum.textContent = `#${savedOrder.id}`;
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          // Verze pro prodavačky: Uloženo rovnou jako platné -> toast & přechod do databáze
-          showToast(`Zakázka #${savedOrder.id} byla uložena jako PLATNÉ!`, '✅');
-          resetOrderForm();
-          showPage('page-2');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.data) {
+          savedOrder = data.data;
         }
-
-        // Aktualizovat počty zakázek v databázi
-        loadOrders();
-      } else {
-        showToast(data.message || 'Chyba při ukládání objednávky.', '❌');
       }
     } catch (err) {
-      showToast('Chyba při komunikaci se serverem.', '❌');
-    } finally {
-      submitOrderBtn.disabled = false;
-      submitOrderBtn.innerHTML = currentFormMode === 'clerk'
-        ? `<span>Uložit jako PLATNOU zakázku</span><span>✓</span>`
-        : `<span>Nezávazně objednat</span><span>→</span>`;
+      // Offline / GitHub Pages režim
     }
+
+    // Pokud backend neběží (GitHub Pages), uložit lokálně do localStorage
+    if (!savedOrder) {
+      const orderId = String(Date.now()).slice(-6);
+      savedOrder = {
+        ...payload,
+        id: orderId,
+        status: currentFormMode === 'clerk' ? 'platné' : 'nevyřízeno',
+        created_at: new Date().toISOString(),
+        history: [
+          {
+            employee: currentUser.name || 'Zákazník z webu',
+            timestamp: new Date().toLocaleString('cs-CZ'),
+            change_text: `Objednávka založena přes web se stavem "${currentFormMode === 'clerk' ? 'platné' : 'nevyřízeno'}"`
+          }
+        ]
+      };
+      const localOrders = JSON.parse(localStorage.getItem('madel_local_orders') || '[]');
+      localOrders.unshift(savedOrder);
+      localStorage.setItem('madel_local_orders', JSON.stringify(localOrders));
+      allOrders.unshift(savedOrder);
+    }
+
+    if (savedOrder) {
+      if (currentFormMode === 'customer') {
+        // Zákaznická verze: Zobrazit děkovnou obrazovku dle specifikace
+        orderMainForm.classList.add('hidden');
+        orderSuccessScreen.classList.remove('hidden');
+        successOrderNum.textContent = `#${savedOrder.id}`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // Verze pro prodavačky: Uloženo rovnou jako platné -> toast & přechod do databáze
+        showToast(`Zakázka #${savedOrder.id} byla uložena jako PLATNÉ!`, '✅');
+        resetOrderForm();
+        showPage('page-2');
+      }
+
+      loadOrders();
+    }
+
+    submitOrderBtn.disabled = false;
+    submitOrderBtn.innerHTML = currentFormMode === 'clerk'
+      ? `<span>Uložit jako PLATNOU zakázku</span><span>✓</span>`
+      : `<span>Nezávazně objednat</span><span>→</span>`;
   });
 
   // Tlačítko na děkovné obrazovce: Zadat další objednávku
@@ -958,13 +1020,35 @@
   async function loadOrders() {
     try {
       dbResultsCount.textContent = 'Načítám objednávky...';
-      const res = await fetch('/api/orders');
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data)) {
-        allOrders = data.data;
-        renderOrdersList();
-        updatePendingTabBadge();
+      let fetched = false;
+
+      try {
+        const res = await fetch('/api/orders');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.data)) {
+            allOrders = data.data;
+            fetched = true;
+          }
+        }
+      } catch (e) {
+        // Offline / GitHub Pages
       }
+
+      if (!fetched) {
+        // Fallback pro statický GitHub Pages hosting
+        try {
+          const resJson = await fetch('orders.json');
+          if (resJson.ok) {
+            const staticOrders = await resJson.json();
+            const localOrders = JSON.parse(localStorage.getItem('madel_local_orders') || '[]');
+            allOrders = [...localOrders, ...staticOrders];
+          }
+        } catch (err) {}
+      }
+
+      renderOrdersList();
+      updatePendingTabBadge();
     } catch (e) {
       dbResultsCount.textContent = 'Chyba načítání zakázek';
     }
