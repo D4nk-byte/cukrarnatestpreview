@@ -548,7 +548,7 @@
     dessertDropdownResults.innerHTML = matches.map(p => `
       <div class="p-2.5 hover:bg-[#FAF7F2] cursor-pointer flex items-center justify-between border-b border-stone-100 last:border-0 select-dessert-item" data-id="${p.id}" data-title="${escapeHtml(p.title)}">
         <div class="flex items-center gap-2">
-          <img src="${p.localImage || 'images/logo-madel.png'}" class="w-8 h-8 rounded-lg object-cover" onerror="this.src='images/logo-madel.png'">
+          <img src="${p.localImage || 'images/logo-madel.png'}" class="w-8 h-8 rounded-lg object-cover" onerror="this.onerror=null; this.src='images/logo-madel.png';">
           <div>
             <span class="font-bold text-xs text-[#3B2820] block">${escapeHtml(p.title)}</span>
             <span class="text-[10px] text-stone-500">${escapeHtml(p.category || 'Zákusek')}</span>
@@ -1737,7 +1737,7 @@
       <div class="pastry-card rounded-2xl overflow-hidden shadow-xs flex flex-col justify-between">
         <div>
           <div class="h-44 w-full overflow-hidden bg-stone-100 relative">
-            <img src="${p.localImage || 'images/logo-madel.png'}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover" onerror="this.src='images/logo-madel.png'">
+            <img src="${p.localImage || 'images/logo-madel.png'}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='images/logo-madel.png';">
             <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-stone-700 shadow-xs">
               ${escapeHtml(p.category || 'Zákusek')}
             </span>
