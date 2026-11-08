@@ -5,7 +5,14 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 const BASE_DIR = __dirname;
 const PUBLIC_DIR = path.join(BASE_DIR, 'public');
+const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 const ORDERS_FILE = path.join(BASE_DIR, 'orders.json');
+const USERS_FILE = path.join(BASE_DIR, 'users.json');
+const CAPACITY_FILE = path.join(BASE_DIR, 'calendar_capacity.json');
+
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -24,38 +31,101 @@ const MIME_TYPES = {
   '.ttf': 'font/ttf'
 };
 
-// Helper to read orders
+function formatCzechDateTime(date = new Date()) {
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const y = date.getFullYear();
+  const h = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${d}.${m}.${y} ${h}:${min}`;
+}
+
+// Read orders with automatic 24h expiration check for "platné" orders
 function readOrders() {
   try {
     if (fs.existsSync(ORDERS_FILE)) {
       const data = fs.readFileSync(ORDERS_FILE, 'utf-8');
-      return JSON.parse(data || '[]');
+      const orders = JSON.parse(data || '[]');
+      
+      let changed = false;
+      const now = Date.now();
+      const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+      orders.forEach(o => {
+        if (o.status === 'platné' && o.pickup_date) {
+          const pickupTimeStr = o.pickup_time || '17:00';
+          const pickupDt = new Date(`${o.pickup_date}T${pickupTimeStr}:00`);
+          if (!isNaN(pickupDt.getTime())) {
+            // Check if 24 hours elapsed past pickup
+            if (now > pickupDt.getTime() + TWENTY_FOUR_HOURS) {
+              o.status = 'nevyzvednuté';
+              o.history = o.history || [];
+              o.history.push({
+                employee: 'Systém',
+                timestamp: formatCzechDateTime(new Date()),
+                change_text: 'Automaticky zařazeno do nevyzvednutých po 24 hodinách od termínu vyzvednutí'
+              });
+              changed = true;
+            }
+          }
+        }
+      });
+
+      if (changed) {
+        saveOrders(orders);
+      }
+      return orders;
     }
   } catch (err) {
-    console.error('Error reading orders:', err);
+    console.error('Chyba při čtení orders.json:', err);
   }
   return [];
 }
 
-// Helper to save orders
 function saveOrders(orders) {
   try {
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf-8');
     return true;
   } catch (err) {
-    console.error('Error writing orders:', err);
+    console.error('Chyba při zápisu orders.json:', err);
     return false;
   }
 }
 
-// Parse request body
+function readUsers() {
+  try {
+    if (fs.existsSync(USERS_FILE)) {
+      return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8') || '[]');
+    }
+  } catch (e) {}
+  return [];
+}
+
+function readCapacity() {
+  try {
+    if (fs.existsSync(CAPACITY_FILE)) {
+      return JSON.parse(fs.readFileSync(CAPACITY_FILE, 'utf-8') || '{}');
+    }
+  } catch (e) {}
+  return {};
+}
+
+function saveCapacity(data) {
+  try {
+    fs.writeFileSync(CAPACITY_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
     req.on('data', chunk => {
       body += chunk.toString();
-      if (body.length > 5 * 1024 * 1024) { // 5MB limit
-        reject(new Error('Body too large'));
+      if (body.length > 25 * 1024 * 1024) { // 25MB limit
+        reject(new Error('Payload too large'));
       }
     });
     req.on('end', () => {
@@ -64,12 +134,9 @@ function parseBody(req) {
         if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
           return resolve(JSON.parse(body));
         }
-        // handle urlencoded or FormData params
         const params = new URLSearchParams(body);
         const obj = {};
-        for (const [key, value] of params.entries()) {
-          obj[key] = value;
-        }
+        for (const [k, v] of params.entries()) obj[k] = v;
         resolve(obj);
       } catch (e) {
         resolve({});
@@ -83,121 +150,253 @@ const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const reqPath = decodeURI(parsedUrl.pathname);
 
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Employee-Role, X-Employee-Name');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     return res.end();
   }
 
-  // --- API ENDPOINTS FOR ORDER SYSTEM (truhlarstvijarkulis.cz/cukrarna compatibility) ---
+  // --- API 1: USERS & AUTHENTICATION ---
+  if (reqPath === '/api/login' && req.method === 'POST') {
+    const body = await parseBody(req);
+    const { username, pin } = body;
+    const users = readUsers();
+    const user = users.find(u => u.username.toLowerCase() === (username || '').toLowerCase() && String(u.pin) === String(pin));
+
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    if (user) {
+      res.writeHead(200);
+      return res.end(JSON.stringify({
+        success: true,
+        user: { id: user.id, username: user.username, name: user.name, role: user.role }
+      }));
+    } else {
+      res.writeHead(401);
+      return res.end(JSON.stringify({ success: false, message: 'Nesprávné přihlašovací jméno nebo PIN kód.' }));
+    }
+  }
+
+  if (reqPath === '/api/users' && req.method === 'GET') {
+    const users = readUsers().map(u => ({ id: u.id, username: u.username, name: u.name, role: u.role }));
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.writeHead(200);
+    return res.end(JSON.stringify({ success: true, data: users }));
+  }
+
+  // --- API 2: CALENDAR CAPACITIES (Zelená / Žlutá / Červená) ---
+  if (reqPath === '/api/calendar-capacity') {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    if (req.method === 'GET') {
+      const customCapacities = readCapacity();
+      const orders = readOrders();
+      // Count cake orders per day
+      const dayCounts = {};
+      orders.forEach(o => {
+        if (o.status !== 'neplatné' && o.pickup_date && (o.cake || o.order_type === 'dort' || o.order_type === 'kombinace')) {
+          dayCounts[o.pickup_date] = (dayCounts[o.pickup_date] || 0) + 1;
+        }
+      });
+
+      // Merge dynamic counts with custom overrides
+      const result = { ...customCapacities };
+      Object.entries(dayCounts).forEach(([d, count]) => {
+        if (!result[d]) {
+          if (count >= 5) result[d] = 'red';
+          else if (count >= 2) result[d] = 'yellow';
+        }
+      });
+
+      res.writeHead(200);
+      return res.end(JSON.stringify({ success: true, data: result }));
+    }
+
+    if (req.method === 'POST') {
+      const body = await parseBody(req);
+      const { date, status } = body;
+      const data = readCapacity();
+      if (status === 'green' || !status) {
+        delete data[date];
+      } else {
+        data[date] = status; // yellow or red
+      }
+      saveCapacity(data);
+      res.writeHead(200);
+      return res.end(JSON.stringify({ success: true, data }));
+    }
+  }
+
+  // --- API 3: IMAGE UPLOAD FOR CAKE PHOTO ---
+  if (reqPath === '/api/upload-image' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const { base64Data, filename } = body;
+      if (!base64Data) {
+        res.writeHead(400);
+        return res.end(JSON.stringify({ success: false, message: 'Chybí obrazová data' }));
+      }
+      const matches = base64Data.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+      if (!matches) {
+        res.writeHead(400);
+        return res.end(JSON.stringify({ success: false, message: 'Neplatný formát obrázku' }));
+      }
+      const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+      const buffer = Buffer.from(matches[2], 'base64');
+      const safeName = `cake_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+      const filePath = path.join(UPLOADS_DIR, safeName);
+      fs.writeFileSync(filePath, buffer);
+
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.writeHead(200);
+      return res.end(JSON.stringify({ success: true, url: `uploads/${safeName}` }));
+    } catch (e) {
+      res.writeHead(500);
+      return res.end(JSON.stringify({ success: false, message: e.message }));
+    }
+  }
+
+  // --- API 4: ORDERS (GET, POST, DELETE) ---
   if (reqPath === '/api/orders' || reqPath === '/wp-admin/admin-ajax.php') {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
-    // 1. GET Orders List
+    // 1. GET ALL ORDERS
     if (req.method === 'GET') {
       const orders = readOrders();
       res.writeHead(200);
       return res.end(JSON.stringify({ success: true, data: orders }));
     }
 
-    // 2. POST Save / Update / Action
+    // 2. CREATE / UPDATE ORDER
     if (req.method === 'POST') {
       try {
         const body = await parseBody(req);
-        const action = body.action || '';
         let orders = readOrders();
 
-        // Compatibility with Jarkuliš WordPress AJAX actions
-        if (action === 'cukrarna_test_list' || action === 'cukrarna_demo_list') {
-          res.writeHead(200);
-          return res.end(JSON.stringify({ success: true, data: orders }));
-        }
+        const employeeName = req.headers['x-employee-name'] || body.employee_name || 'Ester';
+        const employeeRole = req.headers['x-employee-role'] || body.employee_role || 'prodavačka';
+        const isCustomer = body.created_by_customer === true || body.created_by === 'Zákazník z webu';
 
-        if (action === 'cukrarna_test_delete' || action === 'cukrarna_demo_delete') {
-          const id = String(body.id);
-          orders = orders.filter(o => String(o.id) !== id);
+        // Check if updating existing order
+        if (body.id && orders.some(o => String(o.id) === String(body.id))) {
+          const idx = orders.findIndex(o => String(o.id) === String(body.id));
+          const old = orders[idx];
+
+          // Permission check: only admin can change status from "nevyřízeno" to "platné"
+          if (old.status === 'nevyřízeno' && body.status === 'platné' && employeeRole !== 'admin') {
+            res.writeHead(403);
+            return res.end(JSON.stringify({
+              success: false,
+              message: 'Nemáte oprávnění schválit nevyřízenou objednávku. Toto může provést pouze administrátor.'
+            }));
+          }
+
+          // Compute change diff for audit trail
+          const diffs = [];
+          if (body.customer && body.customer !== old.customer) diffs.push(`zákazník z: "${old.customer}" na: "${body.customer}"`);
+          if (body.phone && body.phone !== old.phone) diffs.push(`telefon z: "${old.phone}" na: "${body.phone}"`);
+          if (body.pickup_date && body.pickup_date !== old.pickup_date) diffs.push(`termín z: ${old.pickup_date} na: ${body.pickup_date}`);
+          if (body.status && body.status !== old.status) diffs.push(`stav z: ${old.status} na: ${body.status}`);
+          if (body.price !== undefined && String(body.price) !== String(old.price)) diffs.push(`cena z: ${old.price} Kč na: ${body.price} Kč`);
+          
+          // Cake details diff
+          if (body.cake && old.cake) {
+            if (body.cake.sponge && body.cake.sponge !== old.cake.sponge) diffs.push(`korpus z: ${old.cake.sponge} na: ${body.cake.sponge}`);
+            if (body.cake.filling && body.cake.filling !== old.cake.filling) diffs.push(`náplň z: ${old.cake.filling} na: ${body.cake.filling}`);
+            if (body.cake.finish && body.cake.finish !== old.cake.finish) diffs.push(`potah z: ${old.cake.finish} na: ${body.cake.finish}`);
+          }
+
+          const changeText = diffs.length > 0 ? `Změněno: ${diffs.join(', ')}` : (body.change_note || 'Úprava objednávky');
+
+          const historyEntry = {
+            employee: employeeName,
+            timestamp: formatCzechDateTime(new Date()),
+            change_text: `Změněno zaměstnancem ${employeeName} ${formatCzechDateTime(new Date())} (${changeText})`,
+            prev_snapshot: {
+              customer: old.customer,
+              phone: old.phone,
+              status: old.status,
+              cake: old.cake,
+              desserts: old.desserts,
+              pickup_date: old.pickup_date
+            }
+          };
+
+          const updated = {
+            ...old,
+            ...body,
+            id: old.id,
+            history: [historyEntry, ...(old.history || [])]
+          };
+
+          orders[idx] = updated;
           saveOrders(orders);
           res.writeHead(200);
-          return res.end(JSON.stringify({ success: true, data: { deleted: id } }));
+          return res.end(JSON.stringify({ success: true, data: updated }));
         }
 
-        // Standard save (new or edit)
-        let orderData = body;
-        if (body.data) {
-          try { orderData = typeof body.data === 'string' ? JSON.parse(body.data) : body.data; } catch(e){}
-        }
+        // New Order creation
+        const orderId = String(Date.now()).slice(-6);
+        let initialStatus = 'nevyřízeno';
+        let createdBy = 'Zákazník z webu';
 
-        const orderId = orderData.id ? String(orderData.id) : String(Date.now());
-        const existingIdx = orders.findIndex(o => String(o.id) === orderId);
+        if (!isCustomer) {
+          initialStatus = 'platné'; // orders placed by clerk or admin are immediately "platné"
+          createdBy = `${employeeName} (${employeeRole === 'admin' ? 'Admin' : 'Prodavačka'})`;
+        }
 
         const newOrder = {
           id: orderId,
-          customer: orderData.customer || 'Neznámý zákazník',
-          phone: orderData.phone || '',
-          email: orderData.email || '',
-          kind: orderData.kind || 'Narozeninový',
-          portions: orderData.portions || '12',
-          shape: orderData.shape || '',
-          diameter: orderData.diameter || '',
-          floors: orderData.floors || '1',
-          sponge: orderData.sponge || '',
-          cream: orderData.cream || '',
-          filling: orderData.filling || '',
-          finish: orderData.finish || '',
-          diet: orderData.diet || '',
-          decor: orderData.decor || '',
-          notes: orderData.notes || '',
-          pickup_date: orderData.pickup_date || '',
-          pickup_time: orderData.pickup_time || '10:00',
-          price: String(orderData.price || '0'),
-          deposit: String(orderData.deposit || '0'),
-          status: orderData.status || 'Nová',
-          details: JSON.stringify({
-            shape: orderData.shape,
-            diameter: orderData.diameter,
-            floors: orderData.floors,
-            sponge: orderData.sponge,
-            cream: orderData.cream,
-            filling: orderData.filling,
-            finish: orderData.finish,
-            diet: orderData.diet,
-            decor: orderData.decor,
-            notes: orderData.notes
-          }),
-          created_at: orderData.created_at || new Date().toISOString()
+          customer: body.customer || 'Zákazník',
+          phone: body.phone || '',
+          email: body.email || '',
+          created_at: new Date().toISOString(),
+          created_by: createdBy,
+          order_type: body.order_type || (body.cake && body.desserts && body.desserts.length ? 'kombinace' : (body.cake ? 'dort' : 'zakusek')),
+          desserts: Array.isArray(body.desserts) ? body.desserts : [],
+          cake: body.cake || null,
+          pickup_date: body.pickup_date || '',
+          pickup_time: body.pickup_time || '10:00',
+          price: String(body.price || '0'),
+          status: body.status || initialStatus,
+          history: [
+            {
+              employee: createdBy,
+              timestamp: formatCzechDateTime(new Date()),
+              change_text: `Objednávka založena (${createdBy}) se stavem "${body.status || initialStatus}"`
+            }
+          ]
         };
 
-        if (existingIdx >= 0) {
-          orders[existingIdx] = { ...orders[existingIdx], ...newOrder, id: orderId };
-        } else {
-          orders.unshift(newOrder);
-        }
-
+        orders.unshift(newOrder);
         saveOrders(orders);
         res.writeHead(200);
         return res.end(JSON.stringify({ success: true, data: newOrder }));
       } catch (err) {
         res.writeHead(500);
-        return res.end(JSON.stringify({ success: false, data: { message: err.message } }));
+        return res.end(JSON.stringify({ success: false, message: err.message }));
       }
     }
 
-    // 3. DELETE Order
+    // 3. DELETE ORDER (Only Admin)
     if (req.method === 'DELETE') {
       const id = parsedUrl.searchParams.get('id');
-      if (id) {
-        let orders = readOrders();
-        orders = orders.filter(o => String(o.id) !== String(id));
-        saveOrders(orders);
-        res.writeHead(200);
-        return res.end(JSON.stringify({ success: true, data: { deleted: id } }));
+      const employeeRole = req.headers['x-employee-role'] || 'prodavačka';
+
+      if (employeeRole !== 'admin') {
+        res.writeHead(403);
+        return res.end(JSON.stringify({
+          success: false,
+          message: 'Prodavačka nemůže mazat objednávky. Tuto akci smí provést pouze administrátor.'
+        }));
       }
-      res.writeHead(400);
-      return res.end(JSON.stringify({ success: false, data: { message: 'Missing ID' } }));
+
+      let orders = readOrders();
+      orders = orders.filter(o => String(o.id) !== String(id));
+      saveOrders(orders);
+      res.writeHead(200);
+      return res.end(JSON.stringify({ success: true, message: 'Objednávka smazána' }));
     }
   }
 
@@ -212,7 +411,6 @@ const server = http.createServer(async (req, res) => {
     filePath = path.join(PUBLIC_DIR, targetPath);
   }
 
-  // Security check to avoid directory traversal
   const safeBase = BASE_DIR;
   if (!filePath.startsWith(safeBase)) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
@@ -227,8 +425,8 @@ const server = http.createServer(async (req, res) => {
         <html lang="cs">
         <head><meta charset="utf-8"><title>404 - Nenalezeno | Cukrářství Madel</title></head>
         <body style="font-family:sans-serif;text-align:center;padding:50px;">
-          <h1>404 - Stránka nebo soubor nenalezen</h1>
-          <p><a href="/">Zpět na přehled</a></p>
+          <h1>404 - Stránka nenalezena</h1>
+          <p><a href="/">Zpět na hlavní stránku</a></p>
         </body>
         </html>
       `);
@@ -238,7 +436,7 @@ const server = http.createServer(async (req, res) => {
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
     const headers = { 'Content-Type': contentType };
-    if (ext === '.html' || ext === '.json' || ext === '.js' || ext === '.css') {
+    if (['.html', '.json', '.js', '.css'].includes(ext)) {
       headers['Cache-Control'] = 'no-cache';
     } else {
       headers['Cache-Control'] = 'public, max-age=86400';
@@ -251,7 +449,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`\n======================================================`);
-  console.log(`🍰 Cukrářství Madel - Objednávkový systém běží na:`);
+  console.log(`🍰 Cukrářství Madel - Kompletní objednávkový systém 2.0`);
   console.log(`👉 http://localhost:${PORT}`);
   console.log(`======================================================\n`);
 });

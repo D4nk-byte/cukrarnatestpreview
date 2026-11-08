@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "username": "admin",
+    "name": "Radka Magerová",
+    "role": "admin",
+    "pin": "1234"
+  },
+  {
+    "id": "2",
+    "username": "ester",
+    "name": "Ester",
+    "role": "prodavačka",
+    "pin": "1111"
+  },
+  {
+    "id": "3",
+    "username": "lucie",
+    "name": "Lucie",
+    "role": "prodavačka",
+    "pin": "2222"
+  },
+  {
+    "id": "4",
+    "username": "marie",
+    "name": "Marie",
+    "role": "cukrářka",
+    "pin": "3333"
+  }
+]

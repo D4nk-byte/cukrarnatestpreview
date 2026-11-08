@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cukrářství Madel - Nabídka zákusků & Vlastní objednávka</title>
-  <meta name="description" content="Kompletní nabídka 114 poctivých zákusků a moderní průvodce vlastní objednávkou dortů a zákusků Cukrářství Madel v Dolním Benešově - Zábřehu.">
+  <title>Cukrářství Madel - Objednávkový systém & Výroba</title>
+  <meta name="description" content="Kompletní objednávkový systém Cukrářství Madel: dotazník pro zákazníky i prodavačky, databáze objednávek s auditní stopou, rozpis zákusků a rozpis dortů pro cukrářky.">
   <link rel="icon" type="image/png" href="images/logo-madel.png">
   
   <!-- Tailwind CSS CDN -->
@@ -34,533 +34,811 @@
 <body class="bg-[#FAF7F2] text-[#3B2820] min-h-screen flex flex-col antialiased selection:bg-[#C59B27]/20 selection:text-[#3B2820]">
 
   <!-- Top Announcement Bar -->
-  <div class="bg-[#3B2820] text-[#F7EEDB] text-xs sm:text-sm py-2 px-4 border-b border-[#C59B27]/30">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-4 text-center sm:text-left">
+  <div class="bg-[#3B2820] text-[#F7EEDB] text-xs py-2 px-4 border-b border-[#C59B27]/30 no-print">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2">
         <span class="inline-block w-2 h-2 rounded-full bg-[#C59B27] animate-ping"></span>
-        <span>Rodinné cukrářství s vlastní výrobou • Dolní Benešov - Zábřeh</span>
+        <span>Cukrářství Madel • Objednávkový & výrobní systém Dolní Benešov - Zábřeh</span>
       </div>
-      <div class="flex items-center gap-4 text-xs">
-        <a href="tel:+420604707646" class="hover:text-white transition flex items-center gap-1 font-semibold">
-          <svg class="w-3.5 h-3.5 text-[#C59B27]" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z"/></svg>
-          +420 604 707 646
-        </a>
-        <span class="text-stone-400">|</span>
-        <span class="text-stone-300">Út–Pá 9–17 • So 8–16 • Ne 9–17</span>
+      <div class="flex items-center gap-3">
+        <!-- Logged in user info -->
+        <div id="user-badge-container" class="flex items-center gap-2">
+          <span class="text-stone-300">Režim:</span>
+          <span id="current-user-name" class="font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20">
+            Zákazník z webu
+          </span>
+          <button id="auth-toggle-btn" class="text-xs text-[#C59B27] hover:text-white underline font-medium ml-1">
+            Přihlásit personál
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Sticky Glass Header -->
-  <header class="sticky top-0 z-40 glass-nav shadow-sm transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <!-- Sticky Header & System Navigation -->
+  <header class="sticky top-0 z-40 glass-nav shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
       
       <!-- Brand Logo -->
-      <a href="#" class="flex items-center gap-3.5 group">
-        <img src="images/logo-madel.png" alt="Cukrářství Madel" class="h-12 w-auto object-contain transition group-hover:scale-105 duration-300 drop-shadow-sm">
-        <div class="flex flex-col">
-          <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#3B2820] group-hover:text-[#AA821C] transition">
+      <a href="#" class="flex items-center gap-3 group">
+        <img src="images/logo-madel.png" alt="Cukrářství Madel" class="h-11 w-auto object-contain transition group-hover:scale-105 duration-200">
+        <div>
+          <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#3B2820]">
             Cukrářství Madel
           </span>
-          <span class="text-[11px] tracking-wider uppercase text-stone-500 font-medium -mt-1">
-            Poctivá řemeslná výroba
+          <span class="text-[10px] tracking-wider uppercase text-stone-500 font-semibold block -mt-1">
+            Objednávkový systém
           </span>
         </div>
       </a>
 
-      <!-- Desktop Nav -->
-      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium">
-        <a href="#nabidka" class="text-stone-700 hover:text-[#AA821C] transition font-semibold">
-          Katalog zákusků (114)
-        </a>
-        <!-- Button trigger for 3-step wizard -->
-        <button id="nav-custom-order-btn" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FAF0E4] text-[#AA821C] border border-[#C59B27]/40 hover:bg-[#F5E5D0] transition font-bold text-xs shadow-xs">
+      <!-- 4 Hlavní Strany Systému (Tabs) -->
+      <nav class="flex items-center gap-1.5 overflow-x-auto max-w-full p-1 bg-[#FAF7F2] border border-[#E8DFD5] rounded-2xl shadow-inner">
+        <button class="sys-nav-tab active" data-page="page-1">
+          <span>📝</span>
+          <span>1. Objednávkový dotazník</span>
+        </button>
+        <button class="sys-nav-tab" data-page="page-2">
+          <span>📂</span>
+          <span>2. Databáze objednávek</span>
+          <span id="tab-pending-badge" class="ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-purple-600 text-white font-bold hidden">0</span>
+        </button>
+        <button class="sys-nav-tab" data-page="page-3">
+          <span>🥐</span>
+          <span>3. Rozpis zákusků</span>
+        </button>
+        <button class="sys-nav-tab" data-page="page-4">
           <span>🎂</span>
-          <span>Vlastní objednávka</span>
-          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#3B2820] text-white">Průvodce</span>
+          <span>4. Rozpis dortů</span>
         </button>
-        <a href="#system-objednavek" class="text-stone-700 hover:text-[#AA821C] transition text-xs font-medium">
-          Správa výroby
-        </a>
-        <a href="#jak-objednat" class="text-stone-700 hover:text-[#AA821C] transition">
-          Jak objednat
-        </a>
-        <a href="#oteviraci-doba" class="text-stone-700 hover:text-[#AA821C] transition">
-          Otevírací doba
-        </a>
+        <button class="sys-nav-tab" data-page="page-catalog">
+          <span>✨</span>
+          <span>Katalog 114 zákusků</span>
+        </button>
       </nav>
-
-      <!-- Header Actions -->
-      <div class="flex items-center gap-3">
-        <!-- Prominent Vlastní objednávka button -->
-        <button id="header-custom-order-btn" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-full btn-primary shadow-sm">
-          <span>🎂</span> Vlastní objednávka
-        </button>
-
-        <!-- Cart / Inquiry Button -->
-        <button id="open-cart-btn" class="relative flex items-center gap-2 px-3.5 py-2.5 rounded-full btn-secondary text-xs sm:text-sm font-semibold cursor-pointer shadow-sm">
-          <svg class="w-4 h-4 text-[#AA821C]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          <span class="hidden xs:inline">Košík</span>
-          <span id="cart-badge" class="ml-1 px-2 py-0.5 rounded-full text-[11px] bg-[#3B2820] text-white font-bold shadow-sm">0</span>
-        </button>
-      </div>
 
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="relative bg-gradient-to-b from-[#FFFDF9] via-[#FAF7F2] to-[#FAF7F2] pt-12 pb-14 border-b border-[#E8DFD5]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-[#3B2820] text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#C59B27]/40 text-sm">
+    <span id="toast-icon" class="text-lg">✅</span>
+    <span id="toast-msg">Zpráva systému</span>
+  </div>
+
+  <!-- ========================================================
+       PAGE 1: OBJEDNÁVKOVÝ DOTAZNÍK (Zákazník & Prodavačka)
+       ======================================================== -->
+  <section id="page-1" class="sys-page max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
+    
+    <!-- Header with Customer vs. Staff Switcher -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFD5] shadow-sm mb-8">
       
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full badge-gold text-xs font-semibold uppercase tracking-wider mb-4 animate-fade-in">
-        <span>✨</span> Vlastní výroba Dolní Benešov - Zábřeh
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-stone-100">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C]">1. Strana systému</span>
+          <h1 class="font-serif text-3xl font-bold text-[#3B2820] mt-1" id="form-main-heading">
+            Objednávkový dotazník
+          </h1>
+          <p class="text-xs sm:text-sm text-stone-500 mt-1" id="form-sub-heading">
+            Vyplňte prosím údaje pro objednání dortu nebo zákusků.
+          </p>
+        </div>
+
+        <!-- Mode switcher: Verze pro zákazníka vs. Verze pro prodavačky -->
+        <div class="bg-[#FAF7F2] p-1.5 rounded-2xl border border-stone-200 flex items-center gap-1 shrink-0 text-xs font-bold">
+          <button id="mode-customer-btn" class="px-3.5 py-2 rounded-xl bg-[#3B2820] text-white shadow-xs transition">
+            👤 Verze pro zákazníka
+          </button>
+          <button id="mode-clerk-btn" class="px-3.5 py-2 rounded-xl text-stone-600 hover:text-black hover:bg-stone-200 transition flex items-center gap-1.5">
+            <span>🛒</span> Verze pro prodavačky
+          </button>
+        </div>
       </div>
 
-      <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#3B2820] max-w-4xl mx-auto leading-tight">
-        Poctivé zákusky & Vlastní objednávka na přání
-      </h1>
-
-      <p class="mt-4 text-base sm:text-lg text-stone-600 max-w-2xl mx-auto font-normal leading-relaxed">
-        Vyberte si z naší stálé nabídky 114 tradičních zákusků nebo si v našem <strong>krokovém průvodci</strong> jednoduše sestavte vlastní dort i zákusky přesně podle vašich chutí.
-      </p>
-
-      <!-- CTA Buttons -->
-      <div class="mt-7 flex flex-wrap justify-center gap-3">
-        <button id="hero-custom-order-btn" class="px-6 py-3 rounded-full btn-primary text-xs sm:text-sm font-bold shadow-md flex items-center gap-2">
-          <span>🎂</span> Vlastní objednávka (Průvodce)
-        </button>
-        <a href="#nabidka" class="px-6 py-3 rounded-full btn-secondary text-xs sm:text-sm font-semibold shadow-sm flex items-center gap-2">
-          <span>🥐</span> Prohlédnout 114 zákusků
-        </a>
+      <!-- Notification banner for clerk mode -->
+      <div id="clerk-mode-banner" class="hidden mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span>⚡</span>
+          <span><strong>Režim prodejny (prodavačka):</strong> Všechny položky jsou nepovinné, obsahuje zadání ceny a objednávka je okamžitě zařazena jako <strong>PLATNÉ</strong>.</span>
+        </div>
+        <span class="font-bold bg-amber-200/60 px-2 py-0.5 rounded text-[11px]">Personál</span>
       </div>
 
-      <!-- Key Highlights Stats -->
-      <div class="mt-9 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
-        <div class="bg-white/80 p-3.5 rounded-2xl border border-[#E8DFD5] shadow-sm backdrop-blur-sm">
-          <div class="text-2xl font-serif font-bold text-[#AA821C]">114</div>
-          <div class="text-xs text-stone-500 font-medium">Druhů zákusků</div>
+      <!-- MAIN ORDER FORM -->
+      <form id="order-main-form" class="mt-6 space-y-8">
+        
+        <!-- SECTION 1: Údaje zákazníka -->
+        <div>
+          <h2 class="font-serif text-xl font-bold text-[#3B2820] mb-4 flex items-center gap-2">
+            <span class="w-7 h-7 rounded-full bg-[#F7EEDB] text-[#AA821C] text-sm flex items-center justify-center font-serif font-bold">1</span>
+            Kontaktní údaje
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1.5">Jméno a příjmení <span class="req-star text-rose-600">*</span></label>
+              <input type="text" id="form-customer" class="form-input-madel" placeholder="Např. Jana Nováková" required>
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1.5">Telefonní číslo <span class="req-star text-rose-600">*</span></label>
+              <input type="tel" id="form-phone" class="form-input-madel" placeholder="+420 ..." required>
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1.5">E-mailová adresa <span class="req-star text-rose-600 hidden">*</span></label>
+              <input type="email" id="form-email" class="form-input-madel" placeholder="zakaznik@email.cz">
+            </div>
+
+            <!-- Pouze pro prodavačky: Cena objednávky -->
+            <div id="clerk-price-field" class="sm:col-span-3 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 hidden">
+              <label class="block font-bold text-amber-950 mb-1 text-sm flex items-center gap-1.5">
+                <span>💰</span> Cena objednávky (Kč) — pro zákazníka neviditelná
+              </label>
+              <div class="flex items-center gap-3">
+                <input type="number" id="form-price" min="0" step="1" class="form-input-madel max-w-xs font-bold text-base text-[#3B2820]" placeholder="Např. 1850">
+                <span class="text-xs text-stone-500">Zadejte dohodnutou celkovou částku v Kč.</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="bg-white/80 p-3.5 rounded-2xl border border-[#E8DFD5] shadow-sm backdrop-blur-sm">
-          <div class="text-2xl font-serif font-bold text-[#3B2820]">3 kroky</div>
-          <div class="text-xs text-stone-500 font-medium">Vlastní objednávka</div>
+
+        <!-- SECTION 2: Výběr výrobku (Dort / Zákusek / Kombinace) -->
+        <div class="pt-6 border-t border-stone-100">
+          <h2 class="font-serif text-xl font-bold text-[#3B2820] mb-3 flex items-center gap-2">
+            <span class="w-7 h-7 rounded-full bg-[#F7EEDB] text-[#AA821C] text-sm flex items-center justify-center font-serif font-bold">2</span>
+            Jaký výrobek si přejete?
+          </h2>
+
+          <!-- Radio Type Select -->
+          <div class="grid grid-cols-3 gap-3 max-w-md mb-6 text-xs font-bold">
+            <label class="p-3 bg-[#FAF7F2] border-2 border-stone-200 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition has-[:checked]:border-[#AA821C] has-[:checked]:bg-[#FAF0E4]">
+              <input type="radio" name="product_type" value="dort" class="sr-only" checked>
+              <span class="text-xl mb-1">🎂</span>
+              <span>Jen Dort</span>
+            </label>
+            <label class="p-3 bg-[#FAF7F2] border-2 border-stone-200 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition has-[:checked]:border-[#AA821C] has-[:checked]:bg-[#FAF0E4]">
+              <input type="radio" name="product_type" value="zakusek" class="sr-only">
+              <span class="text-xl mb-1">🥐</span>
+              <span>Jen Zákusky</span>
+            </label>
+            <label class="p-3 bg-[#FAF7F2] border-2 border-stone-200 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition has-[:checked]:border-[#AA821C] has-[:checked]:bg-[#FAF0E4]">
+              <input type="radio" name="product_type" value="kombinace" class="sr-only">
+              <span class="text-xl mb-1">✨</span>
+              <span>Dort i Zákusky</span>
+            </label>
+          </div>
+
+          <!-- SUBSECTION A: ZÁKUSKY (2 uzavřené otázky, možnost opakování, psát a vybírat z databáze, množství) -->
+          <div id="section-desserts-box" class="p-5 rounded-2xl border border-[#E8DFD5] bg-[#FFFDF9] mb-6 hidden">
+            <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
+              <h3 class="font-serif font-bold text-base text-[#3B2820] flex items-center gap-2">
+                <span>🥐</span> Výběr stálých zákusků z databáze (114 druhů)
+              </h3>
+              <span id="desserts-total-summary" class="text-xs font-bold text-[#AA821C] bg-[#F7EEDB] px-2.5 py-0.5 rounded-full">
+                0 položek
+              </span>
+            </div>
+
+            <!-- List of added desserts -->
+            <div id="desserts-items-list" class="space-y-2 mb-4">
+              <!-- Dynamically populated rows -->
+            </div>
+
+            <!-- Add new dessert row (Uzavřená otázka 1: název ze 114 + Uzavřená otázka 2: množství) -->
+            <div class="p-4 rounded-xl bg-[#FAF7F2] border border-stone-200">
+              <span class="text-xs font-bold text-stone-700 block mb-2">Přidat zákusek:</span>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                <!-- Question 1: Vyhledávání a výběr z databáze -->
+                <div class="sm:col-span-8 relative">
+                  <input type="text" id="dessert-search-input" placeholder="Začněte psát název zákusku (např. větrník, harlekýn, špička)..." class="form-input-madel text-xs">
+                  <div id="dessert-dropdown-results" class="absolute z-20 left-0 right-0 top-full mt-1 bg-white border border-stone-300 rounded-xl shadow-xl max-h-48 overflow-y-auto hidden"></div>
+                </div>
+                <!-- Question 2: Množství (ks) -->
+                <div class="sm:col-span-2">
+                  <input type="number" id="dessert-qty-input" value="10" min="1" class="form-input-madel text-xs text-center font-bold" title="Počet kusů">
+                </div>
+                <!-- Add Button -->
+                <div class="sm:col-span-2">
+                  <button type="button" id="add-dessert-btn" class="w-full py-2.5 px-3 rounded-xl btn-primary text-xs font-bold">
+                    + Přidat
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBSECTION B: DORT (Specifikace dle zadání) -->
+          <div id="section-cake-box" class="p-5 sm:p-6 rounded-2xl border border-[#E8DFD5] bg-[#FFFDF9] mb-6">
+            <h3 class="font-serif font-bold text-base text-[#3B2820] mb-4 pb-2 border-b border-stone-100 flex items-center gap-2">
+              <span>🎂</span> Konfigurace zakázkového dortu
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              
+              <!-- 1. Počet porcí (Uzavřená) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Počet porcí (U) <span class="cake-req-star text-rose-600">*</span></label>
+                <select id="cake-portions" class="form-input-madel">
+                  <option value="8">8 porcí (mini)</option>
+                  <option value="12" selected>12 porcí (klasický)</option>
+                  <option value="16">16 porcí (střední)</option>
+                  <option value="20">20 porcí (velký)</option>
+                  <option value="24">24 porcí</option>
+                  <option value="30">30 porcí (2 patra)</option>
+                  <option value="40">40 porcí (3 patra)</option>
+                  <option value="50">50+ porcí (velký slavnostní)</option>
+                </select>
+              </div>
+
+              <!-- 2. Tvar (Uzavřená) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Tvar (U) <span class="cake-req-star text-rose-600">*</span></label>
+                <select id="cake-shape" class="form-input-madel">
+                  <option selected>Kulatý</option>
+                  <option>Hranatý (obdélník)</option>
+                  <option>Čtvercový</option>
+                  <option>Srdce</option>
+                  <option>Podkova</option>
+                  <option>Kniha</option>
+                  <option>Patrový</option>
+                  <option>Atypický</option>
+                </select>
+              </div>
+
+              <!-- 3. Korpus (Uzavřená) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Korpus (U) <span class="cake-req-star text-rose-600">*</span></label>
+                <select id="cake-sponge" class="form-input-madel">
+                  <option selected>Světlý vanilkový (klasika)</option>
+                  <option>Tmavý čokoládový</option>
+                  <option>Belgická čokoláda</option>
+                  <option>Ořechový</option>
+                  <option>Red velvet</option>
+                  <option>Toffi korpus</option>
+                  <option>Duhový (barevný)</option>
+                  <option>Makový</option>
+                  <option>Bezlepkový světlý</option>
+                  <option>Bezlepkový čokoládový</option>
+                </select>
+              </div>
+
+              <!-- 4. Náplň (Uzavřená) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Náplň (U) <span class="cake-req-star text-rose-600">*</span></label>
+                <select id="cake-filling" class="form-input-madel">
+                  <option selected>Mascarpone (+ čerstvé ovoce)</option>
+                  <option>Jogurtová se zakysanou smetanou (+ ovoce)</option>
+                  <option>Pařížská náplň (+ marmeláda, ovoce)</option>
+                  <option>Karamel nebo slaný karamel</option>
+                  <option>Toffi krém</option>
+                  <option>Pistáciová</option>
+                  <option>Lotus náplň</option>
+                  <option>Máslová náplň – vanilka</option>
+                  <option>Máslová náplň – čokoláda</option>
+                  <option>Máslová náplň – karamel</option>
+                  <option>Mascarpone bez laktózy (+ ovoce)</option>
+                </select>
+              </div>
+
+              <!-- 5. Potah / povrch (Uzavřená) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Potah / povrch (U) <span class="cake-req-star text-rose-600">*</span></label>
+                <select id="cake-finish" class="form-input-madel">
+                  <option selected>Semi-naked (polonahý dort)</option>
+                  <option>Hladký krémový povrch</option>
+                  <option>Čokoládový drip (stékaná poleva)</option>
+                  <option>Karamelový drip</option>
+                  <option>Fondánový potah</option>
+                  <option>Šlehačkový povrch</option>
+                </select>
+              </div>
+
+              <!-- 6. Jedlý papír (Ano / Ne) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Jedlý papír / obrázek <span class="cake-req-star text-rose-600">*</span></label>
+                <select id="cake-edible-paper" class="form-input-madel">
+                  <option value="ne" selected>NE</option>
+                  <option value="ano">ANO</option>
+                </select>
+              </div>
+
+              <!-- Podmíněná sekce pro Jedlý papír ANO -->
+              <div id="edible-paper-conditional" class="sm:col-span-2 p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                  <div>
+                    <label class="block font-bold text-blue-900 mb-1">Jaký styl / motiv jedlého papíru? (Otevřená)</label>
+                    <input type="text" id="cake-edible-style" class="form-input-madel bg-white" placeholder="Např. pohádka Frozen, fotka oslavence...">
+                  </div>
+                  <div class="p-2.5 bg-white rounded-lg border border-blue-200 text-xs text-blue-800 flex items-start gap-2">
+                    <span class="text-base">ℹ️</span>
+                    <span><strong>Upozornění:</strong> Obrázek jedlého papíru ve vysokém rozlišení pošlete prosím na náš e-mail: <strong>cukrarstvimadel@seznam.cz</strong> s uvedením vašeho jména.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7. Možnost vložení obrázku (JPG) -->
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-stone-700 mb-1">Možnost vložení referenčního obrázku dortu (JPG, PNG)</label>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                  <input type="file" id="cake-image-file" accept="image/jpeg,image/png,image/jpg" class="text-xs file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#3B2820] file:text-white hover:file:bg-[#5A3E31] cursor-pointer">
+                  <span class="text-[11px] text-stone-500">Můžete nahrát předlohu, jak by měl dort vypadat.</span>
+                </div>
+                <div id="cake-image-preview-container" class="mt-2 hidden">
+                  <img id="cake-image-preview" src="" alt="Náhled předlohy" class="h-24 w-auto rounded-xl border border-stone-300 shadow-sm object-cover">
+                </div>
+              </div>
+
+              <!-- 8. Dietní omezení (Uzavřená, nepovinné) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Dietní omezení (U) <span class="text-stone-400 font-normal">(nepovinné)</span></label>
+                <select id="cake-diet" class="form-input-madel">
+                  <option selected>Bez dietního omezení (standard)</option>
+                  <option>Bezlepkový dort</option>
+                  <option>Bez laktózy</option>
+                  <option>Bez ořechů</option>
+                </select>
+              </div>
+
+              <!-- 9. Barva a dekorace (Otevřená, nepovinné) -->
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Barva a dekorace (O) <span class="text-stone-400 font-normal">(nepovinné)</span></label>
+                <input type="text" id="cake-decor" class="form-input-madel" placeholder="Např. zlaté plátky, živé květiny, ovocný věnec, makronky...">
+              </div>
+
+              <!-- 10. Detailnější popis dortu (Velká otevřená nepovinná kolonka) -->
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-stone-700 mb-1">Detailnější popis dortu <span class="text-stone-400 font-normal">(velká otevřená nepovinná kolonka)</span></label>
+                <textarea id="cake-description" rows="3" class="form-input-madel" placeholder="Napište nám jakékoliv další přání, text nápisu na dort, věnování pro oslavence nebo zvláštní instrukce pro cukrářku..."></textarea>
+              </div>
+
+            </div>
+          </div>
         </div>
-        <div class="bg-white/80 p-3.5 rounded-2xl border border-[#E8DFD5] shadow-sm backdrop-blur-sm">
-          <div class="text-2xl font-serif font-bold text-[#AA821C]">100%</div>
-          <div class="text-xs text-stone-500 font-medium">Poctivé suroviny</div>
+
+        <!-- SECTION 3: Datum a čas vyzvednutí (Interaktivní barevný kalendář Zelená / Žlutá / Červená) -->
+        <div class="pt-6 border-t border-stone-100">
+          <h2 class="font-serif text-xl font-bold text-[#3B2820] mb-2 flex items-center gap-2">
+            <span class="w-7 h-7 rounded-full bg-[#F7EEDB] text-[#AA821C] text-sm flex items-center justify-center font-serif font-bold">3</span>
+            Datum a čas vyzvednutí
+          </h2>
+          <p class="text-xs text-stone-500 mb-4">
+            Klikněte na požadovaný den v kalendáři. Zelené dny jsou volné, žluté mají vysoké vytížení a na červené termíny již objednávky nepřijímáme.
+          </p>
+
+          <!-- Calendar Controls -->
+          <div class="p-4 sm:p-5 bg-white rounded-2xl border border-stone-200 shadow-xs mb-4">
+            
+            <div class="flex items-center justify-between mb-4">
+              <button type="button" id="cal-prev-month" class="px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold hover:bg-stone-100">
+                ← Předchozí měsíc
+              </button>
+              <h3 id="cal-month-title" class="font-serif font-bold text-base text-[#3B2820]">
+                Listopad 2026
+              </h3>
+              <button type="button" id="cal-next-month" class="px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold hover:bg-stone-100">
+                Další měsíc →
+              </button>
+            </div>
+
+            <!-- Weekday headers -->
+            <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-stone-500 mb-2">
+              <div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
+            </div>
+
+            <!-- Days Grid -->
+            <div id="cal-days-grid" class="cal-grid">
+              <!-- Dynamically generated with green, yellow, red classes -->
+            </div>
+
+            <!-- Calendar Legend -->
+            <div class="mt-4 pt-3 border-t border-stone-100 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 rounded-md bg-[#A5D6A7] border border-[#2E7D32]"></span>
+                <span class="text-emerald-900">Zelené: Volný termín</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 rounded-md bg-[#FFE082] border border-[#F57F17]"></span>
+                <span class="text-amber-900">Žluté: Velké množství objednávek</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 rounded-md bg-[#EF9A9A] border border-[#B71C1C]"></span>
+                <span class="text-rose-900">Červené: Obsazeno (nepřijímáme)</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Calendar Warning Notice (Yellow / Red) -->
+          <div id="cal-alert-box" class="p-4 rounded-xl text-xs font-semibold hidden mb-4">
+            <!-- Injected dynamically -->
+          </div>
+
+          <!-- Time & Location -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Vybrané datum vyzvednutí <span class="req-star text-rose-600">*</span></label>
+              <input type="date" id="selected-date-input" class="form-input-madel font-bold" readonly required>
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Čas vyzvednutí (9:00 - 17:00) <span class="req-star text-rose-600">*</span></label>
+              <input type="time" id="selected-time-input" value="10:00" class="form-input-madel font-bold" required>
+            </div>
+            <div class="sm:col-span-2 p-3 bg-[#FAF7F2] rounded-xl border border-stone-200 text-stone-600">
+              📍 <strong>Místo odběru:</strong> Prodejna Cukrářství Madel, Opavská 191, Dolní Benešov - Zábřeh
+            </div>
+          </div>
         </div>
-        <div class="bg-white/80 p-3.5 rounded-2xl border border-[#E8DFD5] shadow-sm backdrop-blur-sm">
-          <div class="text-2xl font-serif font-bold text-[#3B2820]">Výrobna</div>
-          <div class="text-xs text-stone-500 font-medium">Čerstvě na míru</div>
+
+        <!-- SECTION 4: reCAPTCHA (pro verzi zákazníka) -->
+        <div id="recaptcha-section" class="pt-6 border-t border-stone-100 flex flex-col items-center sm:items-start">
+          <div class="recaptcha-box">
+            <div class="flex items-center gap-3">
+              <div id="recaptcha-check" class="recaptcha-checkbox"></div>
+              <span class="text-xs font-medium text-stone-700">Nejsem robot</span>
+            </div>
+            <div class="flex flex-col items-center text-[9px] text-stone-400">
+              <svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              <span>reCAPTCHA</span>
+            </div>
+          </div>
+          <span id="recaptcha-error" class="text-xs text-rose-600 mt-1 font-semibold hidden">
+            Před odesláním prosím zaškrtněte pole reCAPTCHA.
+          </span>
+        </div>
+
+        <!-- SUBMIT BUTTONS -->
+        <div class="pt-6 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="text-xs text-stone-500">
+            * Odesláním souhlasíte se zpracováním údajů pro účely přípravy objednávky.
+          </div>
+          <button type="submit" id="submit-order-btn" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl btn-primary text-sm font-bold shadow-lg flex items-center justify-center gap-2">
+            <span>Nezávazně objednat</span>
+            <span>→</span>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- SUCCESS CONFIRMATION SCREEN -->
+      <div id="order-success-screen" class="hidden text-center py-12 space-y-4">
+        <div class="w-20 h-20 mx-auto bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl shadow-md">
+          ✓
+        </div>
+        <h2 class="font-serif text-3xl font-bold text-[#3B2820]">
+          Děkujeme za objednávku!
+        </h2>
+        <p class="text-base text-stone-700 max-w-lg mx-auto font-medium">
+          Objednávka bude závazně potvrzena telefonicky, nebo prostřednictvím e-mailu.
+        </p>
+        <div class="p-4 bg-[#FAF7F2] rounded-2xl border border-stone-200 max-w-md mx-auto text-xs text-stone-600">
+          Číslo vaší objednávky: <strong id="success-order-num" class="text-base text-[#AA821C]">#</strong><br>
+          Stav objednávky v systému: <span class="status-badge status-nevyrizeno font-bold">nevyřízeno</span>
+        </div>
+        <div class="pt-4 flex justify-center gap-3">
+          <button id="success-new-order-btn" class="px-6 py-2.5 rounded-xl btn-primary text-xs font-bold">
+            Zadat další objednávku
+          </button>
         </div>
       </div>
 
     </div>
   </section>
 
-  <!-- Main Catalog Section -->
-  <main id="nabidka" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+  <!-- ========================================================
+       PAGE 2: DATABÁZE OBJEDNÁVEK
+       ======================================================== -->
+  <section id="page-2" class="sys-page max-w-7xl mx-auto px-4 py-8 flex-grow w-full hidden">
     
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFD5] shadow-sm mb-6">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-stone-100">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C]">2. Strana systému</span>
+          <h1 class="font-serif text-3xl font-bold text-[#3B2820] mt-1">
+            Databáze všech objednávek
+          </h1>
+          <p class="text-xs sm:text-sm text-stone-500 mt-1">
+            Přehled zakázek, schvalování administrátorem, auditní stopa a změna stavů.
+          </p>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="flex items-center gap-2">
+          <button id="db-refresh-btn" class="px-3.5 py-2 rounded-xl btn-secondary text-xs font-semibold flex items-center gap-1.5">
+            <span>🔄</span> Obnovit
+          </button>
+          <button id="db-new-order-goto" class="px-4 py-2 rounded-xl btn-primary text-xs font-bold flex items-center gap-1.5">
+            <span>➕</span> Nová zakázka
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTER PANEL (dle specifikace) -->
+      <div class="mt-6 p-4 rounded-2xl bg-[#FAF7F2] border border-stone-200 space-y-3">
+        <span class="text-xs font-bold uppercase tracking-wider text-stone-500 block">Filtrování databáze:</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          
+          <!-- 1. Filtr dle stavu -->
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">Stav zakázky:</label>
+            <select id="filter-status" class="form-input-madel bg-white text-xs">
+              <option value="">Všechny stavy</option>
+              <option value="nevyřízeno">nevyřízeno (čeká na schválení)</option>
+              <option value="platné">platné</option>
+              <option value="vyzvednuté">vyzvednuté</option>
+              <option value="neplatné">neplatné</option>
+              <option value="nevyzvednuté">nevyzvednuté</option>
+            </select>
+          </div>
+
+          <!-- 2. Filtr podle data vyzvednutí -->
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">Datum vyzvednutí:</label>
+            <input type="date" id="filter-pickup-date" class="form-input-madel bg-white text-xs">
+          </div>
+
+          <!-- 3. Filtr podle zaměstnance -->
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">Zadal zaměstnanec:</label>
+            <select id="filter-employee" class="form-input-madel bg-white text-xs">
+              <option value="">Všichni zadavatelé</option>
+              <option value="Zákazník z webu">Zákazník z webu</option>
+              <option value="Ester">Ester (Prodavačka)</option>
+              <option value="Lucie">Lucie (Prodavačka)</option>
+              <option value="Radka Magerová">Radka Magerová (Admin)</option>
+            </select>
+          </div>
+
+          <!-- 4. Filtr podle alergenů / diety -->
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">Dietní omezení / alergeny:</label>
+            <select id="filter-diet" class="form-input-madel bg-white text-xs">
+              <option value="">Bez filtru diety</option>
+              <option value="Bezlepkový">Bezlepkový</option>
+              <option value="Bez laktózy">Bez laktózy</option>
+              <option value="Bez ořechů">Bez ořechů</option>
+            </select>
+          </div>
+
+          <!-- 5. Hledání zákazníka / telefonu -->
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">Hledat (jméno / tel):</label>
+            <input type="text" id="filter-search" placeholder="Jméno, telefon..." class="form-input-madel bg-white text-xs">
+          </div>
+
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span id="db-results-count" class="text-xs text-stone-500 font-semibold">Načítám objednávky...</span>
+          <button id="db-reset-filters" class="text-xs text-[#AA821C] hover:underline font-bold">
+            Resetovat filtry ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- ORDERS LIST CONTAINER -->
+      <div id="db-orders-container" class="mt-6 space-y-4">
+        <!-- Injected via JavaScript -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 3: ROZPIS ZÁKUSKŮ (Výrobní list pro cukrářky - A4 tisk)
+       ======================================================== -->
+  <section id="page-3" class="sys-page max-w-5xl mx-auto px-4 py-8 flex-grow w-full hidden">
+    
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFD5] shadow-sm mb-6 print-area">
+      
+      <!-- Top Bar with Print Button -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-stone-200">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C] no-print">3. Strana systému</span>
+          <h1 class="font-serif text-3xl font-bold text-[#3B2820] mt-1">
+            Rozpis zákusků pro výrobnu
+          </h1>
+          <p class="text-xs sm:text-sm text-stone-500 mt-1">
+            Souhrn všech platných objednávek seřazených podle celkového množství jednotlivých zákusků k upečení.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 no-print">
+          <!-- Week filter -->
+          <div class="flex items-center gap-2">
+            <label for="prep-week-select" class="text-xs font-bold text-stone-600">Období:</label>
+            <select id="prep-week-select" class="form-input-madel py-1.5 px-3 text-xs">
+              <option value="next_week" selected>Příští týden</option>
+              <option value="this_week">Aktuální týden</option>
+              <option value="all_valid">Všechny platné objednávky</option>
+            </select>
+          </div>
+          <button id="print-desserts-btn" class="px-5 py-2.5 rounded-xl btn-primary text-xs font-bold flex items-center gap-2 shadow-sm">
+            <span>🖨️</span> Vytisknout rozpis (A4)
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable A4 Header (visible only when printing) -->
+      <div class="hidden print:block mb-4 pb-3 border-b-2 border-black">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-xl font-bold">🍰 CUKRÁŘSTVÍ MADEL – ROZPIS ZÁKUSKŮ PRO VÝROBU</h2>
+            <p class="text-xs">Dolní Benešov - Zábřeh • Vygenerováno: <span class="print-timestamp"></span></p>
+          </div>
+          <div class="text-right text-xs">
+            <strong>Platné objednávky</strong><br>
+            Období: <span id="print-period-label">Příští týden</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aggregated Desserts Table -->
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left border-collapse print-table">
+          <thead>
+            <tr class="bg-[#FAF7F2] border-b-2 border-stone-200 text-xs font-bold text-[#3B2820]">
+              <th class="py-3 px-3 w-12 text-center">#</th>
+              <th class="py-3 px-3">Název zákusku</th>
+              <th class="py-3 px-3">Kategorie</th>
+              <th class="py-3 px-3 text-right">Celkem ks k upečení</th>
+              <th class="py-3 px-3 text-left">Rozpis objednávek (Termín / ks)</th>
+            </tr>
+          </thead>
+          <tbody id="prep-desserts-rows" class="text-xs divide-y divide-stone-100">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Signoff Footer for printing -->
+      <div class="mt-8 pt-4 border-t border-stone-200 text-xs text-stone-500 flex justify-between items-center">
+        <span>Celkem různých druhů: <strong id="prep-total-types">0</strong></span>
+        <span>Celkem kusů k výrobě: <strong id="prep-total-pieces" class="text-base text-[#AA821C]">0 ks</strong></span>
+        <span class="hidden print:inline">Podpis cukrářky: ____________________</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 4: ROZPIS DORTŮ (Chronologický přehled pro cukrářky - A4)
+       ======================================================== -->
+  <section id="page-4" class="sys-page max-w-6xl mx-auto px-4 py-8 flex-grow w-full hidden">
+    
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFD5] shadow-sm mb-6 print-area">
+      
+      <!-- Top Bar with Print Button -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-stone-200">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C] no-print">4. Strana systému</span>
+          <h1 class="font-serif text-3xl font-bold text-[#3B2820] mt-1">
+            Rozpis dortů pro výrobnu
+          </h1>
+          <p class="text-xs sm:text-sm text-stone-500 mt-1">
+            Souhrn všech objednaných dortů seřazených chronologicky podle data a času vyzvednutí.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 no-print">
+          <div class="flex items-center gap-2">
+            <label for="prep-cakes-week-select" class="text-xs font-bold text-stone-600">Období:</label>
+            <select id="prep-cakes-week-select" class="form-input-madel py-1.5 px-3 text-xs">
+              <option value="next_week" selected>Příští týden</option>
+              <option value="this_week">Aktuální týden</option>
+              <option value="all_valid">Všechny platné dorty</option>
+            </select>
+          </div>
+          <button id="print-cakes-btn" class="px-5 py-2.5 rounded-xl btn-primary text-xs font-bold flex items-center gap-2 shadow-sm">
+            <span>🖨️</span> Vytisknout rozpis dortů (A4)
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable A4 Header -->
+      <div class="hidden print:block mb-4 pb-3 border-b-2 border-black">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-xl font-bold">🎂 CUKRÁŘSTVÍ MADEL – CHRONOLOGICKÝ ROZPIS DORTŮ</h2>
+            <p class="text-xs">Dolní Benešov - Zábřeh • Vygenerováno: <span class="print-timestamp"></span></p>
+          </div>
+          <div class="text-right text-xs">
+            <strong>Výrobní plán pro cukrářky</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chronological Cakes Table -->
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left border-collapse print-table">
+          <thead>
+            <tr class="bg-[#FAF7F2] border-b-2 border-stone-200 text-xs font-bold text-[#3B2820]">
+              <th class="py-3 px-3 whitespace-nowrap">Termín vyzvednutí</th>
+              <th class="py-3 px-3">Příjmení & kontakt</th>
+              <th class="py-3 px-3">Popis dortu (porce, korpus, náplň, potah)</th>
+              <th class="py-3 px-3">Jedlý papír / dekorace</th>
+              <th class="py-3 px-3">Nápis na dort & přání</th>
+              <th class="py-3 px-3 text-right">Cena</th>
+            </tr>
+          </thead>
+          <tbody id="prep-cakes-rows" class="text-xs divide-y divide-stone-100">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-8 pt-4 border-t border-stone-200 text-xs text-stone-500 flex justify-between items-center">
+        <span>Celkem dortů k výrobě: <strong id="prep-total-cakes" class="text-base text-[#AA821C]">0</strong></span>
+        <span class="hidden print:inline">Kontrola provedena: ____________________</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 5: STÁLÝ KATALOG (114 ZÁKUSKŮ)
+       ======================================================== -->
+  <section id="page-catalog" class="sys-page max-w-7xl mx-auto px-4 py-8 flex-grow w-full hidden">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-3">
       <div>
         <span class="text-xs font-semibold uppercase tracking-wider text-[#AA821C]">Stálý sortiment</span>
         <h2 class="font-serif text-3xl font-bold text-[#3B2820]">Katalog 114 stálých zákusků</h2>
       </div>
-      <button id="catalog-custom-order-btn" class="px-4 py-2 rounded-full bg-[#FAF0E4] hover:bg-[#F5E5D0] border border-[#C59B27]/40 text-[#AA821C] text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
-        <span>🎂</span> Chci vlastní dort nebo zakázku →
+      <button class="goto-order-btn px-4 py-2 rounded-full btn-primary text-xs font-bold shadow-xs">
+        📝 Otevřít objednávkový dotazník →
       </button>
     </div>
 
-    <!-- Filter & Search Bar Area -->
-    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8DFD5] shadow-sm mb-10">
-      
-      <!-- Top Row: Search and Sort -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
-        
-        <!-- Search Input -->
-        <div class="relative w-full sm:max-w-md">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-          <input 
-            type="text" 
-            id="search-input" 
-            placeholder="Hledat zákusek (např. větrník, harlekýn, lotus, sacher)..." 
-            class="w-full pl-10 pr-10 py-3 bg-[#FAF7F2] border border-[#DCD0C5] rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#C59B27] focus:border-transparent transition"
-          >
-          <button id="clear-search-btn" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-        </div>
-
-        <!-- Sort Select & Results count -->
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          <span id="results-count" class="text-xs sm:text-sm text-stone-500 font-medium">
-            Načítání...
-          </span>
-          <div class="flex items-center gap-2">
-            <label for="sort-select" class="text-xs text-stone-500 font-medium hidden sm:inline">Řadit:</label>
-            <select id="sort-select" class="py-2 px-3 bg-[#FAF7F2] border border-[#DCD0C5] rounded-xl text-xs sm:text-sm font-medium text-[#3B2820] focus:outline-none focus:ring-2 focus:ring-[#C59B27]">
-              <option value="default">Doporučené pořadí</option>
-              <option value="popular">⭐ Nejoblíbenější</option>
-              <option value="name-asc">Abecedně (A - Z)</option>
-              <option value="name-desc">Abecedně (Z - A)</option>
-            </select>
-          </div>
-        </div>
-
+    <!-- Filter bar -->
+    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8DFD5] shadow-sm mb-8">
+      <div class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-4">
+        <input type="text" id="cat-search" placeholder="Hledat zákusek (větrník, harlekýn, sacher...)" class="form-input-madel max-w-md text-xs">
+        <span id="cat-count-badge" class="text-xs text-stone-500 font-medium">Načítání...</span>
       </div>
-
-      <!-- Categories Pills -->
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold uppercase tracking-wider text-stone-400">Kategorie zákusků:</span>
-          <button id="reset-filters-btn" class="hidden text-xs text-[#AA821C] hover:underline font-medium">
-            Resetovat všechny filtry ✕
-          </button>
-        </div>
-
-        <div id="category-tabs" class="flex flex-wrap gap-2">
-          <!-- Rendered dynamically -->
-        </div>
-
-        <!-- Secondary Flavor/Dietary Tags -->
-        <div class="pt-2 border-t border-stone-100 flex flex-wrap items-center gap-1.5 text-xs">
-          <span class="text-stone-400 mr-1">Rychlý filtr:</span>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="Bestseller">⭐ Bestsellery</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="Čokoládové">🍫 Čokoládové</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="S ovocem">🍓 S ovocem</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="Karamel">🍯 Karamel</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="Oříškové">🌰 Oříškové</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="S likérem">🥂 S likérem</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="Tradiční klasika">🇨🇿 Tradiční české</button>
-          <button class="tag-filter-btn px-2.5 py-1 rounded-lg badge-tag transition" data-tag="Bezlepkové">🌾 Bezlepkové</button>
-        </div>
+      <div id="cat-tags" class="flex flex-wrap gap-2 text-xs">
+        <!-- Rendered dynamically -->
       </div>
-
     </div>
 
-    <!-- Products Grid -->
-    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <!-- Injected via JavaScript -->
-    </div>
-
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden text-center py-20 bg-white rounded-3xl border border-[#E8DFD5] p-8 max-w-lg mx-auto">
-      <div class="w-16 h-16 mx-auto mb-4 bg-[#F7EEDB] rounded-full flex items-center justify-center text-[#AA821C] text-2xl">
-        🔍
-      </div>
-      <h3 class="font-serif text-2xl font-bold text-[#3B2820] mb-2">Žádný zákusek neodpovídá zadání</h3>
-      <p class="text-sm text-stone-500 mb-6">Zkuste upravit hledaný výraz nebo vybrat jinou kategorii.</p>
-      <button id="reset-empty-btn" class="px-5 py-2.5 rounded-full btn-primary text-xs font-semibold">
-        Zobrazit všech 114 zákusků
-      </button>
-    </div>
-
-  </main>
+    <!-- Product Grid -->
+    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </section>
 
   <!-- ========================================================
-       TŘÍKROKOVÝ PRŮVODCE OBJEDNÁVKOU (WIZARD MODAL)
-       1. Zákazník -> 2. Výběr (Dort + Zákusky) -> 3. Vyzvednutí & Souhrn
+       STAFF LOGIN MODAL
        ======================================================== -->
-  <div id="order-wizard-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 wizard-backdrop hidden opacity-0 transition-opacity duration-300">
-    <div id="wizard-container" class="wizard-modal transform scale-95 transition-transform duration-300 relative flex flex-col">
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 no-print">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-[#E8DFD5] text-center relative">
       
-      <!-- Header -->
-      <div class="p-5 sm:p-6 bg-[#FFFDF9] border-b border-[#E8DFD5] flex items-center justify-between">
+      <button id="close-login-btn" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition">
+        ✕
+      </button>
+
+      <div class="w-14 h-14 mx-auto mb-3 bg-[#F7EEDB] text-[#AA821C] rounded-2xl flex items-center justify-center text-2xl shadow-xs">
+        🔑
+      </div>
+      <h3 class="font-serif text-2xl font-bold text-[#3B2820]">Přihlášení personálu</h3>
+      <p class="text-xs text-stone-500 mt-1 mb-6">
+        Zvolte svůj profil a zadejte PIN pro přístup k databázi zakázek.
+      </p>
+
+      <div class="space-y-3 text-left text-xs">
         <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-[#AA821C] block">Průvodce objednávkou</span>
-          <h2 class="font-serif text-xl sm:text-2xl font-bold text-[#3B2820]">
-            Vlastní objednávka dortu & zákusků
-          </h2>
+          <label class="block font-bold text-stone-700 mb-1">Zaměstnanec:</label>
+          <select id="login-user-select" class="form-input-madel">
+            <option value="ester">Ester (Prodavačka) - PIN 1111</option>
+            <option value="lucie">Lucie (Prodavačka) - PIN 2222</option>
+            <option value="marie">Marie (Cukrářka) - PIN 3333</option>
+            <option value="admin">Radka Magerová (Admin) - PIN 1234</option>
+          </select>
         </div>
-        <button id="close-wizard-btn" class="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition">
-          ✕
-        </button>
-      </div>
-
-      <!-- Step Indicator Bar -->
-      <div class="step-bar">
-        <div id="step-node-1" class="step-node active">
-          <div class="step-circle">1</div>
-          <span>1. Zákazník</span>
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">PIN kód:</label>
+          <input type="password" id="login-pin-input" class="form-input-madel text-center text-lg tracking-widest font-bold" placeholder="••••" maxlength="6" value="1111">
         </div>
-        <div id="step-node-2" class="step-node">
-          <div class="step-circle">2</div>
-          <span>2. Výběr dortu a zákusků</span>
-        </div>
-        <div id="step-node-3" class="step-node">
-          <div class="step-circle">3</div>
-          <span>3. Vyzvednutí & Odeslání</span>
-        </div>
-      </div>
+        <div id="login-error-msg" class="text-rose-600 font-bold text-[11px] hidden text-center"></div>
 
-      <!-- Scrollable Wizard Body -->
-      <div class="flex-grow overflow-y-auto p-5 sm:p-7">
-        
-        <!-- STEP 1: ZÁKAZNÍK (přesně podle screenshotu) -->
-        <div id="wizard-step-1" class="space-y-6">
-          <div>
-            <h3 class="font-serif text-2xl font-bold text-[#3B2820]">Nová objednávka dortu & zákusků</h3>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-[#AA821C] mt-2 mb-4">1. ZÁKAZNÍK</h4>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-stone-600 mb-1.5">Jméno a příjmení *</label>
-              <input type="text" id="wiz-customer" class="wizard-input" placeholder="Např. Jana Nováková" required>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-stone-600 mb-1.5">Telefon *</label>
-              <input type="tel" id="wiz-phone" class="wizard-input" placeholder="+420 ..." required>
-            </div>
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-bold text-stone-600 mb-1.5">E-mail</label>
-              <input type="email" id="wiz-email" class="wizard-input" placeholder="zakaznik@email.cz">
-            </div>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD5] text-xs text-stone-600 leading-relaxed">
-            💡 V dalším kroku si přesně zvolíte, co pro vás máme připravit: můžete si nakonfigurovat <strong>vlastní zakázkový dort</strong> a/nebo přidat <strong>oblíbené zákusky ze stálé nabídky (114 druhů)</strong>.
-          </div>
-        </div>
-
-        <!-- STEP 2: VÝBĚR DORTU A ZÁKUSKŮ -->
-        <div id="wizard-step-2" class="space-y-6 hidden">
-          <div>
-            <h3 class="font-serif text-2xl font-bold text-[#3B2820]">Výběr toho, co pro vás upečeme</h3>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-[#AA821C] mt-2 mb-4">2. DORT & ZÁKUSKY</h4>
-          </div>
-
-          <!-- Section A: Zakázkový dort -->
-          <div class="p-5 rounded-2xl border border-[#E8DFD5] bg-white shadow-xs">
-            <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
-              <div class="flex items-center gap-2.5">
-                <span class="text-xl">🎂</span>
-                <div>
-                  <h4 class="font-serif font-bold text-base text-[#3B2820]">Zakázkový dort na přání</h4>
-                  <p class="text-[11px] text-stone-500">Narozeninový, svatební, dětský či slavnostní dort</p>
-                </div>
-              </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="wiz-cake-enable" class="sr-only peer" checked>
-                <div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#C59B27]"></div>
-                <span class="ml-2 text-xs font-bold text-stone-700">Chci dort</span>
-              </label>
-            </div>
-
-            <!-- Cake configuration form fields -->
-            <div id="wiz-cake-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Druh dortu *</label>
-                <select id="wiz-cake-kind" class="wizard-input">
-                  <option>Narozeninový</option>
-                  <option>Svatební</option>
-                  <option>Dětský</option>
-                  <option>Slavnostní</option>
-                  <option>Firemní</option>
-                  <option>Jubilejní</option>
-                  <option>Jiný</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Počet porcí</label>
-                <input type="number" id="wiz-cake-portions" class="wizard-input" value="12" min="1">
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Tvar & rozměr</label>
-                <input type="text" id="wiz-cake-shape" class="wizard-input" placeholder="Např. Kulatý 26 cm, srdce...">
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Počet pater</label>
-                <input type="number" id="wiz-cake-floors" class="wizard-input" value="1" min="1">
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Korpus *</label>
-                <select id="wiz-cake-sponge" class="wizard-input">
-                  <option>Vanilka (klasika světlý)</option>
-                  <option>Čokoláda (klasika tmavý)</option>
-                  <option>Belgická čokoláda</option>
-                  <option>Ořech</option>
-                  <option>Red velvet</option>
-                  <option>Toffi</option>
-                  <option>Duha</option>
-                  <option>Mák</option>
-                  <option>Bez lepku</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Náplň *</label>
-                <select id="wiz-cake-filling" class="wizard-input">
-                  <option>Mascarpone (+ ovoce)</option>
-                  <option>Jogurt se zakysanou smetanou (+ ovoce)</option>
-                  <option>Pařížská náplň (+ marmeláda, ovoce)</option>
-                  <option>Karamel nebo slaný karamel</option>
-                  <option>Toffi</option>
-                  <option>Čokoládové mascarpone</option>
-                  <option>Pistácie</option>
-                  <option>Lotus</option>
-                  <option>Máslová náplň – vanilka</option>
-                  <option>Máslová náplň – čokoláda</option>
-                  <option>Mascarpone bez laktózy (+ ovoce)</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Doplňující krém / chuť</label>
-                <input type="text" id="wiz-cake-cream" class="wizard-input" placeholder="Např. malinové mascarpone...">
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Potah / povrch</label>
-                <input type="text" id="wiz-cake-finish" class="wizard-input" placeholder="Semi-naked, čoko drip, fondán...">
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Dekorace a styl</label>
-                <input type="text" id="wiz-cake-decor" class="wizard-input" placeholder="Živé květiny, ovoce, makronky, zápich...">
-              </div>
-
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Dietní omezení</label>
-                <input type="text" id="wiz-cake-diet" class="wizard-input" placeholder="Standard / Bezlepkový / Bez ořechů...">
-              </div>
-
-              <div class="sm:col-span-2">
-                <label class="block font-semibold text-stone-600 mb-1">Nápis na dort a další přání</label>
-                <textarea id="wiz-cake-notes" rows="2" class="wizard-input" placeholder="Např. text: 'Všechno nejlepší k 30!', barevné ladění..."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section B: Zákusky ze stálé nabídky -->
-          <div class="p-5 rounded-2xl border border-[#E8DFD5] bg-white shadow-xs">
-            <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
-              <div class="flex items-center gap-2.5">
-                <span class="text-xl">🥐</span>
-                <div>
-                  <h4 class="font-serif font-bold text-base text-[#3B2820]">Zákusky ze stálé nabídky</h4>
-                  <p class="text-[11px] text-stone-500">Vybrané zákusky z katalogu 114 druhů</p>
-                </div>
-              </div>
-              <span id="wiz-desserts-count" class="text-xs font-bold text-[#AA821C] bg-[#F7EEDB] px-2.5 py-1 rounded-full">
-                0 ks v košíku
-              </span>
-            </div>
-
-            <!-- List of selected desserts -->
-            <div id="wiz-selected-desserts" class="space-y-2 mb-4">
-              <!-- Dynamically rendered -->
-            </div>
-
-            <!-- Quick dessert adder search -->
-            <div class="bg-[#FAF7F2] p-3.5 rounded-xl border border-stone-200">
-              <label class="block text-xs font-bold text-stone-700 mb-1.5 flex items-center gap-1.5">
-                <span>➕ Přidat další zákusek ze stálé nabídky:</span>
-              </label>
-              <div class="flex gap-2">
-                <input type="text" id="wiz-dessert-search" placeholder="Napište název zákusku (např. větrník, harlekýn, špička)..." class="wizard-input flex-grow text-xs">
-              </div>
-              <!-- Quick search suggestions -->
-              <div id="wiz-dessert-results" class="mt-2 max-h-44 overflow-y-auto space-y-1 hidden">
-                <!-- Dropdown suggestions -->
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- STEP 3: VYZVEDNUTÍ & SOUHRN -->
-        <div id="wizard-step-3" class="space-y-6 hidden">
-          <div>
-            <h3 class="font-serif text-2xl font-bold text-[#3B2820]">Termín vyzvednutí & rekapitulace</h3>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-[#AA821C] mt-2 mb-4">3. VYZVEDNUTÍ & SOUHRN</h4>
-          </div>
-
-          <!-- Pickup date & time -->
-          <div class="p-5 rounded-2xl border border-[#E8DFD5] bg-white shadow-xs">
-            <h4 class="font-serif font-bold text-base text-[#3B2820] mb-3 flex items-center gap-2">
-              <span>📅</span> Termín a místo vyzvednutí
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Datum požadovaného vyzvednutí *</label>
-                <input type="date" id="wiz-pickup-date" class="wizard-input" required>
-              </div>
-              <div>
-                <label class="block font-semibold text-stone-600 mb-1">Čas vyzvednutí</label>
-                <input type="time" id="wiz-pickup-time" class="wizard-input" value="10:00">
-              </div>
-              <div class="sm:col-span-2 p-3 rounded-xl bg-[#FAF7F2] border border-stone-200 text-stone-600">
-                📍 <strong>Místo odběru:</strong> Prodejna Cukrářství Madel, Opavská 191, Dolní Benešov - Zábřeh
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block font-semibold text-stone-600 mb-1">Poznámka k objednávce (volitelné)</label>
-                <textarea id="wiz-notes" rows="2" class="wizard-input" placeholder="Např. zabalit do dárkové krabice, dorazí manžel..."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Order Summary Breakdown -->
-          <div class="p-5 rounded-2xl border border-[#E8DFD5] bg-[#FAF5EB] shadow-xs">
-            <h4 class="font-serif font-bold text-base text-[#3B2820] mb-3 flex items-center gap-2">
-              <span>📋</span> Shrnutí objednávky
-            </h4>
-            <div id="wiz-summary-content" class="text-xs space-y-3 text-stone-700">
-              <!-- Dynamically filled -->
-            </div>
-
-            <!-- Price estimation -->
-            <div class="mt-4 pt-4 border-t border-stone-300/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <div>
-                <span class="text-xs text-stone-500">Předpokládaná celková cena:</span>
-                <div class="font-serif text-2xl font-bold text-[#AA821C]" id="wiz-summary-price">Dle specifikace</div>
-              </div>
-              <span class="text-[11px] text-stone-500 bg-white px-3 py-1.5 rounded-xl border border-stone-200">
-                Záloha a platba se hradí osobně v cukrárně nebo bankovním převodem
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 4: POTVRZENÍ (ÚSPĚCH) -->
-        <div id="wizard-step-4" class="py-8 text-center space-y-4 hidden">
-          <div class="w-16 h-16 mx-auto bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl shadow-sm">
-            ✓
-          </div>
-          <h3 class="font-serif text-3xl font-bold text-[#3B2820]">Objednávka byla úspěšně odeslána!</h3>
-          <p class="text-sm text-stone-600 max-w-md mx-auto">
-            Děkujeme za vaši objednávku. Vaše zakázka byla zaevidována ve výrobně Cukrářství Madel pod číslem <strong id="wiz-success-id">#</strong>.
-          </p>
-
-          <div class="pt-4 flex flex-wrap justify-center gap-3">
-            <button id="wiz-success-whatsapp" class="px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-bold flex items-center gap-2 transition">
-              <span>🟢</span> Odeslat kopii na WhatsApp
-            </button>
-            <button id="wiz-success-print" class="px-5 py-2.5 rounded-xl btn-secondary text-xs font-bold flex items-center gap-2">
-              <span>🖨️</span> Vytisknout zakázkový list
-            </button>
-            <button id="wiz-success-close" class="px-5 py-2.5 rounded-xl btn-primary text-xs font-bold">
-              Zavřít a zpět do nabídky
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Wizard Navigation Footer -->
-      <div id="wizard-nav-footer" class="p-4 sm:p-5 bg-[#FAF7F2] border-t border-[#E8DFD5] flex items-center justify-between">
-        <button id="wiz-btn-prev" class="px-4 py-2 rounded-xl btn-secondary text-xs font-bold hidden">
-          ← Zpět
-        </button>
-        <div class="flex-grow"></div>
-        <button id="wiz-btn-next" class="px-6 py-2.5 rounded-xl btn-primary text-xs font-bold shadow-sm flex items-center gap-1.5">
-          <span>Pokračovat na výběr</span>
-          <span>→</span>
+        <button type="button" id="login-submit-btn" class="w-full py-3 rounded-xl btn-primary text-xs font-bold mt-2 shadow-md">
+          Přihlásit se do systému
         </button>
       </div>
 
@@ -568,630 +846,23 @@
   </div>
 
   <!-- ========================================================
-       CUKRÁRNA OBJEDNÁVKOVÝ SYSTÉM & VÝROBNA
-       (Interní správa, kalendář a přípravna)
+       AUDIT HISTORY & DIFF MODAL
        ======================================================== -->
-  <section id="system-objednavek" class="py-14 bg-[#FAF5EB] border-t-2 border-[#E8DFD5]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-3xl mx-auto mb-8">
-        <span class="inline-block px-3 py-1 rounded-full badge-gold text-xs font-semibold uppercase tracking-wider mb-2">
-          🎂 Správa výroby & Zakázkový management
-        </span>
-        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#3B2820]">
-          Správa objednávek & Přehled pro výrobnu
-        </h2>
-        <p class="text-stone-600 text-sm mt-2">
-          Interní systém pro cukráře a personál: přehled všech přijatých zakázek z průvodce, kalendář vyzvednutí a tisk rozpisů pro pečení.
-        </p>
-      </div>
-
-      <!-- App container -->
-      <div id="cukrarna-app" class="cukrarna-app" data-ajax="/api/orders" data-demo="0">
-        
-        <header class="ck-head">
-          <div>
-            <div class="ck-brand">🍰 Cukrářství Madel</div>
-            <div class="ck-sub">Systém zakázkových objednávek & výrobna dortů</div>
-          </div>
-          <span class="ck-test">PROVOZ VÝROBNY</span>
-        </header>
-
-        <nav class="ck-tabs">
-          <button class="active" data-view="overview">Přehled</button>
-          <button data-view="form">＋ Nová objednávka</button>
-          <button data-view="orders">Objednávky</button>
-          <button data-view="calendar">Kalendář</button>
-          <button data-view="prep">Přípravna</button>
-        </nav>
-
-        <div class="ck-content">
-          
-          <!-- View 1: Overview / Dashboard -->
-          <section class="ck-view" id="ck-overview">
-            <div class="ck-stats">
-              <div>
-                <b id="ck-count">0</b>
-                <span>Celkem objednávek</span>
-              </div>
-              <div>
-                <b id="ck-open">0</b>
-                <span>K vyřízení</span>
-              </div>
-              <div>
-                <b id="ck-due">0 Kč</b>
-                <span>Zbývá doplatit</span>
-              </div>
-            </div>
-
-            <div class="ck-card">
-              <h2>Nejbližší objednávky</h2>
-              <div id="ck-upcoming" class="ck-list">Načítám…</div>
-            </div>
-
-            <button class="ck-primary" data-goto="form">＋ Zadat novou zakázku ručně</button>
-          </section>
-
-          <!-- View 2: Form -->
-          <section class="ck-view" id="ck-form" hidden>
-            <div class="ck-card">
-              <h2 id="ck-form-title">Nová objednávka dortu</h2>
-              
-              <form id="ck-order-form">
-                <input type="hidden" name="id" value="">
-                
-                <h3>1. Zákazník</h3>
-                <div class="ck-grid">
-                  <label>Jméno a příjmení *<input name="customer" required placeholder="Např. Jana Nováková"></label>
-                  <label>Telefon *<input name="phone" required type="tel" placeholder="+420 ..."></label>
-                  <label>E-mail<input name="email" type="email" placeholder="zakaznik@email.cz"></label>
-                </div>
-
-                <h3>2. Dort & Zákusky</h3>
-                <div class="ck-grid">
-                  <label>Druh dortu *
-                    <select name="kind" required>
-                      <option value="">Vyberte druh</option>
-                      <option>Narozeninový</option>
-                      <option>Svatební</option>
-                      <option>Dětský</option>
-                      <option>Slavnostní</option>
-                      <option>Firemní</option>
-                      <option>Zákusky & Sweet bar</option>
-                      <option>Jiný</option>
-                    </select>
-                  </label>
-                  <label>Počet porcí<input name="portions" type="number" min="1" value="12"></label>
-                  <label>Tvar<input name="shape" placeholder="Kulatý, hranatý, srdce..."></label>
-                  <label>Průměr / rozměr<input name="diameter" placeholder="Např. 26 cm / 3 patra"></label>
-                  <label>Počet pater<input name="floors" type="number" min="1" value="1"></label>
-                  
-                  <label>Korpus *
-                    <select name="sponge" required>
-                      <option value="">Vyberte korpus</option>
-                      <option>Vanilka (klasika světlý)</option>
-                      <option>Čokoláda (klasika tmavý)</option>
-                      <option>Belgická čokoláda</option>
-                      <option>Ořech</option>
-                      <option>Red velvet</option>
-                      <option>Toffi</option>
-                      <option>Duha</option>
-                      <option>Mák</option>
-                      <option>Bez lepku</option>
-                    </select>
-                  </label>
-                  
-                  <label>Krém<input name="cream" placeholder="Doplňující krém"></label>
-                  
-                  <label>Náplň *
-                    <select name="filling" required>
-                      <option value="">Vyberte náplň</option>
-                      <option>Jogurt se zakysanou smetanou (+ ovoce)</option>
-                      <option>Mascarpone (+ ovoce)</option>
-                      <option>Pařížská náplň (+ marmeláda, ovoce)</option>
-                      <option>Karamel nebo slaný karamel</option>
-                      <option>Toffi</option>
-                      <option>Máslová náplň – vanilka</option>
-                      <option>Máslová náplň – čokoláda</option>
-                      <option>Máslová náplň – karamel</option>
-                      <option>Máslová náplň – ořech</option>
-                      <option>Čokoládové mascarpone</option>
-                      <option>Pistácie</option>
-                      <option>Lotus</option>
-                      <option>Mascarpone bez laktózy (+ ovoce)</option>
-                    </select>
-                  </label>
-                  
-                  <label>Potah / povrch<input name="finish" placeholder="Např. semi-naked, krém, fondán"></label>
-                  <label>Dietní omezení<input name="diet" placeholder="Např. bez lepku, bez ořechů"></label>
-                  <label>Barvy a dekorace<input name="decor" placeholder="Květiny, živé ovoce, zápich..."></label>
-                  <label class="ck-wide">Nápis a další přání<textarea name="notes" rows="3" placeholder="Text na dortu, věnování..."></textarea></label>
-                </div>
-
-                <h3>3. Vyzvednutí</h3>
-                <div class="ck-grid">
-                  <label>Datum vyzvednutí *<input name="pickup_date" type="date" required></label>
-                  <label>Čas vyzvednutí<input name="pickup_time" type="time" value="10:00"></label>
-                </div>
-
-                <h3>4. Cena a platba</h3>
-                <div class="ck-grid">
-                  <label>Cena celkem (Kč) *<input name="price" type="number" min="0" step="1" required placeholder="0"></label>
-                  <label>Zaplacená záloha (Kč)<input name="deposit" type="number" min="0" step="1" value="0"></label>
-                  <label>Stav objednávky
-                    <select name="status">
-                      <option>Nová</option>
-                      <option>Potvrzená</option>
-                      <option>Ve výrobě</option>
-                      <option>Připravená</option>
-                      <option>Vydaná</option>
-                      <option>Zrušená</option>
-                    </select>
-                  </label>
-                </div>
-
-                <div class="ck-balance">
-                  <span>Doplatek:</span>
-                  <b id="ck-balance">0 Kč</b>
-                </div>
-
-                <div class="ck-actions">
-                  <button class="ck-primary" type="submit">Uložit zakázku</button>
-                  <button class="ck-secondary" type="button" id="ck-cancel">Zrušit</button>
-                </div>
-                
-                <div id="ck-form-message" role="status" class="mt-3 text-sm font-semibold"></div>
-              </form>
-
-            </div>
-          </section>
-
-          <!-- View 3: All Orders List -->
-          <section class="ck-view" id="ck-orders" hidden>
-            <div class="ck-card">
-              <h2>Všechny objednávky</h2>
-              <div class="ck-tools">
-                <input id="ck-search" placeholder="Hledat zákazníka, telefon nebo druh dortu...">
-                <select id="ck-filter">
-                  <option value="">Všechny stavy</option>
-                  <option>Nová</option>
-                  <option>Potvrzená</option>
-                  <option>Ve výrobě</option>
-                  <option>Připravená</option>
-                  <option>Vydaná</option>
-                  <option>Zrušená</option>
-                </select>
-              </div>
-              <div id="ck-orders-list" class="ck-list"></div>
-            </div>
-          </section>
-
-          <!-- View 4: Calendar -->
-          <section class="ck-view" id="ck-calendar" hidden>
-            <div class="ck-card">
-              <h2>Kalendář vyzvednutí</h2>
-              <label class="ck-month">
-                Zvolte měsíc:
-                <input type="month" id="ck-month">
-              </label>
-              <div id="ck-calendar-list" class="ck-list mt-4"></div>
-            </div>
-          </section>
-
-          <!-- View 5: Workshop Preparation Table -->
-          <section class="ck-view" id="ck-prep" hidden>
-            <div class="ck-card">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                <h2>Přípravna – přehled pro výrobu</h2>
-                <button onclick="window.print()" class="ck-secondary text-xs flex items-center gap-1.5 py-1.5 px-3">
-                  <span>🖨️</span> Vytisknout rozpis výroby (A4)
-                </button>
-              </div>
-              <p class="ck-prep-note">Jedna objednávka = jeden řádek s veškerou specifikací pro cukráře (korpus, náplň, průměr, dekorace). Tabulku lze posouvat do stran.</p>
-              <div class="ck-prep-wrap">
-                <table class="ck-prep-table">
-                  <thead>
-                    <tr>
-                      <th>Termín</th>
-                      <th>Zákazník</th>
-                      <th>Popis dortu & položek</th>
-                      <th>Průměr / tvar</th>
-                      <th>Potah</th>
-                      <th>Patera</th>
-                      <th>Korpus</th>
-                      <th>Náplň / krém</th>
-                      <th>Dekorace</th>
-                      <th>Text na dortu</th>
-                      <th>Tisk zakázky</th>
-                    </tr>
-                  </thead>
-                  <tbody id="ck-prep-rows"></tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-
-        </div>
-
-        <div class="ck-foot">
-          Cukrářství Madel • Zakázková výroba Dolní Benešov - Zábřeh • Objednávky jsou ukládány do databáze na serveru
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- How to Order Section -->
-  <section id="jak-objednat" class="bg-white py-16 border-t border-[#E8DFD5]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-3xl mx-auto mb-12">
-        <span class="text-xs font-semibold tracking-wider uppercase text-[#AA821C]">Snadné objednání</span>
-        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#3B2820] mt-1">
-          Jak si u nás objednat zákusky & dorty?
-        </h2>
-        <p class="text-stone-600 text-sm sm:text-base mt-3">
-          Objednávky na víkendy, rodinné oslavy, svatby nebo firemní akce doporučujeme zadávat s předstihem několika dní.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        
-        <div class="p-6 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD5] flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-[#3B2820] text-[#F7EEDB] flex items-center justify-center text-xl font-bold mb-4 font-serif">1</div>
-          <h3 class="font-serif font-bold text-lg mb-2 text-[#3B2820]">1. Zákazník</h3>
-          <p class="text-xs text-stone-600 leading-relaxed">
-            Klikněte na <strong>„Vlastní objednávka“</strong> a zadejte své jméno, telefon a e-mail.
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD5] flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-[#C59B27] text-white flex items-center justify-center text-xl font-bold mb-4 font-serif">2</div>
-          <h3 class="font-serif font-bold text-lg mb-2 text-[#3B2820]">2. Výběr dortu a zákusků</h3>
-          <p class="text-xs text-stone-600 leading-relaxed">
-            Zvolte si korpus, náplň a dekoraci dortu a přidejte zákusky ze 114 stálých druhů.
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD5] flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-[#3B2820] text-[#F7EEDB] flex items-center justify-center text-xl font-bold mb-4 font-serif">3</div>
-          <h3 class="font-serif font-bold text-lg mb-2 text-[#3B2820]">3. Termín & Odeslání</h3>
-          <p class="text-xs text-stone-600 leading-relaxed">
-            Zvolte datum a čas vyzvednutí a objednávku odešlete. Obdržíte potvrzení i na WhatsApp.
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD5] flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-[#C59B27] text-white flex items-center justify-center text-xl font-bold mb-4 font-serif">4</div>
-          <h3 class="font-serif font-bold text-lg mb-2 text-[#3B2820]">4. Vyzvednutí v cukrárně</h3>
-          <p class="text-xs text-stone-600 leading-relaxed">
-            Čerstvě upečené sladkosti si vyzvednete na naší prodejně v <strong>Dolním Benešově - Zábřehu</strong>.
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Location & Opening Hours Section -->
-  <section id="oteviraci-doba" class="py-16 bg-[#FAF7F2] border-t border-[#E8DFD5]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        
-        <!-- Info Card -->
-        <div class="bg-white rounded-3xl p-8 border border-[#E8DFD5] shadow-sm">
-          <span class="text-xs font-semibold tracking-wider uppercase text-[#AA821C]">Kde nás najdete & Provoz</span>
-          <h2 class="font-serif text-3xl font-bold text-[#3B2820] mt-1 mb-6">
-            Prodejna & Výrobna Zábřeh
-          </h2>
-
-          <div class="space-y-4 text-sm">
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 rounded-full bg-[#F7EEDB] flex items-center justify-center text-[#AA821C] shrink-0 mt-0.5">
-                📍
-              </div>
-              <div>
-                <strong class="text-[#3B2820]">Adresa prodejny:</strong>
-                <p class="text-stone-600">Opavská 191, Dolní Benešov - Zábřeh, 747 22</p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 rounded-full bg-[#F7EEDB] flex items-center justify-center text-[#AA821C] shrink-0 mt-0.5">
-                📞
-              </div>
-              <div>
-                <strong class="text-[#3B2820]">Telefonické objednávky:</strong>
-                <p><a href="tel:+420604707646" class="text-[#AA821C] font-bold text-base hover:underline">+420 604 707 646</a></p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 rounded-full bg-[#F7EEDB] flex items-center justify-center text-[#AA821C] shrink-0 mt-0.5">
-                ✉️
-              </div>
-              <div>
-                <strong class="text-[#3B2820]">E-mail:</strong>
-                <p><a href="mailto:cukrarstvimadel@seznam.cz" class="text-[#AA821C] hover:underline">cukrarstvimadel@seznam.cz</a></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Opening Hours Table -->
-          <div class="mt-8 pt-6 border-t border-stone-100">
-            <h3 class="font-serif font-bold text-lg mb-4 text-[#3B2820] flex items-center gap-2">
-              <span>🕒</span> Otevírací doba prodejny
-            </h3>
-            <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-              <div class="flex justify-between py-1.5 border-b border-stone-100">
-                <span class="text-stone-500">Pondělí</span>
-                <span class="font-semibold text-rose-700">ZAVŘENO</span>
-              </div>
-              <div class="flex justify-between py-1.5 border-b border-stone-100">
-                <span class="text-stone-500">Pátek</span>
-                <span class="font-semibold text-stone-800">9:00 - 17:00</span>
-              </div>
-              <div class="flex justify-between py-1.5 border-b border-stone-100">
-                <span class="text-stone-500">Úterý</span>
-                <span class="font-semibold text-stone-800">9:00 - 17:00</span>
-              </div>
-              <div class="flex justify-between py-1.5 border-b border-stone-100">
-                <span class="text-stone-500">Sobota</span>
-                <span class="font-semibold text-stone-800">8:00 - 16:00</span>
-              </div>
-              <div class="flex justify-between py-1.5 border-b border-stone-100">
-                <span class="text-stone-500">Středa</span>
-                <span class="font-semibold text-stone-800">9:00 - 17:00</span>
-              </div>
-              <div class="flex justify-between py-1.5 border-b border-stone-100">
-                <span class="text-stone-500">Neděle</span>
-                <span class="font-semibold text-stone-800">9:00 - 17:00</span>
-              </div>
-              <div class="flex justify-between py-1.5 border-b border-stone-100 col-span-2 sm:col-span-1">
-                <span class="text-stone-500">Čtvrtek</span>
-                <span class="font-semibold text-stone-800">9:00 - 17:00</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6 flex flex-wrap gap-3">
-            <a href="https://maps.google.com/?q=Opavsk%C3%A1+191,+Doln%C3%AD+Bene%C5%A1ov+-+Z%C3%A1b%C5%99eh" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full btn-secondary text-xs font-semibold inline-flex items-center gap-2">
-              <span>🗺️</span> Otevřít v Google Mapách
-            </a>
-            <a href="tel:+420604707646" class="px-5 py-2.5 rounded-full btn-primary text-xs font-semibold inline-flex items-center gap-2">
-              <span>📞</span> Zavolat do cukrárny
-            </a>
-          </div>
-
-        </div>
-
-        <!-- Sweet Bar Banner -->
-        <div class="bg-gradient-to-br from-[#3B2820] to-[#251813] text-[#FAF7F2] rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col justify-between h-full border border-[#C59B27]/30">
-          <div>
-            <div class="inline-block px-3 py-1 rounded-full bg-[#C59B27]/20 text-[#F7EEDB] border border-[#C59B27]/40 text-xs font-semibold uppercase tracking-wider mb-4">
-              Svatby & Oslavy
-            </div>
-            <h3 class="font-serif text-3xl font-bold leading-tight mb-4">
-              Chystáte svatbu nebo narozeninovou oslavu?
-            </h3>
-            <p class="text-stone-300 text-sm leading-relaxed mb-6">
-              Připravujeme kompletní <strong>Sweet bary</strong>, mini zákusky, cupcakes, makronky i zakázkové slavnostní dorty na míru.
-            </p>
-            <ul class="space-y-2.5 text-xs text-stone-300 mb-8">
-              <li class="flex items-center gap-2">
-                <span class="text-[#C59B27]">✔</span> Výběr z více než 114 druhů zákusků a mini dezertů
-              </li>
-              <li class="flex items-center gap-2">
-                <span class="text-[#C59B27]">✔</span> Vlastní konfigurace v objednávkovém průvodci
-              </li>
-              <li class="flex items-center gap-2">
-                <span class="text-[#C59B27]">✔</span> Možnost zapůjčení etažérů a podnosů
-              </li>
-            </ul>
-          </div>
-
-          <div class="pt-6 border-t border-stone-700/60 flex flex-wrap gap-4 items-center justify-between">
-            <div>
-              <span class="text-xs text-stone-400 block">Zavolejte nám na konzultaci:</span>
-              <span class="font-bold text-lg text-white">+420 604 707 646</span>
-            </div>
-            <button id="banner-custom-order-btn" class="px-5 py-2.5 rounded-full btn-primary text-xs font-semibold">
-              Sestavit vlastní objednávku
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer id="kontakt" class="bg-[#2A1C16] text-[#FAF7F2] pt-14 pb-10 border-t border-[#3B2820]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10 pb-10 border-b border-stone-800">
-        
-        <div class="md:col-span-1">
-          <div class="flex items-center gap-3 mb-4">
-            <img src="images/logo-madel.png" alt="Cukrářství Madel" class="h-10 w-auto">
-            <span class="font-serif font-bold text-xl text-white">Cukrářství Madel</span>
-          </div>
-          <p class="text-xs text-stone-400 leading-relaxed mb-4">
-            Rodinné cukrářství s poctivou vlastní výrobou v Dolním Benešově - Zábřehu.
-          </p>
-          <div class="flex items-center gap-3">
-            <a href="https://www.facebook.com/cukrarstviMadel" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-stone-800 hover:bg-[#C59B27] flex items-center justify-center transition text-white">
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <a href="https://www.instagram.com/cukrarstvimadel" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-stone-800 hover:bg-[#C59B27] flex items-center justify-center transition text-white">
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="font-serif font-bold text-sm text-[#F7EEDB] mb-3">Rychlé odkazy</h4>
-          <ul class="space-y-2 text-xs text-stone-400">
-            <li><a href="#nabidka" class="hover:text-white transition">Katalog všech 114 zákusků</a></li>
-            <li><button class="open-wizard-trigger hover:text-white transition text-left">Vlastní objednávka dortu</button></li>
-            <li><a href="#system-objednavek" class="hover:text-white transition">Správa výroby</a></li>
-            <li><a href="#oteviraci-doba" class="hover:text-white transition">Otevírací doba & Kde nás najdete</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-serif font-bold text-sm text-[#F7EEDB] mb-3">Kontakt prodejny</h4>
-          <ul class="space-y-2 text-xs text-stone-400">
-            <li class="flex items-center gap-2">
-              <span>📍</span> Opavská 191, Dolní Benešov - Zábřeh
-            </li>
-            <li class="flex items-center gap-2">
-              <span>📞</span> <a href="tel:+420604707646" class="text-white hover:text-[#C59B27]">+420 604 707 646</a>
-            </li>
-            <li class="flex items-center gap-2">
-              <span>✉️</span> <a href="mailto:cukrarstvimadel@seznam.cz" class="hover:text-white">cukrarstvimadel@seznam.cz</a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-serif font-bold text-sm text-[#F7EEDB] mb-3">Fakturační údaje</h4>
-          <p class="text-xs text-stone-400 leading-relaxed">
-            <strong>Radka Magerová</strong><br>
-            Opavská 76, Zábřeh<br>
-            747 22 Dolní Benešov<br>
-            IČO / Provozovna: Dolní Benešov
-          </p>
-        </div>
-
-      </div>
-
-      <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-stone-500 gap-2">
-        <p>© 2026 Cukrářství Madel. Všechna práva vyhrazena.</p>
-        <p>Běží lokálně na vašem počítači (Localhost 3000) • Integrovaný systém objednávek</p>
-      </div>
-
-    </div>
-  </footer>
-
-  <!-- Product Detail Modal (Lightbox) -->
-  <div id="product-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-    <div id="modal-container" class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-[#E8DFD5] transform scale-95 transition-transform duration-300 relative flex flex-col md:flex-row max-h-[90vh]">
-      
-      <button id="close-modal-btn" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-stone-900 shadow-md flex items-center justify-center transition">
+  <div id="history-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 no-print">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-[#E8DFD5] relative max-h-[85vh] flex flex-col">
+      <button id="close-history-btn" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition">
         ✕
       </button>
-
-      <div class="md:w-1/2 bg-[#FAF7F2] p-6 flex items-center justify-center border-b md:border-b-0 md:border-r border-stone-100">
-        <img id="modal-img" src="" alt="" class="max-h-72 w-auto object-contain rounded-2xl drop-shadow-md">
+      <div class="pb-3 border-b border-stone-200 mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C]">Auditní stopa zakázky</span>
+        <h3 id="history-modal-title" class="font-serif text-2xl font-bold text-[#3B2820]">
+          Historie změn zakázky #
+        </h3>
       </div>
-
-      <div class="md:w-1/2 p-6 flex flex-col justify-between overflow-y-auto">
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span id="modal-category" class="text-[11px] font-semibold uppercase tracking-wider text-[#AA821C] bg-[#F7EEDB] px-2.5 py-0.5 rounded-full">
-              Kategorie
-            </span>
-            <span id="modal-badge-popular" class="hidden text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
-              ⭐ Bestseller
-            </span>
-          </div>
-
-          <h2 id="modal-title" class="font-serif text-2xl font-bold text-[#3B2820] mb-3">
-            Název zákusku
-          </h2>
-
-          <p id="modal-desc" class="text-xs text-stone-600 leading-relaxed mb-4">
-            Popis zákusku a jeho chuti.
-          </p>
-
-          <div class="bg-[#FAF7F2] p-3 rounded-xl border border-stone-100 mb-4">
-            <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-1">Alergeny:</span>
-            <div id="modal-allergens" class="text-xs text-stone-700 flex flex-wrap gap-1"></div>
-          </div>
-
-          <div id="modal-tags" class="flex flex-wrap gap-1 mb-6"></div>
-        </div>
-
-        <div class="pt-4 border-t border-stone-100 flex items-center justify-between gap-3">
-          <div class="flex items-center border border-stone-300 rounded-xl bg-white shadow-sm">
-            <button id="modal-qty-minus" class="px-3 py-2 text-stone-600 hover:text-stone-900 font-bold transition">−</button>
-            <span id="modal-qty-val" class="px-2 font-semibold text-sm">1</span>
-            <button id="modal-qty-plus" class="px-3 py-2 text-stone-600 hover:text-stone-900 font-bold transition">+</button>
-          </div>
-
-          <button id="modal-add-cart-btn" class="flex-grow py-3 px-4 rounded-xl btn-primary text-xs font-semibold flex items-center justify-center gap-2">
-            <span>Přidat do objednávky</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          </button>
-        </div>
-
+      <div id="history-modal-content" class="flex-grow overflow-y-auto space-y-3 text-xs pr-2">
+        <!-- Injected dynamically -->
       </div>
-
     </div>
-  </div>
-
-  <!-- Cart / Inquiry Drawer Slide-Over -->
-  <div id="cart-drawer-backdrop" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden opacity-0 transition-opacity duration-300"></div>
-
-  <div id="cart-drawer" class="fixed top-0 right-0 bottom-0 w-full sm:max-w-md bg-white z-50 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 border-l border-[#E8DFD5]">
-    
-    <!-- Drawer Header -->
-    <div class="p-5 border-b border-stone-100 flex items-center justify-between bg-[#FFFDF9]">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-full bg-[#F7EEDB] flex items-center justify-center text-[#AA821C]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-        </div>
-        <div>
-          <h3 class="font-serif font-bold text-lg text-[#3B2820]">Vybrané zákusky</h3>
-          <span id="cart-drawer-count" class="text-xs text-stone-500">0 položek</span>
-        </div>
-      </div>
-      <button id="close-cart-btn" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition">
-        ✕
-      </button>
-    </div>
-
-    <!-- Drawer Content: Items List -->
-    <div id="cart-items-container" class="flex-grow overflow-y-auto p-5 space-y-3"></div>
-
-    <!-- Drawer Footer: Integrated Checkout Trigger -->
-    <div id="cart-footer" class="p-5 border-t border-stone-200 bg-[#FAF7F2] space-y-3">
-      
-      <div class="flex justify-between items-center text-sm font-semibold pb-2 border-b border-stone-200">
-        <span>Celkem vybráno:</span>
-        <span id="cart-total-qty" class="text-[#AA821C] font-bold text-base">0 ks</span>
-      </div>
-
-      <!-- Main action: launch 3-step wizard with cart items pre-loaded! -->
-      <button id="cart-checkout-wizard-btn" class="w-full py-3 px-4 rounded-xl btn-primary text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md">
-        <span>🎂</span>
-        <span>Přejít k objednávce (Průvodce)</span>
-        <span>→</span>
-      </button>
-
-      <!-- Quick alternatives -->
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button id="send-whatsapp-btn" class="py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
-          <span>🟢</span> WhatsApp
-        </button>
-        <button id="copy-list-btn" class="py-2 px-3 rounded-xl btn-secondary text-[11px] font-medium flex items-center justify-center gap-1">
-          <span>📋</span> Kopírovat
-        </button>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-[#3B2820] text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-[#C59B27]/40 text-xs sm:text-sm">
-    <span id="toast-icon" class="text-base">✅</span>
-    <span id="toast-msg">Zpráva notifikace</span>
   </div>
 
   <!-- Application Logic -->

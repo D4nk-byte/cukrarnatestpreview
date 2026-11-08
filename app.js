@@ -1,1635 +1,1708 @@
-// Cukrářství Madel - Kompletní aplikace, 3-krokový průvodce & Výrobní systém
-// Sjednocený systém pro zakázkové dorty i stálou nabídku 114 zákusků
-// Běží na Localhost 3000
+// ==========================================================================
+// CUKRÁŘSTVÍ MADEL - KOMPLETNÍ OBJEDNÁVKOVÝ & VÝROBNÍ SYSTÉM 2.0
+// DOLNÍ BENEŠOV - ZÁBŘEH
+// ==========================================================================
 
 (function () {
   'use strict';
 
-  // ==========================================
-  // 1. DATA & STAV APLIKACE
-  // ==========================================
-  let products = [];
-  let filteredProducts = [];
-  let selectedCategory = 'all';
-  let activeTag = null;
-  let searchQuery = '';
-  let currentSort = 'default';
+  // ------------------------------------------------------------------------
+  // 1. GLOBÁLNÍ STAV APLIKACE & UŽIVATELSKÁ RELACE
+  // ------------------------------------------------------------------------
+  let allProducts = [];
+  let allOrders = [];
+  let calendarCapacities = {};
+  
+  // Uživatelská relace (Uloženo v localStorage)
+  let currentUser = JSON.parse(localStorage.getItem('madel_current_user') || 'null') || {
+    role: 'customer', // 'customer' | 'prodavačka' | 'admin' | 'cukrářka'
+    name: 'Zákazník z webu',
+    username: null
+  };
 
-  // Košík vybraných stálých zákusků (localStorage)
-  let cart = JSON.parse(localStorage.getItem('madel_inquiry_cart') || '{}');
+  // Režim dotazníku: 'customer' (zákazník) nebo 'clerk' (prodavačka)
+  let currentFormMode = currentUser.role === 'customer' ? 'customer' : 'clerk';
 
-  // Správa zakázek (pro interní systém / výrobnu)
-  let orders = [];
+  // Vybrané zákusky v dotazníku (Pole objektů: { id, name, qty })
+  let orderDessertItems = [];
 
-  // Stav 3-krokového průvodce
-  let wizardCurrentStep = 1;
-  let wizardLastSubmittedOrder = null;
+  // Kalendář stav
+  let calCurrentYear = 2026;
+  let calCurrentMonth = 10; // 0-indexed, 10 = Listopad (November)
+  let selectedPickupDate = '';
+  let isRecaptchaVerified = false;
+  let uploadedCakeImageUrl = '';
 
-  // DOM Elements - Katalog
-  const productsGrid = document.getElementById('products-grid');
-  const emptyState = document.getElementById('empty-state');
-  const resultsCount = document.getElementById('results-count');
-  const searchInput = document.getElementById('search-input');
-  const clearSearchBtn = document.getElementById('clear-search-btn');
-  const sortSelect = document.getElementById('sort-select');
-  const categoryTabsContainer = document.getElementById('category-tabs');
-  const resetFiltersBtn = document.getElementById('reset-filters-btn');
-  const resetEmptyBtn = document.getElementById('reset-empty-btn');
-  const cartBadge = document.getElementById('cart-badge');
-  const openCartBtn = document.getElementById('open-cart-btn');
-
-  // DOM Elements - Modal Detail Zákusku
-  const productModal = document.getElementById('product-modal');
-  const modalContainer = document.getElementById('modal-container');
-  const closeModalBtn = document.getElementById('close-modal-btn');
-  const modalImg = document.getElementById('modal-img');
-  const modalCategory = document.getElementById('modal-category');
-  const modalBadgePopular = document.getElementById('modal-badge-popular');
-  const modalTitle = document.getElementById('modal-title');
-  const modalDesc = document.getElementById('modal-desc');
-  const modalAllergens = document.getElementById('modal-allergens');
-  const modalTags = document.getElementById('modal-tags');
-  const modalQtyVal = document.getElementById('modal-qty-val');
-  const modalQtyMinus = document.getElementById('modal-qty-minus');
-  const modalQtyPlus = document.getElementById('modal-qty-plus');
-  const modalAddCartBtn = document.getElementById('modal-add-cart-btn');
-  let activeModalProduct = null;
-  let activeModalQty = 1;
-
-  // DOM Elements - Drawer Košíku
-  const cartDrawer = document.getElementById('cart-drawer');
-  const cartDrawerBackdrop = document.getElementById('cart-drawer-backdrop');
-  const closeCartBtn = document.getElementById('close-cart-btn');
-  const cartItemsContainer = document.getElementById('cart-items-container');
-  const cartDrawerCount = document.getElementById('cart-drawer-count');
-  const cartTotalQty = document.getElementById('cart-total-qty');
-  const cartCheckoutWizardBtn = document.getElementById('cart-checkout-wizard-btn');
-  const sendWhatsappBtn = document.getElementById('send-whatsapp-btn');
-  const copyListBtn = document.getElementById('copy-list-btn');
-
-  // DOM Elements - 3-Krokový Průvodce Objednávkou (Wizard)
-  const orderWizardModal = document.getElementById('order-wizard-modal');
-  const wizardContainer = document.getElementById('wizard-container');
-  const closeWizardBtn = document.getElementById('close-wizard-btn');
-  const wizBtnPrev = document.getElementById('wiz-btn-prev');
-  const wizBtnNext = document.getElementById('wiz-btn-next');
-  const stepNode1 = document.getElementById('step-node-1');
-  const stepNode2 = document.getElementById('step-node-2');
-  const stepNode3 = document.getElementById('step-node-3');
-
-  // Krok 1 prvky
-  const wizCustomer = document.getElementById('wiz-customer');
-  const wizPhone = document.getElementById('wiz-phone');
-  const wizEmail = document.getElementById('wiz-email');
-
-  // Krok 2 prvky
-  const wizCakeEnable = document.getElementById('wiz-cake-enable');
-  const wizCakeFields = document.getElementById('wiz-cake-fields');
-  const wizCakeKind = document.getElementById('wiz-cake-kind');
-  const wizCakePortions = document.getElementById('wiz-cake-portions');
-  const wizCakeShape = document.getElementById('wiz-cake-shape');
-  const wizCakeFloors = document.getElementById('wiz-cake-floors');
-  const wizCakeSponge = document.getElementById('wiz-cake-sponge');
-  const wizCakeFilling = document.getElementById('wiz-cake-filling');
-  const wizCakeCream = document.getElementById('wiz-cake-cream');
-  const wizCakeFinish = document.getElementById('wiz-cake-finish');
-  const wizCakeDecor = document.getElementById('wiz-cake-decor');
-  const wizCakeDiet = document.getElementById('wiz-cake-diet');
-  const wizCakeNotes = document.getElementById('wiz-cake-notes');
-  const wizDessertsCount = document.getElementById('wiz-desserts-count');
-  const wizSelectedDesserts = document.getElementById('wiz-selected-desserts');
-  const wizDessertSearch = document.getElementById('wiz-dessert-search');
-  const wizDessertResults = document.getElementById('wiz-dessert-results');
-
-  // Krok 3 prvky
-  const wizPickupDate = document.getElementById('wiz-pickup-date');
-  const wizPickupTime = document.getElementById('wiz-pickup-time');
-  const wizNotes = document.getElementById('wiz-notes');
-  const wizSummaryContent = document.getElementById('wiz-summary-content');
-  const wizSummaryPrice = document.getElementById('wiz-summary-price');
-
-  // Krok 4 prvky (Úspěch)
-  const wizSuccessId = document.getElementById('wiz-success-id');
-  const wizSuccessWhatsapp = document.getElementById('wiz-success-whatsapp');
-  const wizSuccessPrint = document.getElementById('wiz-success-print');
-  const wizSuccessClose = document.getElementById('wiz-success-close');
-
-  // Toast
+  // ------------------------------------------------------------------------
+  // 2. DOM ELEMENTY
+  // ------------------------------------------------------------------------
+  // Navigace & Strany
+  const navTabs = document.querySelectorAll('.sys-nav-tab');
+  const sysPages = document.querySelectorAll('.sys-page');
+  const tabPendingBadge = document.getElementById('tab-pending-badge');
+  const authToggleBtn = document.getElementById('auth-toggle-btn');
+  const currentUserNameEl = document.getElementById('current-user-name');
   const toast = document.getElementById('toast');
   const toastMsg = document.getElementById('toast-msg');
   const toastIcon = document.getElementById('toast-icon');
-  let toastTimer = null;
 
-  function showToast(msg, icon = '✅') {
-    if (toastTimer) clearTimeout(toastTimer);
+  // Strana 1: Objednávkový dotazník
+  const modeCustomerBtn = document.getElementById('mode-customer-btn');
+  const modeClerkBtn = document.getElementById('mode-clerk-btn');
+  const clerkModeBanner = document.getElementById('clerk-mode-banner');
+  const clerkPriceField = document.getElementById('clerk-price-field');
+  const formMainHeading = document.getElementById('form-main-heading');
+  const formSubHeading = document.getElementById('form-sub-heading');
+  const orderMainForm = document.getElementById('order-main-form');
+  const orderSuccessScreen = document.getElementById('order-success-screen');
+  const successOrderNum = document.getElementById('success-order-num');
+  const successNewOrderBtn = document.getElementById('success-new-order-btn');
+
+  // Formulářová pole
+  const formCustomer = document.getElementById('form-customer');
+  const formPhone = document.getElementById('form-phone');
+  const formEmail = document.getElementById('form-email');
+  const formPrice = document.getElementById('form-price');
+  const productTypeRadios = document.querySelectorAll('input[name="product_type"]');
+  const sectionDessertsBox = document.getElementById('section-desserts-box');
+  const sectionCakeBox = document.getElementById('section-cake-box');
+
+  // Zákusky v dotazníku
+  const dessertsItemsList = document.getElementById('desserts-items-list');
+  const dessertsTotalSummary = document.getElementById('desserts-total-summary');
+  const dessertSearchInput = document.getElementById('dessert-search-input');
+  const dessertDropdownResults = document.getElementById('dessert-dropdown-results');
+  const dessertQtyInput = document.getElementById('dessert-qty-input');
+  const addDessertBtn = document.getElementById('add-dessert-btn');
+
+  // Dortová pole
+  const cakePortions = document.getElementById('cake-portions');
+  const cakeShape = document.getElementById('cake-shape');
+  const cakeSponge = document.getElementById('cake-sponge');
+  const cakeFilling = document.getElementById('cake-filling');
+  const cakeFinish = document.getElementById('cake-finish');
+  const cakeEdiblePaper = document.getElementById('cake-edible-paper');
+  const ediblePaperConditional = document.getElementById('edible-paper-conditional');
+  const cakeEdibleStyle = document.getElementById('cake-edible-style');
+  const cakeImageFile = document.getElementById('cake-image-file');
+  const cakeImagePreviewContainer = document.getElementById('cake-image-preview-container');
+  const cakeImagePreview = document.getElementById('cake-image-preview');
+  const cakeDiet = document.getElementById('cake-diet');
+  const cakeDecor = document.getElementById('cake-decor');
+  const cakeDescription = document.getElementById('cake-description');
+
+  // Kalendář
+  const calMonthTitle = document.getElementById('cal-month-title');
+  const calDaysGrid = document.getElementById('cal-days-grid');
+  const calPrevMonthBtn = document.getElementById('cal-prev-month');
+  const calNextMonthBtn = document.getElementById('cal-next-month');
+  const calAlertBox = document.getElementById('cal-alert-box');
+  const selectedDateInput = document.getElementById('selected-date-input');
+  const selectedTimeInput = document.getElementById('selected-time-input');
+  const recaptchaSection = document.getElementById('recaptcha-section');
+  const recaptchaCheck = document.getElementById('recaptcha-check');
+  const recaptchaError = document.getElementById('recaptcha-error');
+  const submitOrderBtn = document.getElementById('submit-order-btn');
+
+  // Strana 2: Databáze
+  const dbRefreshBtn = document.getElementById('db-refresh-btn');
+  const dbNewOrderGoto = document.getElementById('db-new-order-goto');
+  const filterStatus = document.getElementById('filter-status');
+  const filterPickupDate = document.getElementById('filter-pickup-date');
+  const filterEmployee = document.getElementById('filter-employee');
+  const filterDiet = document.getElementById('filter-diet');
+  const filterSearch = document.getElementById('filter-search');
+  const dbResetFilters = document.getElementById('db-reset-filters');
+  const dbResultsCount = document.getElementById('db-results-count');
+  const dbOrdersContainer = document.getElementById('db-orders-container');
+
+  // Strana 3: Rozpis zákusků
+  const prepWeekSelect = document.getElementById('prep-week-select');
+  const printDessertsBtn = document.getElementById('print-desserts-btn');
+  const prepDessertsRows = document.getElementById('prep-desserts-rows');
+  const prepTotalTypes = document.getElementById('prep-total-types');
+  const prepTotalPieces = document.getElementById('prep-total-pieces');
+
+  // Strana 4: Rozpis dortů
+  const prepCakesWeekSelect = document.getElementById('prep-cakes-week-select');
+  const printCakesBtn = document.getElementById('print-cakes-btn');
+  const prepCakesRows = document.getElementById('prep-cakes-rows');
+  const prepTotalCakes = document.getElementById('prep-total-cakes');
+
+  // Strana 5: Katalog
+  const catSearch = document.getElementById('cat-search');
+  const catTags = document.getElementById('cat-tags');
+  const catCountBadge = document.getElementById('cat-count-badge');
+  const catalogGrid = document.getElementById('catalog-grid');
+
+  // Modály
+  const loginModal = document.getElementById('login-modal');
+  const closeLoginBtn = document.getElementById('close-login-btn');
+  const loginUserSelect = document.getElementById('login-user-select');
+  const loginPinInput = document.getElementById('login-pin-input');
+  const loginSubmitBtn = document.getElementById('login-submit-btn');
+  const loginErrorMsg = document.getElementById('login-error-msg');
+
+  const historyModal = document.getElementById('history-modal');
+  const closeHistoryBtn = document.getElementById('close-history-btn');
+  const historyModalTitle = document.getElementById('history-modal-title');
+  const historyModalContent = document.getElementById('history-modal-content');
+
+  // ------------------------------------------------------------------------
+  // 3. POMOCNÉ FUNKCE
+  // ------------------------------------------------------------------------
+  function showToast(msg, icon = '✅', duration = 3500) {
+    if (!toast) return;
     toastMsg.textContent = msg;
     toastIcon.textContent = icon;
     toast.classList.add('show');
-    toastTimer = setTimeout(() => {
+    setTimeout(() => {
       toast.classList.remove('show');
-    }, 2800);
+    }, duration);
   }
 
-  // ==========================================
-  // 2. INICIALIZACE KATALOGU (114 ZÁKUSKŮ)
-  // ==========================================
-  async function initCatalog() {
-    try {
-      const res = await fetch('products_data.json');
-      if (!res.ok) throw new Error('Nelze načíst data katalogu');
-      products = await res.json();
-      filteredProducts = [...products];
+  function formatCzechDate(dateStr) {
+    if (!dateStr) return '—';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parseInt(parts[2], 10)}.${parseInt(parts[1], 10)}.${parts[0]}`;
+    }
+    return dateStr;
+  }
 
-      buildCategoryTabs();
-      renderProducts();
-      updateCartUI();
-      setupCatalogEvents();
-    } catch (err) {
-      console.error('Chyba při načítání katalogu:', err);
-      if (productsGrid) {
-        productsGrid.innerHTML = `
-          <div class="col-span-full text-center py-12 text-rose-700 bg-rose-50 rounded-2xl p-6">
-            <p class="font-bold">Chyba při načítání nabídky produktů.</p>
-            <p class="text-xs text-stone-600 mt-1">Ujistěte se, že soubor products_data.json je dostupný.</p>
-          </div>
-        `;
-      }
+  function getDayNameCzech(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T12:00:00');
+    const days = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
+    return days[d.getDay()] || '';
+  }
+
+  function getStatusBadgeHtml(status) {
+    const s = (status || 'nevyřízeno').toLowerCase();
+    switch (s) {
+      case 'nevyřízeno':
+        return `<span class="status-badge status-nevyrizeno">⏳ nevyřízeno</span>`;
+      case 'platné':
+        return `<span class="status-badge status-platne">✓ platné</span>`;
+      case 'vyzvednuté':
+        return `<span class="status-badge status-vyzvednute">📦 vyzvednuté</span>`;
+      case 'neplatné':
+        return `<span class="status-badge status-neplatne">✕ neplatné</span>`;
+      case 'nevyzvednuté':
+        return `<span class="status-badge status-nevyzvednute">⚠️ nevyzvednuté</span>`;
+      default:
+        return `<span class="status-badge status-nevyrizeno">${escapeHtml(status)}</span>`;
     }
   }
 
-  function buildCategoryTabs() {
-    if (!categoryTabsContainer) return;
-    const counts = { all: products.length };
-    products.forEach(p => {
-      counts[p.category] = (counts[p.category] || 0) + 1;
-    });
-
-    const categories = [
-      { key: 'all', label: 'Všechny zákusky' },
-      { key: 'Dorty & Řezy', label: 'Dorty & Řezy' },
-      { key: 'Tradiční české zákusky', label: 'Tradiční české' },
-      { key: 'Větrníky & Odpalované', label: 'Větrníky & Odpalované' },
-      { key: 'Tartaletky & Košíčky', label: 'Tartaletky & Košíčky' },
-      { key: 'Pohárky & Nepečené', label: 'Pohárky & Nepečené' },
-      { key: 'Cheesecakes', label: 'Cheesecakes' },
-      { key: 'Makronky & Mini dezerty', label: 'Makronky & Mini' }
-    ];
-
-    categoryTabsContainer.innerHTML = categories.map(cat => {
-      const count = counts[cat.key] || 0;
-      const isActive = selectedCategory === cat.key;
-      return `
-        <button 
-          data-category="${cat.key}" 
-          class="category-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${
-            isActive 
-              ? 'tab-active' 
-              : 'bg-[#FAF7F2] text-stone-700 border-[#DCD0C5] hover:bg-[#F0EBE1] hover:border-[#AA821C]'
-          }"
-        >
-          <span>${cat.label}</span>
-          <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200 text-stone-700'}">${count}</span>
-        </button>
-      `;
-    }).join('');
-
-    categoryTabsContainer.querySelectorAll('.category-tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        selectedCategory = btn.getAttribute('data-category');
-        buildCategoryTabs();
-        applyFilters();
-      });
-    });
+  function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
-  function normalizeStr(str) {
-    return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  }
-
-  function applyFilters() {
-    let list = [...products];
-
-    if (selectedCategory !== 'all') {
-      list = list.filter(p => p.category === selectedCategory);
-    }
-
-    if (activeTag) {
-      if (activeTag === 'Bestseller') {
-        list = list.filter(p => p.popular);
-      } else {
-        list = list.filter(p => p.tags && p.tags.includes(activeTag));
-      }
-    }
-
-    if (searchQuery.trim()) {
-      const normQuery = normalizeStr(searchQuery.trim());
-      list = list.filter(p => {
-        const titleMatch = normalizeStr(p.title).includes(normQuery);
-        const tagMatch = p.tags && p.tags.some(t => normalizeStr(t).includes(normQuery));
-        const catMatch = normalizeStr(p.category).includes(normQuery);
-        return titleMatch || tagMatch || catMatch;
-      });
-    }
-
-    if (currentSort === 'name-asc') {
-      list.sort((a, b) => a.title.localeCompare(b.title, 'cs'));
-    } else if (currentSort === 'name-desc') {
-      list.sort((a, b) => b.title.localeCompare(a.title, 'cs'));
-    } else if (currentSort === 'popular') {
-      list.sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+  // ------------------------------------------------------------------------
+  // 4. AUTENTIZACE & UŽIVATELSKÁ OPRÁVNĚNÍ
+  // ------------------------------------------------------------------------
+  function updateAuthUI() {
+    if (currentUser.role === 'customer') {
+      currentUserNameEl.textContent = 'Zákazník z webu';
+      currentUserNameEl.className = 'font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20';
+      authToggleBtn.textContent = 'Přihlásit personál';
     } else {
-      list.sort((a, b) => a.id - b.id);
+      let roleLabel = 'Prodavačka';
+      let badgeClass = 'bg-amber-600/30 border-amber-400 text-amber-200';
+      if (currentUser.role === 'admin') {
+        roleLabel = 'Admin';
+        badgeClass = 'bg-rose-600/30 border-rose-400 text-rose-200';
+      } else if (currentUser.role === 'cukrářka') {
+        roleLabel = 'Cukrářka';
+        badgeClass = 'bg-blue-600/30 border-blue-400 text-blue-200';
+      }
+      currentUserNameEl.textContent = `${currentUser.name} (${roleLabel})`;
+      currentUserNameEl.className = `font-bold px-2.5 py-0.5 rounded-full border ${badgeClass}`;
+      authToggleBtn.textContent = 'Odhlásit se';
     }
 
-    filteredProducts = list;
-    renderProducts();
+    // Nastavení výchozího režimu dotazníku dle role
+    if (currentUser.role === 'prodavačka' || currentUser.role === 'admin') {
+      setFormMode('clerk');
+    } else {
+      setFormMode('customer');
+    }
 
-    const hasFilters = selectedCategory !== 'all' || activeTag !== null || searchQuery.trim() !== '' || currentSort !== 'default';
-    if (resetFiltersBtn) {
-      if (hasFilters) resetFiltersBtn.classList.remove('hidden');
-      else resetFiltersBtn.classList.add('hidden');
+    // Aktualizace databáze a akčních tlačítek
+    renderOrdersList();
+  }
+
+  function setFormMode(mode) {
+    currentFormMode = mode;
+    const reqStars = document.querySelectorAll('.req-star');
+    const cakeReqStars = document.querySelectorAll('.cake-req-star');
+
+    if (mode === 'clerk') {
+      modeClerkBtn.className = 'px-3.5 py-2 rounded-xl bg-[#3B2820] text-white shadow-xs transition';
+      modeCustomerBtn.className = 'px-3.5 py-2 rounded-xl text-stone-600 hover:text-black hover:bg-stone-200 transition';
+      clerkModeBanner.classList.remove('hidden');
+      clerkPriceField.classList.remove('hidden');
+      recaptchaSection.classList.add('hidden');
+      formMainHeading.textContent = 'Objednávka na prodejně (Prodavačka)';
+      formSubHeading.textContent = 'Režim pro personál: všechny položky jsou nepovinné, cena je interní a zakázka je okamžitě zařazena jako PLATNÉ.';
+      submitOrderBtn.innerHTML = `<span>Uložit jako PLATNOU zakázku</span><span>✓</span>`;
+      
+      // Prodejní režim: položky jsou nepovinné
+      reqStars.forEach(s => s.classList.add('hidden'));
+      cakeReqStars.forEach(s => s.classList.add('hidden'));
+      formCustomer.removeAttribute('required');
+      formPhone.removeAttribute('required');
+      selectedDateInput.removeAttribute('required');
+      selectedTimeInput.removeAttribute('required');
+    } else {
+      modeCustomerBtn.className = 'px-3.5 py-2 rounded-xl bg-[#3B2820] text-white shadow-xs transition';
+      modeClerkBtn.className = 'px-3.5 py-2 rounded-xl text-stone-600 hover:text-black hover:bg-stone-200 transition flex items-center gap-1.5';
+      clerkModeBanner.classList.add('hidden');
+      clerkPriceField.classList.add('hidden');
+      recaptchaSection.classList.remove('hidden');
+      formMainHeading.textContent = 'Objednávkový dotazník';
+      formSubHeading.textContent = 'Vyplňte prosím údaje pro objednání dortu nebo zákusků.';
+      submitOrderBtn.innerHTML = `<span>Nezávazně objednat</span><span>→</span>`;
+
+      // Zákaznický režim: povinné položky dle zadání
+      reqStars.forEach(s => s.classList.remove('hidden'));
+      cakeReqStars.forEach(s => s.classList.remove('hidden'));
+      formCustomer.setAttribute('required', 'required');
+      formPhone.setAttribute('required', 'required');
+      selectedDateInput.setAttribute('required', 'required');
+      selectedTimeInput.setAttribute('required', 'required');
     }
   }
 
-  function renderProducts() {
-    if (!productsGrid) return;
-    resultsCount.textContent = `Zobrazeno ${filteredProducts.length} z ${products.length} zákusků`;
+  modeCustomerBtn.addEventListener('click', () => setFormMode('customer'));
+  modeClerkBtn.addEventListener('click', () => {
+    if (currentUser.role === 'customer') {
+      // Zákazník se snaží přepnout na režim prodavačky -> vyzvat k přihlášení
+      openLoginModal();
+    } else {
+      setFormMode('clerk');
+    }
+  });
 
-    if (filteredProducts.length === 0) {
-      productsGrid.innerHTML = '';
-      if (emptyState) emptyState.classList.remove('hidden');
+  // Přihlašovací okno
+  function openLoginModal() {
+    loginModal.classList.remove('hidden');
+    setTimeout(() => loginModal.classList.remove('opacity-0'), 10);
+    loginPinInput.value = '';
+    loginErrorMsg.classList.add('hidden');
+    loginPinInput.focus();
+  }
+
+  function closeLoginModal() {
+    loginModal.classList.add('opacity-0');
+    setTimeout(() => loginModal.classList.add('hidden'), 200);
+  }
+
+  authToggleBtn.addEventListener('click', () => {
+    if (currentUser.role === 'customer') {
+      openLoginModal();
+    } else {
+      // Odhlášení
+      currentUser = {
+        role: 'customer',
+        name: 'Zákazník z webu',
+        username: null
+      };
+      localStorage.removeItem('madel_current_user');
+      updateAuthUI();
+      showToast('Byli jste odhlášeni. Systém je v režimu zákazníka.', 'ℹ️');
+    }
+  });
+
+  closeLoginBtn.addEventListener('click', closeLoginModal);
+  loginModal.addEventListener('click', (e) => {
+    if (e.target === loginModal) closeLoginModal();
+  });
+
+  loginSubmitBtn.addEventListener('click', handleLogin);
+  loginPinInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  async function handleLogin() {
+    const username = loginUserSelect.value;
+    const pin = loginPinInput.value.trim();
+
+    if (!pin) {
+      loginErrorMsg.textContent = 'Zadejte prosím PIN kód.';
+      loginErrorMsg.classList.remove('hidden');
       return;
     }
 
-    if (emptyState) emptyState.classList.add('hidden');
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, pin })
+      });
+      const data = await res.json();
 
-    productsGrid.innerHTML = filteredProducts.map(p => {
-      const inCartQty = cart[p.id] ? cart[p.id].qty : 0;
-      const imgSrc = p.localImage || p.originalImage;
-      const popularBadge = p.popular 
-        ? `<span class="absolute top-3 left-3 z-10 text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-stone-900 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">⭐ Bestseller</span>` 
-        : '';
+      if (data.success && data.user) {
+        currentUser = {
+          id: data.user.id,
+          username: data.user.username,
+          name: data.user.name,
+          role: data.user.role
+        };
+        localStorage.setItem('madel_current_user', JSON.stringify(currentUser));
+        closeLoginModal();
+        updateAuthUI();
+        showToast(`Přihlášen(a): ${currentUser.name} (${currentUser.role})`, '👋');
+      } else {
+        loginErrorMsg.textContent = data.message || 'Chybný PIN kód.';
+        loginErrorMsg.classList.remove('hidden');
+      }
+    } catch (err) {
+      loginErrorMsg.textContent = 'Chyba připojení k serveru.';
+      loginErrorMsg.classList.remove('hidden');
+    }
+  }
 
-      const cartIndicator = inCartQty > 0
-        ? `<span class="text-[11px] font-bold text-[#AA821C] bg-[#F7EEDB] px-2 py-0.5 rounded-full border border-[#C59B27]/40 flex items-center gap-1">✔ V košíku (${inCartQty} ks)</span>`
-        : '';
+  // ------------------------------------------------------------------------
+  // 5. NAVIGACE MEZI STRANAMI SYSTÉMU
+  // ------------------------------------------------------------------------
+  function showPage(targetPageId) {
+    sysPages.forEach(p => {
+      if (p.id === targetPageId) {
+        p.classList.remove('hidden');
+      } else {
+        p.classList.add('hidden');
+      }
+    });
 
-      return `
-        <div class="pastry-card rounded-2xl overflow-hidden flex flex-col group" data-id="${p.id}">
-          <div class="relative bg-[#FAF7F2] aspect-[4/3] overflow-hidden cursor-pointer open-modal-trigger" data-id="${p.id}">
-            ${popularBadge}
-            <img 
-              src="${imgSrc}" 
-              alt="${p.title}" 
-              loading="lazy" 
-              onerror="this.src='${p.originalImage}'"
-              class="w-full h-full object-cover"
-            >
-            <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span class="bg-white/95 text-[#3B2820] text-xs font-semibold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                Detail zákusku
-              </span>
-            </div>
+    navTabs.forEach(t => {
+      if (t.dataset.page === targetPageId) {
+        t.classList.add('active');
+      } else {
+        t.classList.remove('active');
+      }
+    });
+
+    // Akce při přechodu na stranu
+    if (targetPageId === 'page-2') {
+      loadOrders();
+    } else if (targetPageId === 'page-3') {
+      renderDessertsPreparationSheet();
+    } else if (targetPageId === 'page-4') {
+      renderCakesPreparationSheet();
+    } else if (targetPageId === 'page-catalog') {
+      renderCatalog();
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      showPage(tab.dataset.page);
+    });
+  });
+
+  // Odkazy "Otevřít objednávkový dotazník"
+  document.querySelectorAll('.goto-order-btn').forEach(btn => {
+    btn.addEventListener('click', () => showPage('page-1'));
+  });
+  if (dbNewOrderGoto) {
+    dbNewOrderGoto.addEventListener('click', () => showPage('page-1'));
+  }
+
+  // ------------------------------------------------------------------------
+  // 6. STRANA 1: FORMULÁŘ & INTERAKTIVITA
+  // ------------------------------------------------------------------------
+  // A) Přepínání typu výrobku (dort / zakusek / kombinace)
+  productTypeRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val === 'dort') {
+        sectionCakeBox.classList.remove('hidden');
+        sectionDessertsBox.classList.add('hidden');
+      } else if (val === 'zakusek') {
+        sectionCakeBox.classList.add('hidden');
+        sectionDessertsBox.classList.remove('hidden');
+      } else { // kombinace
+        sectionCakeBox.classList.remove('hidden');
+        sectionDessertsBox.classList.remove('hidden');
+      }
+    });
+  });
+
+  // B) Jedlý papír ANO / NE toggle
+  cakeEdiblePaper.addEventListener('change', () => {
+    if (cakeEdiblePaper.value === 'ano') {
+      ediblePaperConditional.classList.remove('hidden');
+    } else {
+      ediblePaperConditional.classList.add('hidden');
+    }
+  });
+
+  // C) Vložení obrázku dortu (JPG / PNG)
+  cakeImageFile.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function (evt) {
+      const base64Data = evt.target.result;
+      cakeImagePreview.src = base64Data;
+      cakeImagePreviewContainer.classList.remove('hidden');
+
+      // Automatické odeslání na server pro uložení
+      try {
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ base64Data, filename: file.name })
+        });
+        const d = await res.json();
+        if (d.success && d.url) {
+          uploadedCakeImageUrl = d.url;
+        } else {
+          uploadedCakeImageUrl = base64Data; // fallback
+        }
+      } catch (err) {
+        uploadedCakeImageUrl = base64Data;
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // D) Zákusky: Vyhledávání a přidávání ze 114 stálých druhů
+  dessertSearchInput.addEventListener('input', () => {
+    const q = dessertSearchInput.value.trim().toLowerCase();
+    if (!q) {
+      dessertDropdownResults.classList.add('hidden');
+      dessertDropdownResults.innerHTML = '';
+      return;
+    }
+
+    const matches = allProducts.filter(p => 
+      p.title.toLowerCase().includes(q) || 
+      (p.category && p.category.toLowerCase().includes(q))
+    ).slice(0, 10);
+
+    if (matches.length === 0) {
+      dessertDropdownResults.innerHTML = `<div class="p-3 text-xs text-stone-500 text-center">Žádný zákusek neodpovídá zadání</div>`;
+      dessertDropdownResults.classList.remove('hidden');
+      return;
+    }
+
+    dessertDropdownResults.innerHTML = matches.map(p => `
+      <div class="p-2.5 hover:bg-[#FAF7F2] cursor-pointer flex items-center justify-between border-b border-stone-100 last:border-0 select-dessert-item" data-id="${p.id}" data-title="${escapeHtml(p.title)}">
+        <div class="flex items-center gap-2">
+          <img src="${p.localImage || 'images/logo-madel.png'}" class="w-8 h-8 rounded-lg object-cover" onerror="this.src='images/logo-madel.png'">
+          <div>
+            <span class="font-bold text-xs text-[#3B2820] block">${escapeHtml(p.title)}</span>
+            <span class="text-[10px] text-stone-500">${escapeHtml(p.category || 'Zákusek')}</span>
           </div>
+        </div>
+        <span class="text-xs text-[#AA821C] font-semibold">Vybrat +</span>
+      </div>
+    `).join('');
 
-          <div class="p-4 flex-grow flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <span class="text-[10px] font-semibold uppercase tracking-wider text-[#AA821C]">
-                  ${p.category}
-                </span>
-                ${cartIndicator}
-              </div>
+    dessertDropdownResults.classList.remove('hidden');
 
-              <h3 class="font-serif font-bold text-base text-[#3B2820] group-hover:text-[#AA821C] transition-colors leading-snug cursor-pointer open-modal-trigger" data-id="${p.id}">
-                ${p.title}
-              </h3>
+    // Kliknutí na položku v dropdownu
+    dessertDropdownResults.querySelectorAll('.select-dessert-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = parseInt(el.dataset.id, 10);
+        const title = el.dataset.title;
+        dessertSearchInput.value = title;
+        dessertSearchInput.dataset.selectedId = id;
+        dessertDropdownResults.classList.add('hidden');
+        dessertQtyInput.focus();
+      });
+    });
+  });
 
-              <p class="text-xs text-stone-500 line-clamp-2 mt-1 leading-relaxed">
-                ${p.description}
-              </p>
+  // Zavřít dropdown při kliknutí mimo
+  document.addEventListener('click', (e) => {
+    if (!dessertSearchInput.contains(e.target) && !dessertDropdownResults.contains(e.target)) {
+      dessertDropdownResults.classList.add('hidden');
+    }
+  });
+
+  // Tlačítko "+ Přidat" zákusek do seznamu
+  addDessertBtn.addEventListener('click', () => {
+    const name = dessertSearchInput.value.trim();
+    const qty = parseInt(dessertQtyInput.value, 10) || 1;
+    const selectedId = dessertSearchInput.dataset.selectedId || null;
+
+    if (!name) {
+      dessertSearchInput.focus();
+      showToast('Zadejte nebo vyberte prosím zákusek ze seznamu.', '⚠️');
+      return;
+    }
+
+    addDessertItemToOrder(name, qty, selectedId);
+    dessertSearchInput.value = '';
+    dessertSearchInput.removeAttribute('data-selected-id');
+    dessertQtyInput.value = '10';
+  });
+
+  function addDessertItemToOrder(name, qty, id = null) {
+    const existing = orderDessertItems.find(item => item.name.toLowerCase() === name.toLowerCase());
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      orderDessertItems.push({
+        id: id || Math.floor(Math.random() * 1000) + 200,
+        name: name,
+        qty: qty
+      });
+    }
+    renderOrderDessertsList();
+    showToast(`Přidáno: ${qty}x ${name}`, '🥐');
+  }
+
+  function renderOrderDessertsList() {
+    if (orderDessertItems.length === 0) {
+      dessertsItemsList.innerHTML = `
+        <div class="p-3 text-center text-xs text-stone-400 italic bg-white rounded-xl border border-dashed border-stone-200">
+          Zatím jste nepřidali žádný zákusek. Vyberte zákusek a množství výše.
+        </div>
+      `;
+      dessertsTotalSummary.textContent = '0 položek';
+      return;
+    }
+
+    let totalPieces = 0;
+    dessertsItemsList.innerHTML = orderDessertItems.map((item, idx) => {
+      totalPieces += item.qty;
+      return `
+        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-stone-200 shadow-2xs">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-[#FAF7F2] text-[#AA821C] text-xs font-bold flex items-center justify-center">
+              ${idx + 1}
+            </span>
+            <span class="font-bold text-xs text-[#3B2820]">${escapeHtml(item.name)}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex items-center border border-stone-200 rounded-lg overflow-hidden bg-stone-50">
+              <button type="button" class="px-2 py-1 text-xs hover:bg-stone-200" onclick="window.changeDessertQty(${idx}, -1)">-</button>
+              <span class="px-3 py-1 font-bold text-xs">${item.qty} ks</span>
+              <button type="button" class="px-2 py-1 text-xs hover:bg-stone-200" onclick="window.changeDessertQty(${idx}, 1)">+</button>
             </div>
-
-            <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between gap-2">
-              <button 
-                class="open-modal-trigger text-xs text-stone-500 hover:text-[#3B2820] font-medium py-1 px-2 rounded-lg hover:bg-stone-100 transition" 
-                data-id="${p.id}"
-              >
-                Detail
-              </button>
-
-              <button 
-                class="quick-add-btn px-3 py-1.5 rounded-xl ${inCartQty > 0 ? 'bg-[#3B2820] text-white hover:bg-[#5A3E31]' : 'btn-primary'} text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 shadow-sm" 
-                data-id="${p.id}"
-              >
-                <span>${inCartQty > 0 ? '+ Přidat další' : '+ Do objednávky'}</span>
-              </button>
-            </div>
+            <button type="button" class="text-rose-500 hover:text-rose-700 text-xs px-2" onclick="window.removeDessertItem(${idx})" title="Odebrat">
+              ✕
+            </button>
           </div>
         </div>
       `;
     }).join('');
 
-    productsGrid.querySelectorAll('.open-modal-trigger').forEach(el => {
-      el.addEventListener('click', () => openProductModal(parseInt(el.getAttribute('data-id'), 10)));
+    dessertsTotalSummary.textContent = `${orderDessertItems.length} druhů (${totalPieces} ks)`;
+  }
+
+  // Globální exposice pro onclick v řádcích
+  window.changeDessertQty = function (idx, delta) {
+    if (orderDessertItems[idx]) {
+      orderDessertItems[idx].qty += delta;
+      if (orderDessertItems[idx].qty <= 0) {
+        orderDessertItems.splice(idx, 1);
+      }
+      renderOrderDessertsList();
+    }
+  };
+
+  window.removeDessertItem = function (idx) {
+    if (orderDessertItems[idx]) {
+      orderDessertItems.splice(idx, 1);
+      renderOrderDessertsList();
+    }
+  };
+
+  // E) Interaktivní Kalendář (Zelená / Žlutá / Červená dle specifikace)
+  const MONTH_NAMES = [
+    'Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen',
+    'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'
+  ];
+
+  async function loadCalendarCapacities() {
+    try {
+      const res = await fetch('/api/calendar-capacity');
+      const data = await res.json();
+      if (data.success && data.data) {
+        calendarCapacities = data.data;
+      }
+    } catch (e) {
+      console.warn('Nelze načíst calendar-capacity:', e);
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    calMonthTitle.textContent = `${MONTH_NAMES[calCurrentMonth]} ${calCurrentYear}`;
+    calDaysGrid.innerHTML = '';
+
+    const firstDayOfMonth = new Date(calCurrentYear, calCurrentMonth, 1);
+    const lastDayOfMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0);
+    const totalDays = lastDayOfMonth.getDate();
+
+    // Den v týdnu pro 1. den měsíce (0 = Po, 6 = Ne v ČR)
+    let startDay = firstDayOfMonth.getDay() - 1;
+    if (startDay < 0) startDay = 6;
+
+    // Prázdná pole před 1. dnem
+    for (let i = 0; i < startDay; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'cal-day-cell cal-day-muted';
+      calDaysGrid.appendChild(emptyCell);
+    }
+
+    // Buňky pro dny v měsíci
+    for (let day = 1; day <= totalDays; day++) {
+      const cell = document.createElement('div');
+      const dayDate = new Date(calCurrentYear, calCurrentMonth, day);
+      const dayOfWeek = dayDate.getDay(); // 0 = Ne, 1 = Po, ...
+      const dateStr = `${calCurrentYear}-${String(calCurrentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+      cell.textContent = day;
+      cell.dataset.date = dateStr;
+
+      // PONDĚLÍ JE ZAVŘENO (dle otevírací doby cukrárny)
+      if (dayOfWeek === 1) {
+        cell.className = 'cal-day-cell cal-day-muted';
+        cell.title = 'V pondělí máme zavřeno';
+      } else {
+        // Zjištění barvy termínu: zelená, žlutá, červená
+        const customStatus = calendarCapacities[dateStr];
+        let colorClass = 'cal-day-green';
+        let statusTitle = 'Volný termín';
+
+        if (customStatus === 'red') {
+          colorClass = 'cal-day-red';
+          statusTitle = 'Termín obsazen';
+        } else if (customStatus === 'yellow') {
+          colorClass = 'cal-day-yellow';
+          statusTitle = 'Vysoké vytížení';
+        }
+
+        cell.className = `cal-day-cell ${colorClass}`;
+        cell.title = `${formatCzechDate(dateStr)}: ${statusTitle}`;
+
+        if (dateStr === selectedPickupDate) {
+          cell.classList.add('selected');
+        }
+
+        cell.addEventListener('click', () => handleCalendarDayClick(dateStr, customStatus));
+      }
+
+      calDaysGrid.appendChild(cell);
+    }
+  }
+
+  calPrevMonthBtn.addEventListener('click', () => {
+    calCurrentMonth--;
+    if (calCurrentMonth < 0) {
+      calCurrentMonth = 11;
+      calCurrentYear--;
+    }
+    renderCalendar();
+  });
+
+  calNextMonthBtn.addEventListener('click', () => {
+    calCurrentMonth++;
+    if (calCurrentMonth > 11) {
+      calCurrentMonth = 0;
+      calCurrentYear++;
+    }
+    renderCalendar();
+  });
+
+  function handleCalendarDayClick(dateStr, capacityStatus) {
+    selectedPickupDate = dateStr;
+    selectedDateInput.value = dateStr;
+
+    // Aktualizace vizuálního výběru
+    document.querySelectorAll('.cal-day-cell').forEach(c => {
+      if (c.dataset.date === dateStr) {
+        c.classList.add('selected');
+      } else {
+        c.classList.remove('selected');
+      }
     });
 
-    productsGrid.querySelectorAll('.quick-add-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = parseInt(btn.getAttribute('data-id'), 10);
-        addToCart(id, 1);
-        btn.classList.add('animate-cart-bounce');
-        setTimeout(() => btn.classList.remove('animate-cart-bounce'), 350);
-      });
-    });
-  }
+    // PŘESNÉ CHOVÁNÍ DLE ZADÁNÍ:
+    // - zelené: všechny ty, které nejsou červené ani žluté
+    // - žluté: po zakliknutí zákazníkem "upozornění: na tento termín máme zaznamenáno velké množství objednávek, je možné, že Vám nebude vyhověno"
+    // - červené: po zakliknutí: "omlouváme se, ale na tento termín již objednávky na dorty nepřijímáme." Po zadání červeného termínu zákazníka nepustí tlačítko "nezávazně objednat"
 
-  function openProductModal(id) {
-    const product = products.find(p => p.id === id);
-    if (!product) return;
-
-    activeModalProduct = product;
-    activeModalQty = cart[id] ? cart[id].qty : 1;
-    if (activeModalQty < 1) activeModalQty = 1;
-
-    modalImg.src = product.localImage || product.originalImage;
-    modalImg.onerror = () => { modalImg.src = product.originalImage; };
-    modalImg.alt = product.title;
-    modalTitle.textContent = product.title;
-    modalCategory.textContent = product.category;
-    modalDesc.textContent = product.description;
-
-    if (product.popular) modalBadgePopular.classList.remove('hidden');
-    else modalBadgePopular.classList.add('hidden');
-
-    modalAllergens.innerHTML = (product.allergens || []).map(a => `
-      <span class="inline-block bg-white px-2 py-0.5 rounded border border-stone-200 text-stone-600 font-medium">
-        ${a}
-      </span>
-    `).join('');
-
-    modalTags.innerHTML = (product.tags || []).map(t => `
-      <span class="text-[11px] px-2.5 py-0.5 rounded-md badge-tag">
-        #${t}
-      </span>
-    `).join('');
-
-    modalQtyVal.textContent = activeModalQty;
-
-    productModal.classList.remove('hidden');
-    setTimeout(() => {
-      productModal.classList.remove('opacity-0');
-      modalContainer.classList.remove('scale-95');
-      modalContainer.classList.add('scale-100');
-    }, 10);
-    document.body.classList.add('overflow-hidden');
-  }
-
-  function closeProductModal() {
-    modalContainer.classList.remove('scale-100');
-    modalContainer.classList.add('scale-95');
-    productModal.classList.add('opacity-0');
-    setTimeout(() => {
-      productModal.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    }, 200);
-  }
-
-  function addToCart(id, qty = 1) {
-    const product = products.find(p => p.id === id);
-    if (!product) return;
-
-    if (!cart[id]) {
-      cart[id] = {
-        id: product.id,
-        title: product.title,
-        category: product.category,
-        image: product.localImage || product.originalImage,
-        qty: 0
-      };
-    }
-
-    cart[id].qty += qty;
-    if (cart[id].qty <= 0) {
-      delete cart[id];
-    }
-
-    saveCart();
-    updateCartUI();
-    renderProducts();
-    updateWizardDessertsList();
-
-    showToast(`Přidáno do objednávky: ${product.title} (${qty > 0 ? '+' : ''}${qty} ks)`);
-  }
-
-  function removeFromCart(id) {
-    if (cart[id]) {
-      const title = cart[id].title;
-      delete cart[id];
-      saveCart();
-      updateCartUI();
-      renderProducts();
-      updateWizardDessertsList();
-      showToast(`Odebráno z objednávky: ${title}`, '🗑️');
-    }
-  }
-
-  function saveCart() {
-    localStorage.setItem('madel_inquiry_cart', JSON.stringify(cart));
-  }
-
-  function updateCartUI() {
-    if (!cartBadge) return;
-    const items = Object.values(cart);
-    const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
-
-    cartBadge.textContent = totalQty;
-    if (totalQty > 0) {
-      cartBadge.classList.remove('bg-[#3B2820]', 'text-white');
-      cartBadge.classList.add('bg-[#AA821C]', 'text-white');
-    } else {
-      cartBadge.classList.remove('bg-[#AA821C]', 'text-white');
-      cartBadge.classList.add('bg-[#3B2820]', 'text-white');
-    }
-
-    if (cartDrawerCount) cartDrawerCount.textContent = `${items.length} ${items.length === 1 ? 'položka' : (items.length >= 2 && items.length <= 4 ? 'položky' : 'položek')}`;
-    if (cartTotalQty) cartTotalQty.textContent = `${totalQty} ks`;
-
-    if (!cartItemsContainer) return;
-    if (items.length === 0) {
-      cartItemsContainer.innerHTML = `
-        <div class="text-center py-12 text-stone-400">
-          <div class="w-16 h-16 mx-auto mb-3 bg-[#FAF7F2] rounded-full flex items-center justify-center text-2xl">
-            🍰
+    if (capacityStatus === 'red') {
+      calAlertBox.className = 'p-4 rounded-xl text-xs font-semibold mb-4 bg-rose-50 border border-rose-300 text-rose-900 block';
+      calAlertBox.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🚫</span>
+          <div>
+            <strong>Omlouváme se, ale na tento termín již objednávky na dorty nepřijímáme.</strong>
+            <p class="mt-0.5 text-[11px] text-rose-700">Kapacita výrobny na tento den je zcela vyčerpána. Zvolte prosím jiný volný (zelený) termín.</p>
           </div>
-          <p class="font-serif font-bold text-base text-[#3B2820]">Váš košík je prázdný</p>
-          <p class="text-xs text-stone-500 mt-1 max-w-xs mx-auto">
-            Vyberte si zákusky ze stálé nabídky nebo si sestavte vlastní zakázkový dort v průvodci.
-          </p>
-          <button class="mt-4 px-4 py-2 rounded-xl btn-primary text-xs font-bold open-wizard-trigger">
-            🎂 Otevřít vlastní objednávku
-          </button>
         </div>
       `;
-    } else {
-      cartItemsContainer.innerHTML = items.map(item => `
-        <div class="p-3 bg-[#FAF7F2] rounded-2xl border border-stone-200 flex items-center gap-3">
-          <img src="${item.image}" alt="${item.title}" class="w-12 h-12 object-cover rounded-xl shadow-xs shrink-0">
-          <div class="flex-grow min-w-0">
-            <h4 class="font-serif font-bold text-xs sm:text-sm text-[#3B2820] truncate">${item.title}</h4>
-            <span class="text-[10px] text-stone-500">${item.category}</span>
+
+      if (currentFormMode === 'customer') {
+        submitOrderBtn.disabled = true;
+        submitOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitOrderBtn.title = 'Na červený termín nelze odeslat objednávku.';
+      } else {
+        // Prodavačka může v nouzi uložit, ale je varována
+        submitOrderBtn.disabled = false;
+        submitOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    } else if (capacityStatus === 'yellow') {
+      calAlertBox.className = 'p-4 rounded-xl text-xs font-semibold mb-4 bg-amber-50 border border-amber-300 text-amber-900 block';
+      calAlertBox.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="text-lg">⚠️</span>
+          <div>
+            <strong>Upozornění: na tento termín máme zaznamenáno velké množství objednávek, je možné, že Vám nebude vyhověno.</strong>
+            <p class="mt-0.5 text-[11px] text-amber-800">Po odeslání objednávky Vás budeme kontaktovat s potvrzením výrobní kapacity.</p>
           </div>
-          <div class="flex items-center gap-1 bg-white rounded-lg border border-stone-200 px-1 py-0.5 shrink-0">
-            <button class="cart-minus-btn w-6 h-6 flex items-center justify-center text-xs text-stone-600 hover:text-black font-bold" data-id="${item.id}">−</button>
-            <span class="text-xs font-bold px-1.5 min-w-[20px] text-center">${item.qty}</span>
-            <button class="cart-plus-btn w-6 h-6 flex items-center justify-center text-xs text-stone-600 hover:text-black font-bold" data-id="${item.id}">+</button>
-          </div>
-          <button class="cart-remove-btn text-stone-400 hover:text-rose-600 p-1 transition shrink-0" data-id="${item.id}" title="Odebrat">
-            ✕
-          </button>
         </div>
-      `).join('');
+      `;
+      submitOrderBtn.disabled = false;
+      submitOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      submitOrderBtn.title = '';
+    } else {
+      // Zelený termín
+      calAlertBox.className = 'hidden';
+      calAlertBox.innerHTML = '';
+      submitOrderBtn.disabled = false;
+      submitOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      submitOrderBtn.title = '';
+    }
+  }
 
-      cartItemsContainer.querySelectorAll('.cart-plus-btn').forEach(b => {
-        b.addEventListener('click', () => addToCart(parseInt(b.getAttribute('data-id'), 10), 1));
-      });
-      cartItemsContainer.querySelectorAll('.cart-minus-btn').forEach(b => {
-        b.addEventListener('click', () => addToCart(parseInt(b.getAttribute('data-id'), 10), -1));
-      });
-      cartItemsContainer.querySelectorAll('.cart-remove-btn').forEach(b => {
-        b.addEventListener('click', () => removeFromCart(parseInt(b.getAttribute('data-id'), 10)));
-      });
+  // F) reCAPTCHA Mock UI
+  recaptchaCheck.addEventListener('click', () => {
+    isRecaptchaVerified = !isRecaptchaVerified;
+    if (isRecaptchaVerified) {
+      recaptchaCheck.classList.add('checked');
+      recaptchaCheck.innerHTML = '✓';
+      recaptchaError.classList.add('hidden');
+    } else {
+      recaptchaCheck.classList.remove('checked');
+      recaptchaCheck.innerHTML = '';
+    }
+  });
+
+  // G) ODESLÁNÍ FORMULÁŘE
+  orderMainForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // 1. Validace reCAPTCHA v zákaznickém režimu
+    if (currentFormMode === 'customer' && !isRecaptchaVerified) {
+      recaptchaError.classList.remove('hidden');
+      recaptchaSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
 
-    // Attach trigger to buttons
-    document.querySelectorAll('.open-wizard-trigger').forEach(b => {
-      b.onclick = () => {
-        closeCartDrawer();
-        openWizard();
+    // 2. Kontrola červeného termínu v zákaznickém režimu
+    if (currentFormMode === 'customer' && calendarCapacities[selectedDateInput.value] === 'red') {
+      showToast('Na vybraný červený termín již nelze objednávku odeslat.', '🚫');
+      return;
+    }
+
+    // 3. Sestavení dat objednávky
+    const productType = document.querySelector('input[name="product_type"]:checked').value;
+    const hasCake = productType === 'dort' || productType === 'kombinace';
+    const hasDesserts = productType === 'zakusek' || productType === 'kombinace';
+
+    // Kontrola, zda zákazník zadal aspoň zákusek nebo dort
+    if (hasDesserts && orderDessertItems.length === 0 && !hasCake) {
+      showToast('Vyberte prosím alespoň jeden zákusek do objednávky.', '⚠️');
+      sectionDessertsBox.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    let cakePayload = null;
+    if (hasCake) {
+      cakePayload = {
+        portions: cakePortions.value,
+        shape: cakeShape.value,
+        sponge: cakeSponge.value,
+        filling: cakeFilling.value,
+        finish: cakeFinish.value,
+        edible_paper: cakeEdiblePaper.value,
+        edible_paper_style: cakeEdiblePaper.value === 'ano' ? (cakeEdibleStyle.value.trim() || 'Dle domluvy') : '',
+        diet: cakeDiet.value,
+        decor: cakeDecor.value.trim(),
+        description: cakeDescription.value.trim(),
+        image_url: uploadedCakeImageUrl || ''
       };
-    });
-  }
-
-  function openCartDrawer() {
-    updateCartUI();
-    cartDrawerBackdrop.classList.remove('hidden');
-    setTimeout(() => {
-      cartDrawerBackdrop.classList.remove('opacity-0');
-      cartDrawer.classList.remove('translate-x-full');
-    }, 10);
-    document.body.classList.add('overflow-hidden');
-  }
-
-  function closeCartDrawer() {
-    cartDrawer.classList.add('translate-x-full');
-    cartDrawerBackdrop.classList.add('opacity-0');
-    setTimeout(() => {
-      cartDrawerBackdrop.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    }, 300);
-  }
-
-  function setupCatalogEvents() {
-    let debounceTimer;
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        clearTimeout(debounceTimer);
-        searchQuery = e.target.value;
-        if (searchQuery.length > 0) clearSearchBtn.classList.remove('hidden');
-        else clearSearchBtn.classList.add('hidden');
-        debounceTimer = setTimeout(applyFilters, 150);
-      });
     }
 
-    if (clearSearchBtn) {
-      clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        searchQuery = '';
-        clearSearchBtn.classList.add('hidden');
-        applyFilters();
-        searchInput.focus();
-      });
-    }
-
-    if (sortSelect) {
-      sortSelect.addEventListener('change', (e) => {
-        currentSort = e.target.value;
-        applyFilters();
-      });
-    }
-
-    document.querySelectorAll('.tag-filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tag = btn.getAttribute('data-tag');
-        if (activeTag === tag) {
-          activeTag = null;
-          btn.classList.remove('bg-[#3B2820]', 'text-white');
-          btn.classList.add('badge-tag');
-        } else {
-          document.querySelectorAll('.tag-filter-btn').forEach(b => {
-            b.classList.remove('bg-[#3B2820]', 'text-white');
-            b.classList.add('badge-tag');
-          });
-          activeTag = tag;
-          btn.classList.remove('badge-tag');
-          btn.classList.add('bg-[#3B2820]', 'text-white');
-        }
-        applyFilters();
-      });
-    });
-
-    const resetAction = () => {
-      selectedCategory = 'all';
-      activeTag = null;
-      searchQuery = '';
-      currentSort = 'default';
-      if (searchInput) searchInput.value = '';
-      if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
-      if (sortSelect) sortSelect.value = 'default';
-      document.querySelectorAll('.tag-filter-btn').forEach(b => {
-        b.classList.remove('bg-[#3B2820]', 'text-white');
-        b.classList.add('badge-tag');
-      });
-      buildCategoryTabs();
-      applyFilters();
+    const payload = {
+      customer: formCustomer.value.trim() || 'Zákazník',
+      phone: formPhone.value.trim(),
+      email: formEmail.value.trim(),
+      order_type: productType,
+      desserts: hasDesserts ? orderDessertItems : [],
+      cake: cakePayload,
+      pickup_date: selectedDateInput.value,
+      pickup_time: selectedTimeInput.value || '10:00',
+      price: currentFormMode === 'clerk' ? (formPrice.value.trim() || '0') : '0',
+      created_by_customer: currentFormMode === 'customer',
+      employee_name: currentUser.role !== 'customer' ? currentUser.name : 'Zákazník z webu',
+      employee_role: currentUser.role !== 'customer' ? currentUser.role : 'customer'
     };
 
-    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetAction);
-    if (resetEmptyBtn) resetEmptyBtn.addEventListener('click', resetAction);
+    submitOrderBtn.disabled = true;
+    submitOrderBtn.innerHTML = `<span>Odesílám...</span>`;
 
-    if (closeModalBtn) closeModalBtn.addEventListener('click', closeProductModal);
-    if (productModal) {
-      productModal.addEventListener('click', (e) => {
-        if (e.target === productModal) closeProductModal();
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Employee-Role': currentUser.role,
+          'X-Employee-Name': currentUser.name
+        },
+        body: JSON.stringify(payload)
       });
-    }
+      const data = await res.json();
 
-    if (modalQtyPlus) {
-      modalQtyPlus.addEventListener('click', () => {
-        activeModalQty++;
-        modalQtyVal.textContent = activeModalQty;
-      });
-    }
+      if (data.success && data.data) {
+        const savedOrder = data.data;
 
-    if (modalQtyMinus) {
-      modalQtyMinus.addEventListener('click', () => {
-        if (activeModalQty > 1) {
-          activeModalQty--;
-          modalQtyVal.textContent = activeModalQty;
+        if (currentFormMode === 'customer') {
+          // Zákaznická verze: Zobrazit děkovnou obrazovku dle specifikace
+          orderMainForm.classList.add('hidden');
+          orderSuccessScreen.classList.remove('hidden');
+          successOrderNum.textContent = `#${savedOrder.id}`;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Verze pro prodavačky: Uloženo rovnou jako platné -> toast & přechod do databáze
+          showToast(`Zakázka #${savedOrder.id} byla uložena jako PLATNÉ!`, '✅');
+          resetOrderForm();
+          showPage('page-2');
         }
-      });
-    }
 
-    if (modalAddCartBtn) {
-      modalAddCartBtn.addEventListener('click', () => {
-        if (activeModalProduct) {
-          addToCart(activeModalProduct.id, activeModalQty);
-          closeProductModal();
-        }
-      });
-    }
-
-    if (openCartBtn) openCartBtn.addEventListener('click', openCartDrawer);
-    if (closeCartBtn) closeCartBtn.addEventListener('click', closeCartDrawer);
-    if (cartDrawerBackdrop) cartDrawerBackdrop.addEventListener('click', closeCartDrawer);
-
-    if (cartCheckoutWizardBtn) {
-      cartCheckoutWizardBtn.addEventListener('click', () => {
-        closeCartDrawer();
-        openWizard();
-      });
-    }
-
-    // Buttons triggering the 3-step wizard
-    const triggerWizard = () => openWizard();
-    ['nav-custom-order-btn', 'header-custom-order-btn', 'hero-custom-order-btn', 'catalog-custom-order-btn', 'banner-custom-order-btn'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) btn.addEventListener('click', triggerWizard);
-    });
-
-    if (sendWhatsappBtn) sendWhatsappBtn.addEventListener('click', sendWhatsAppFallback);
-    if (copyListBtn) copyListBtn.addEventListener('click', copyListFallback);
-  }
-
-
-  // ========================================================
-  // 3. TŘÍKROKOVÝ PRŮVODCE OBJEDNÁVKOU (WIZARD MODAL)
-  // ========================================================
-  function openWizard() {
-    wizardCurrentStep = 1;
-    setWizardStep(1);
-
-    // Pre-fill contacts from localStorage if available
-    const savedName = localStorage.getItem('madel_cust_name');
-    const savedPhone = localStorage.getItem('madel_cust_phone');
-    const savedEmail = localStorage.getItem('madel_cust_email');
-    if (savedName && !wizCustomer.value) wizCustomer.value = savedName;
-    if (savedPhone && !wizPhone.value) wizPhone.value = savedPhone;
-    if (savedEmail && !wizEmail.value) wizEmail.value = savedEmail;
-
-    // Default pickup date to tomorrow if empty
-    if (!wizPickupDate.value) {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      wizPickupDate.value = tomorrow.toISOString().slice(0, 10);
-      wizPickupDate.min = new Date().toISOString().slice(0, 10);
-    }
-
-    // Render desserts in step 2
-    updateWizardDessertsList();
-
-    orderWizardModal.classList.remove('hidden');
-    setTimeout(() => {
-      orderWizardModal.classList.remove('opacity-0');
-      wizardContainer.classList.remove('scale-95');
-      wizardContainer.classList.add('scale-100');
-    }, 10);
-    document.body.classList.add('overflow-hidden');
-  }
-
-  function closeWizard() {
-    wizardContainer.classList.remove('scale-100');
-    wizardContainer.classList.add('scale-95');
-    orderWizardModal.classList.add('opacity-0');
-    setTimeout(() => {
-      orderWizardModal.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    }, 250);
-  }
-
-  function setWizardStep(step) {
-    wizardCurrentStep = step;
-
-    // Toggle step containers
-    document.getElementById('wizard-step-1').classList.toggle('hidden', step !== 1);
-    document.getElementById('wizard-step-2').classList.toggle('hidden', step !== 2);
-    document.getElementById('wizard-step-3').classList.toggle('hidden', step !== 3);
-    document.getElementById('wizard-step-4').classList.toggle('hidden', step !== 4);
-
-    // Step Nodes bar state
-    [stepNode1, stepNode2, stepNode3].forEach((node, idx) => {
-      const num = idx + 1;
-      node.classList.remove('active', 'completed');
-      if (num === step) {
-        node.classList.add('active');
-      } else if (num < step) {
-        node.classList.add('completed');
-      }
-    });
-
-    // Nav Footer Buttons state
-    const footer = document.getElementById('wizard-nav-footer');
-    if (step === 4) {
-      footer.classList.add('hidden');
-    } else {
-      footer.classList.remove('hidden');
-
-      if (step === 1) {
-        wizBtnPrev.classList.add('hidden');
-        wizBtnNext.innerHTML = `<span>Pokračovat na výběr</span> <span>→</span>`;
-      } else if (step === 2) {
-        wizBtnPrev.classList.remove('hidden');
-        wizBtnPrev.textContent = '← Zpět na zákazníka';
-        wizBtnNext.innerHTML = `<span>Pokračovat na vyzvednutí</span> <span>→</span>`;
-      } else if (step === 3) {
-        wizBtnPrev.classList.remove('hidden');
-        wizBtnPrev.textContent = '← Zpět na výběr';
-        wizBtnNext.innerHTML = `<span>✔ Závazně odeslat objednávku</span>`;
-      }
-    }
-
-    // Step specific updates
-    if (step === 2) {
-      updateWizardDessertsList();
-    } else if (step === 3) {
-      renderWizardSummary();
-    }
-  }
-
-  // Handle Wizard Navigation
-  function handleWizardNext() {
-    if (wizardCurrentStep === 1) {
-      // Validate customer inputs
-      const customer = wizCustomer.value.trim();
-      const phone = wizPhone.value.trim();
-
-      if (!customer) {
-        alert('Prosím, zadejte své jméno a příjmení.');
-        wizCustomer.focus();
-        return;
-      }
-      if (!phone) {
-        alert('Prosím, zadejte telefonní číslo pro potvrzení objednávky.');
-        wizPhone.focus();
-        return;
-      }
-
-      // Persist contact to localStorage
-      localStorage.setItem('madel_cust_name', customer);
-      localStorage.setItem('madel_cust_phone', phone);
-      if (wizEmail.value.trim()) localStorage.setItem('madel_cust_email', wizEmail.value.trim());
-
-      setWizardStep(2);
-    } 
-    else if (wizardCurrentStep === 2) {
-      // Validate that at least custom cake OR regular desserts are selected
-      const hasCake = wizCakeEnable.checked;
-      const dessertItems = Object.values(cart);
-      const totalDesserts = dessertItems.reduce((acc, it) => acc + it.qty, 0);
-
-      if (!hasCake && totalDesserts === 0) {
-        alert('Vyberte prosím alespoň zakázkový dort nebo nějaké zákusky ze stálé nabídky.');
-        return;
-      }
-
-      setWizardStep(3);
-    } 
-    else if (wizardCurrentStep === 3) {
-      // Submit order
-      submitWizardOrder();
-    }
-  }
-
-  function handleWizardPrev() {
-    if (wizardCurrentStep > 1) {
-      setWizardStep(wizardCurrentStep - 1);
-    }
-  }
-
-  // Toggle cake options in Step 2
-  if (wizCakeEnable) {
-    wizCakeEnable.addEventListener('change', () => {
-      wizCakeFields.classList.toggle('opacity-40', !wizCakeEnable.checked);
-      wizCakeFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = !wizCakeEnable.checked);
-    });
-  }
-
-  // Update desserts list in Step 2
-  function updateWizardDessertsList() {
-    if (!wizSelectedDesserts) return;
-    const items = Object.values(cart);
-    const totalQty = items.reduce((acc, it) => acc + it.qty, 0);
-
-    if (wizDessertsCount) {
-      wizDessertsCount.textContent = `${totalQty} ks v košíku`;
-    }
-
-    if (items.length === 0) {
-      wizSelectedDesserts.innerHTML = `
-        <div class="text-xs text-stone-500 italic py-2">
-          Zatím nemáte vybrány žádné klasické zákusky. Níže můžete snadno vyhledat a přidat ze 114 druhů.
-        </div>
-      `;
-    } else {
-      wizSelectedDesserts.innerHTML = items.map(it => `
-        <div class="p-2.5 bg-[#FAF7F2] rounded-xl border border-stone-200 flex items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <img src="${it.image}" alt="${it.title}" class="w-10 h-10 object-cover rounded-lg shrink-0">
-            <div class="truncate">
-              <strong class="text-stone-800">${it.title}</strong>
-              <div class="text-[10px] text-stone-500">${it.category}</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <div class="flex items-center bg-white rounded-lg border border-stone-300 px-1">
-              <button type="button" class="wiz-item-minus px-2 py-0.5 text-stone-600 font-bold" data-id="${it.id}">−</button>
-              <span class="font-bold px-1 min-w-[18px] text-center">${it.qty}</span>
-              <button type="button" class="wiz-item-plus px-2 py-0.5 text-stone-600 font-bold" data-id="${it.id}">+</button>
-            </div>
-            <button type="button" class="wiz-item-remove text-stone-400 hover:text-rose-600 px-1" data-id="${it.id}">✕</button>
-          </div>
-        </div>
-      `).join('');
-
-      wizSelectedDesserts.querySelectorAll('.wiz-item-plus').forEach(b => {
-        b.onclick = () => addToCart(parseInt(b.dataset.id, 10), 1);
-      });
-      wizSelectedDesserts.querySelectorAll('.wiz-item-minus').forEach(b => {
-        b.onclick = () => addToCart(parseInt(b.dataset.id, 10), -1);
-      });
-      wizSelectedDesserts.querySelectorAll('.wiz-item-remove').forEach(b => {
-        b.onclick = () => removeFromCart(parseInt(b.dataset.id, 10));
-      });
-    }
-  }
-
-  // Quick dessert search inside Step 2
-  if (wizDessertSearch) {
-    wizDessertSearch.addEventListener('input', (e) => {
-      const q = normalizeStr(e.target.value.trim());
-      if (q.length < 2) {
-        wizDessertResults.classList.add('hidden');
-        wizDessertResults.innerHTML = '';
-        return;
-      }
-
-      const matches = products.filter(p => normalizeStr(p.title).includes(q) || (p.tags && p.tags.some(t => normalizeStr(t).includes(q)))).slice(0, 6);
-      if (matches.length === 0) {
-        wizDessertResults.innerHTML = `<div class="p-2 text-stone-400 italic text-xs">Žádný zákusek neodpovídá výrazu "${e.target.value}"</div>`;
+        // Aktualizovat počty zakázek v databázi
+        loadOrders();
       } else {
-        wizDessertResults.innerHTML = matches.map(p => `
-          <div class="p-2 bg-white hover:bg-[#F7EEDB] rounded-lg border border-stone-200 flex items-center justify-between gap-2 text-xs transition">
-            <div class="flex items-center gap-2 truncate">
-              <img src="${p.localImage || p.originalImage}" alt="" class="w-8 h-8 rounded object-cover shrink-0">
-              <span class="font-medium text-stone-800 truncate">${p.title}</span>
-            </div>
-            <button type="button" class="wiz-quick-add px-2.5 py-1 rounded-lg btn-primary text-[11px] font-bold shrink-0" data-id="${p.id}">
-              + Přidat
-            </button>
-          </div>
-        `).join('');
-
-        wizDessertResults.querySelectorAll('.wiz-quick-add').forEach(btn => {
-          btn.onclick = () => {
-            const id = parseInt(btn.dataset.id, 10);
-            addToCart(id, 1);
-            wizDessertSearch.value = '';
-            wizDessertResults.classList.add('hidden');
-          };
-        });
+        showToast(data.message || 'Chyba při ukládání objednávky.', '❌');
       }
-      wizDessertResults.classList.remove('hidden');
-    });
+    } catch (err) {
+      showToast('Chyba při komunikaci se serverem.', '❌');
+    } finally {
+      submitOrderBtn.disabled = false;
+      submitOrderBtn.innerHTML = currentFormMode === 'clerk'
+        ? `<span>Uložit jako PLATNOU zakázku</span><span>✓</span>`
+        : `<span>Nezávazně objednat</span><span>→</span>`;
+    }
+  });
+
+  // Tlačítko na děkovné obrazovce: Zadat další objednávku
+  successNewOrderBtn.addEventListener('click', () => {
+    resetOrderForm();
+    orderSuccessScreen.classList.add('hidden');
+    orderMainForm.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function resetOrderForm() {
+    orderMainForm.reset();
+    orderDessertItems = [];
+    renderOrderDessertsList();
+    cakeImagePreviewContainer.classList.add('hidden');
+    cakeImagePreview.src = '';
+    uploadedCakeImageUrl = '';
+    ediblePaperConditional.classList.add('hidden');
+    isRecaptchaVerified = false;
+    recaptchaCheck.classList.remove('checked');
+    recaptchaCheck.innerHTML = '';
+    calAlertBox.classList.add('hidden');
+    calAlertBox.innerHTML = '';
+    selectedPickupDate = '';
+    renderCalendar();
   }
 
-  // Render Step 3 summary breakdown
-  function renderWizardSummary() {
-    const customer = wizCustomer.value.trim();
-    const phone = wizPhone.value.trim();
-    const email = wizEmail.value.trim();
-    const date = wizPickupDate.value;
-    const time = wizPickupTime.value || '10:00';
-    const notes = wizNotes.value.trim();
+  // ------------------------------------------------------------------------
+  // 7. STRANA 2: DATABÁZE VŠECH OBJEDNÁVEK
+  // ------------------------------------------------------------------------
+  async function loadOrders() {
+    try {
+      dbResultsCount.textContent = 'Načítám objednávky...';
+      const res = await fetch('/api/orders');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        allOrders = data.data;
+        renderOrdersList();
+        updatePendingTabBadge();
+      }
+    } catch (e) {
+      dbResultsCount.textContent = 'Chyba načítání zakázek';
+    }
+  }
 
-    const hasCake = wizCakeEnable.checked;
-    const dessertItems = Object.values(cart);
-    const totalDesserts = dessertItems.reduce((acc, it) => acc + it.qty, 0);
+  function updatePendingTabBadge() {
+    const pendingCount = allOrders.filter(o => o.status === 'nevyřízeno').length;
+    if (pendingCount > 0) {
+      tabPendingBadge.textContent = pendingCount;
+      tabPendingBadge.classList.remove('hidden');
+    } else {
+      tabPendingBadge.classList.add('hidden');
+    }
+  }
 
-    let html = `
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pb-3 border-b border-stone-200">
-        <div><strong>Zákazník:</strong> ${customer}</div>
-        <div><strong>Telefon:</strong> <span class="text-[#AA821C] font-bold">${phone}</span> ${email ? `(${email})` : ''}</div>
-        <div><strong>Termín vyzvednutí:</strong> 📅 ${date ? new Date(date + 'T12:00:00').toLocaleDateString('cs-CZ') : 'Neuvedeno'} v ${time}</div>
-        <div><strong>Místo:</strong> Prodejna Dolní Benešov - Zábřeh</div>
-      </div>
-    `;
+  function renderOrdersList() {
+    const statusVal = filterStatus.value.trim().toLowerCase();
+    const pickupDateVal = filterPickupDate.value;
+    const employeeVal = filterEmployee.value;
+    const dietVal = filterDiet.value.toLowerCase();
+    const searchVal = filterSearch.value.trim().toLowerCase();
 
-    // Cake summary
-    if (hasCake) {
-      const kind = wizCakeKind.value;
-      const portions = wizCakePortions.value || '12';
-      const shape = wizCakeShape.value || 'Standard';
-      const floors = wizCakeFloors.value || '1';
-      const sponge = wizCakeSponge.value;
-      const filling = wizCakeFilling.value;
-      const cream = wizCakeCream.value;
-      const finish = wizCakeFinish.value;
-      const decor = wizCakeDecor.value;
-      const cakeNotes = wizCakeNotes.value.trim();
+    // Filtrování zakázek dle zadání
+    const filtered = allOrders.filter(order => {
+      // 1. Filtr dle stavu
+      if (statusVal && (order.status || '').toLowerCase() !== statusVal) {
+        return false;
+      }
 
-      html += `
-        <div class="p-3 bg-white rounded-xl border border-stone-200 space-y-1">
-          <div class="font-serif font-bold text-sm text-[#3B2820] flex items-center gap-1.5">
-            <span>🎂</span> ${kind} dort (${portions} porcí, ${floors} patro/patra)
+      // 2. Filtr dle data vyzvednutí
+      if (pickupDateVal && order.pickup_date !== pickupDateVal) {
+        return false;
+      }
+
+      // 3. Filtr dle zaměstnance
+      if (employeeVal) {
+        const creator = (order.created_by || '').toLowerCase();
+        if (!creator.includes(employeeVal.toLowerCase())) {
+          return false;
+        }
+      }
+
+      // 4. Filtr dle alergenů / diety
+      if (dietVal) {
+        const cakeDiet = order.cake && order.cake.diet ? order.cake.diet.toLowerCase() : '';
+        if (!cakeDiet.includes(dietVal)) {
+          return false;
+        }
+      }
+
+      // 5. Textové vyhledávání (Jméno, telefon, email, id)
+      if (searchVal) {
+        const hay = `${order.id} ${order.customer} ${order.phone} ${order.email} ${order.cake ? order.cake.description : ''}`.toLowerCase();
+        if (!hay.includes(searchVal)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    dbResultsCount.textContent = `Nalezeno ${filtered.length} zakázek`;
+
+    if (filtered.length === 0) {
+      dbOrdersContainer.innerHTML = `
+        <div class="p-8 text-center bg-white rounded-3xl border border-stone-200">
+          <span class="text-3xl block mb-2">🔍</span>
+          <p class="font-bold text-stone-700">Žádné objednávky neodpovídají zadaným filtrům.</p>
+          <button class="mt-3 text-xs text-[#AA821C] underline font-bold" onclick="document.getElementById('db-reset-filters').click()">
+            Zrušit filtry
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    dbOrdersContainer.innerHTML = filtered.map(order => renderOrderCardHtml(order)).join('');
+    attachOrderCardEvents();
+  }
+
+  function renderOrderCardHtml(order) {
+    const isAdmin = currentUser.role === 'admin';
+    const isStaff = currentUser.role === 'prodavačka' || isAdmin;
+    const isPastryChef = currentUser.role === 'cukrářka';
+
+    // Výrobní souhrn dortu
+    let cakeHtml = '';
+    if (order.cake) {
+      const c = order.cake;
+      cakeHtml = `
+        <div class="p-3 bg-[#FAF7F2] rounded-xl border border-stone-200 text-xs mt-2">
+          <div class="flex items-center justify-between mb-1">
+            <strong class="text-[#3B2820] flex items-center gap-1.5">
+              <span>🎂</span> Dort: ${escapeHtml(c.portions)} porcí (${escapeHtml(c.shape)})
+            </strong>
+            ${c.diet && c.diet !== 'Standard' ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">${escapeHtml(c.diet)}</span>` : ''}
           </div>
-          <div class="text-[11px] text-stone-600">
-            • <strong>Korpus:</strong> ${sponge} • <strong>Náplň:</strong> ${filling} ${cream ? `(${cream})` : ''}<br>
-            • <strong>Tvar a potah:</strong> ${shape}, ${finish || 'dle domluvy'}<br>
-            ${decor ? `• <strong>Dekorace:</strong> ${decor}<br>` : ''}
-            ${cakeNotes ? `• <strong>Nápis / přání:</strong> "${cakeNotes}"` : ''}
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-stone-600">
+            <div><span class="text-stone-400">Korpus:</span> <strong>${escapeHtml(c.sponge)}</strong></div>
+            <div><span class="text-stone-400">Náplň:</span> <strong>${escapeHtml(c.filling)}</strong></div>
+            <div><span class="text-stone-400">Povrch:</span> <strong>${escapeHtml(c.finish)}</strong></div>
+            <div><span class="text-stone-400">Jedlý papír:</span> <strong>${c.edible_paper === 'ano' ? `ANO (${escapeHtml(c.edible_paper_style)})` : 'NE'}</strong></div>
           </div>
+          ${c.decor ? `<div class="mt-1 text-[11px]"><span class="text-stone-400">Dekorace:</span> ${escapeHtml(c.decor)}</div>` : ''}
+          ${c.description ? `<div class="mt-1 text-[11px] bg-white p-2 rounded border border-stone-200 italic text-stone-700">„${escapeHtml(c.description)}“</div>` : ''}
+          ${c.image_url ? `
+            <div class="mt-2 flex items-center gap-2">
+              <span class="text-[10px] font-bold text-stone-500">Předloha:</span>
+              <a href="${c.image_url}" target="_blank" class="text-xs text-[#AA821C] font-semibold underline flex items-center gap-1">
+                📷 Zobrazit referenční foto
+              </a>
+            </div>
+          ` : ''}
         </div>
       `;
     }
 
-    // Desserts summary
-    if (totalDesserts > 0) {
-      html += `
-        <div class="p-3 bg-white rounded-xl border border-stone-200">
-          <div class="font-serif font-bold text-sm text-[#3B2820] mb-2 flex items-center gap-1.5">
-            <span>🥐</span> Stálé zákusky (${totalDesserts} ks celkem):
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px]">
-            ${dessertItems.map(it => `
-              <div class="flex justify-between border-b border-stone-100 py-1">
-                <span>${it.title}</span>
-                <strong class="text-stone-900">${it.qty} ks</strong>
-              </div>
+    // Výrobní souhrn zákusků
+    let dessertsHtml = '';
+    if (order.desserts && order.desserts.length > 0) {
+      dessertsHtml = `
+        <div class="p-3 bg-[#FAF7F2] rounded-xl border border-stone-200 text-xs mt-2">
+          <strong class="text-[#3B2820] block mb-1">🥐 Stálé zákusky (${order.desserts.length} druhů):</strong>
+          <div class="flex flex-wrap gap-1.5">
+            ${order.desserts.map(d => `
+              <span class="px-2.5 py-1 bg-white border border-stone-200 rounded-lg text-xs font-bold text-[#3B2820]">
+                ${escapeHtml(d.name)}: <span class="text-[#AA821C]">${d.qty} ks</span>
+              </span>
             `).join('')}
           </div>
         </div>
       `;
     }
 
-    if (notes) {
-      html += `
-        <div class="p-2.5 bg-white/70 rounded-lg border border-stone-200 text-[11px] text-stone-600">
-          <strong>Poznámka k objednávce:</strong> ${notes}
+    // Poslední auditní záznam
+    let auditNote = '';
+    if (order.history && order.history.length > 0) {
+      const last = order.history[0];
+      auditNote = `
+        <div class="text-[11px] text-stone-500 bg-stone-50 px-3 py-1.5 rounded-lg border border-stone-200 flex items-center justify-between mt-3">
+          <span>🕒 <strong>Audit:</strong> ${escapeHtml(last.change_text)}</span>
+          <button class="text-[#AA821C] underline font-bold view-history-btn ml-2" data-order-id="${order.id}">Celá historie (${order.history.length})</button>
         </div>
       `;
     }
 
-    wizSummaryContent.innerHTML = html;
+    // Tlačítka akcí dle role uživatele:
+    // - admin: schválit/zamítnout nevyřízené, označit vyzvednuté, upravit, smazat
+    // - prodavačka: nemůže mazat, nemůže schválit nevyřízené, může měnit platné na vyzvednuté, upravit
+    // - cukrářka: read-only náhled
+    let actionButtonsHtml = '';
+    if (!isPastryChef && currentUser.role !== 'customer') {
+      let statusButtons = '';
 
-    // Price estimate
-    let estPrice = 0;
-    if (hasCake) {
-      const portions = Number(wizCakePortions.value) || 12;
-      estPrice += Math.round(portions * 95); // ~95 Kč/porce poctivého dortu
-    }
-    if (totalDesserts > 0) {
-      estPrice += totalDesserts * 45; // ~45 Kč průměrná cena zákusku
-    }
-    wizSummaryPrice.textContent = `cca ${estPrice.toLocaleString('cs-CZ')} Kč`;
-  }
-
-  // Submit Order to backend API (s automatickým fallbackem pro GitHub Pages)
-  async function submitWizardOrder() {
-    const customer = wizCustomer.value.trim();
-    const phone = wizPhone.value.trim();
-    const email = wizEmail.value.trim();
-    const date = wizPickupDate.value;
-    const time = wizPickupTime.value || '10:00';
-    const notes = wizNotes.value.trim();
-
-    const hasCake = wizCakeEnable.checked;
-    const dessertItems = Object.values(cart);
-    const totalDesserts = dessertItems.reduce((acc, it) => acc + it.qty, 0);
-
-    // Calculate estimated price
-    let estPrice = 0;
-    if (hasCake) {
-      const portions = Number(wizCakePortions.value) || 12;
-      estPrice += Math.round(portions * 95);
-    }
-    if (totalDesserts > 0) {
-      estPrice += totalDesserts * 45;
-    }
-
-    const cakeNotes = wizCakeNotes.value.trim();
-    const fullNotes = [
-      cakeNotes ? `Dort: ${cakeNotes}` : '',
-      notes ? `Poznámka: ${notes}` : '',
-      totalDesserts > 0 ? `Zákusky: ${dessertItems.map(it => `${it.title} (${it.qty}ks)`).join(', ')}` : ''
-    ].filter(Boolean).join(' | ');
-
-    const orderData = {
-      customer,
-      phone,
-      email,
-      kind: hasCake ? (wizCakeKind.value + (totalDesserts > 0 ? ' + Zákusky' : '')) : 'Výběr zákusků',
-      portions: hasCake ? (wizCakePortions.value || '12') : String(totalDesserts),
-      shape: hasCake ? (wizCakeShape.value || 'Kulatý') : 'Mix',
-      diameter: hasCake ? (wizCakeShape.value || '') : '',
-      floors: hasCake ? (wizCakeFloors.value || '1') : '1',
-      sponge: hasCake ? wizCakeSponge.value : '—',
-      filling: hasCake ? wizCakeFilling.value : '—',
-      cream: hasCake ? wizCakeCream.value : '',
-      finish: hasCake ? wizCakeFinish.value : '',
-      decor: hasCake ? wizCakeDecor.value : '',
-      diet: hasCake ? wizCakeDiet.value : 'Standard',
-      notes: fullNotes,
-      pickup_date: date,
-      pickup_time: time,
-      price: String(estPrice),
-      deposit: '0',
-      status: 'Nová',
-      cart_items: dessertItems
-    };
-
-    try {
-      wizBtnNext.disabled = true;
-      wizBtnNext.textContent = 'Odesílám...';
-
-      let savedOrder = null;
-
-      // Zkusit Node.js backend
-      try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
-        });
-        if (res.ok) {
-          const json = await res.json();
-          if (json.success) savedOrder = json.data;
+      // Schvalování nevyřízených zakázek (POUZE ADMIN dle zadání)
+      if (order.status === 'nevyřízeno') {
+        if (isAdmin) {
+          statusButtons += `
+            <button class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs action-approve-btn" data-order-id="${order.id}">
+              ✓ Schválit (Platné)
+            </button>
+            <button class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs action-reject-btn" data-order-id="${order.id}">
+              ✕ Zamítnout (Neplatné)
+            </button>
+          `;
+        } else {
+          statusButtons += `
+            <span class="text-xs text-purple-700 font-bold bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">
+              ⏳ Čeká na schválení adminem
+            </span>
+          `;
         }
-      } catch (errApi) {
-        // Fallback pro statický hosting jako GitHub Pages
+      } else if (order.status === 'platné') {
+        // Platné zakázky může označit jako vyzvednuté prodavačka i admin
+        statusButtons += `
+          <button class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs action-pickup-btn" data-order-id="${order.id}">
+            📦 Označit jako vyzvednuté
+          </button>
+        `;
       }
 
-      // Pokud běžíme na GitHub Pages bez Node.js backendu
-      if (!savedOrder) {
-        savedOrder = {
-          id: String(Date.now()).slice(-6),
-          ...orderData,
-          details: JSON.stringify({
-            shape: orderData.shape,
-            diameter: orderData.diameter,
-            floors: orderData.floors,
-            sponge: orderData.sponge,
-            cream: orderData.cream,
-            filling: orderData.filling,
-            finish: orderData.finish,
-            diet: orderData.diet,
-            decor: orderData.decor,
-            notes: orderData.notes
-          }),
-          created_at: new Date().toISOString()
-        };
-        orders.unshift(savedOrder);
-        localStorage.setItem('madel_static_orders', JSON.stringify(orders));
-      }
+      // Úprava objednávky (Audit stopa se zaznamená)
+      const editBtn = `
+        <button class="px-3 py-1.5 rounded-xl btn-secondary text-xs font-bold action-edit-btn" data-order-id="${order.id}">
+          ✏️ Upravit
+        </button>
+      `;
 
-      wizardLastSubmittedOrder = savedOrder;
-      wizSuccessId.textContent = `#${savedOrder.id}`;
+      // Smazání (POUZE ADMIN dle specifikace)
+      const deleteBtn = isAdmin ? `
+        <button class="px-3 py-1.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-200 text-xs font-bold action-delete-btn" data-order-id="${order.id}">
+          🗑️ Smazat
+        </button>
+      ` : '';
 
-      // Obnovit zobrazení
-      loadOrders();
-
-      // Vyčistit košík
-      cart = {};
-      saveCart();
-      updateCartUI();
-      renderProducts();
-
-      // Zobrazit potvrzení
-      setWizardStep(4);
-      showToast('Objednávka byla úspěšně přijata do výroby! 🎂', '🎉');
-
-    } catch (err) {
-      alert('Chyba při odesílání objednávky: ' + err.message);
-    } finally {
-      wizBtnNext.disabled = false;
+      actionButtonsHtml = `
+        <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-stone-100">
+          ${statusButtons}
+          ${editBtn}
+          ${deleteBtn}
+        </div>
+      `;
     }
-  }
 
-  // Setup Wizard button listeners
-  if (closeWizardBtn) closeWizardBtn.addEventListener('click', closeWizard);
-  if (wizBtnNext) wizBtnNext.addEventListener('click', handleWizardNext);
-  if (wizBtnPrev) wizBtnPrev.addEventListener('click', handleWizardPrev);
-
-  if (orderWizardModal) {
-    orderWizardModal.addEventListener('click', (e) => {
-      if (e.target === orderWizardModal) closeWizard();
-    });
-  }
-
-  // Step 4 actions
-  if (wizSuccessClose) wizSuccessClose.addEventListener('click', closeWizard);
-
-  if (wizSuccessWhatsapp) {
-    wizSuccessWhatsapp.addEventListener('click', () => {
-      if (!wizardLastSubmittedOrder) return;
-      const o = wizardLastSubmittedOrder;
-      let text = `*Objednávka č. #${o.id} - Cukrářství Madel*\n`;
-      text += `------------------------------------\n`;
-      text += `👤 Zákazník: ${o.customer}\n`;
-      text += `📞 Telefon: ${o.phone}\n`;
-      text += `📅 Vyzvednutí: ${o.pickup_date} v ${o.pickup_time}\n`;
-      text += `🎂 Zakázka: ${o.kind}\n`;
-      text += `📝 Detaily: ${o.notes}\n`;
-      text += `💰 Předpokládaná cena: ${o.price} Kč\n`;
-      const url = `https://api.whatsapp.com/send?phone=420604707646&text=${encodeURIComponent(text)}`;
-      window.open(url, '_blank');
-    });
-  }
-
-  if (wizSuccessPrint) {
-    wizSuccessPrint.addEventListener('click', () => {
-      if (wizardLastSubmittedOrder) {
-        printOrder(wizardLastSubmittedOrder.id);
-      }
-    });
-  }
-
-
-  // ========================================================
-  // 4. INTERNÍ MANAGEMENT VÝROBNY & OBJEDNÁVEK
-  // ========================================================
-  const money = n => (Number(n) || 0).toLocaleString('cs-CZ') + ' Kč';
-  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const dateFmt = s => s ? new Date(s + 'T12:00:00').toLocaleDateString('cs-CZ') : 'Bez data';
-
-  function balance(o) {
-    return Math.max(0, Number(o.price || 0) - Number(o.deposit || 0));
-  }
-
-  function getStatusClass(status) {
-    switch ((status || '').toLowerCase()) {
-      case 'nová': return 'ck-status-nova';
-      case 'potvrzená': return 'ck-status-potvrzena';
-      case 've výrobě': return 'ck-status-vyroba';
-      case 'připravená': return 'ck-status-pripravena';
-      case 'vydaná': return 'ck-status-vydana';
-      case 'zrušená': return 'ck-status-zrusena';
-      default: return 'ck-status-nova';
-    }
-  }
-
-  function card(o) {
-    const statusClass = getStatusClass(o.status);
     return `
-      <article class="ck-order">
-        <div class="ck-ordertop">
-          <div>
-            <strong>${esc(o.customer)}</strong>
-            <div class="ck-meta">
-              ${esc(o.kind)} • ${esc(o.portions)} porcí/ks<br>
-              📅 <strong>${dateFmt(o.pickup_date)} ${esc(o.pickup_time)}</strong><br>
-              ☎ <a href="tel:${esc(o.phone)}" class="text-[#AA821C] hover:underline font-semibold">${esc(o.phone)}</a>
-              ${o.email ? ` • ✉️ ${esc(o.email)}` : ''}
-              ${o.notes ? `<div class="mt-1 text-xs text-stone-500 italic truncate max-w-md">${esc(o.notes)}</div>` : ''}
+      <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-2xs hover:shadow-xs transition space-y-3">
+        <!-- Card Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-stone-100">
+          <div class="flex items-center gap-2.5">
+            <span class="font-serif font-bold text-lg text-[#3B2820]">#${order.id}</span>
+            ${getStatusBadgeHtml(order.status)}
+            <span class="text-xs text-stone-500 font-medium">| Zadal: <strong>${escapeHtml(order.created_by || 'Zákazník z webu')}</strong></span>
+          </div>
+          <div class="text-right">
+            <div class="text-xs text-stone-500">Termín vyzvednutí:</div>
+            <div class="font-bold text-sm text-[#3B2820]">
+              📅 ${getDayNameCzech(order.pickup_date)} ${formatCzechDate(order.pickup_date)} v ${escapeHtml(order.pickup_time || '10:00')}
             </div>
           </div>
-          <span class="ck-pill ${statusClass}">${esc(o.status)}</span>
         </div>
-        
-        <div class="ck-orderbottom">
+
+        <!-- Customer & Price details -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div>
-            <div class="ck-price">${money(o.price)}</div>
-            <div class="ck-meta text-xs">Záloha: ${money(o.deposit)} • <strong>Doplatek: ${money(balance(o))}</strong></div>
+            <span class="text-stone-400 block">Zákazník:</span>
+            <strong class="text-stone-800 text-sm">${escapeHtml(order.customer)}</strong>
           </div>
           <div>
-            <button class="ck-smallbtn" data-edit="${o.id}">Upravit</button>
-            <button class="ck-smallbtn" data-print="${o.id}">🖨️ Tisk</button>
-            <button class="ck-smallbtn hover:!bg-red-50 hover:!text-red-700" data-delete="${o.id}">Smazat</button>
+            <span class="text-stone-400 block">Kontakt:</span>
+            <span class="text-stone-800 font-bold">${escapeHtml(order.phone)}</span>
+            ${order.email ? `<span class="text-stone-500 block text-[11px]">${escapeHtml(order.email)}</span>` : ''}
+          </div>
+          <div>
+            <span class="text-stone-400 block">Cena objednávky:</span>
+            <strong class="text-[#AA821C] text-sm">${order.price ? `${order.price} Kč` : 'Nezadána'}</strong>
           </div>
         </div>
-      </article>
+
+        <!-- Cake & Desserts details -->
+        ${cakeHtml}
+        ${dessertsHtml}
+        ${auditNote}
+
+        <!-- Actions -->
+        ${actionButtonsHtml}
+      </div>
     `;
   }
 
-  function bindCards(root) {
-    root.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editOrder(b.dataset.edit));
-    root.querySelectorAll('[data-delete]').forEach(b => b.onclick = () => removeOrder(b.dataset.delete));
-    root.querySelectorAll('[data-print]').forEach(b => b.onclick = () => printOrder(b.dataset.print));
-  }
-
-  function view(name) {
-    document.querySelectorAll('.ck-view').forEach(x => x.hidden = true);
-    const target = document.getElementById('ck-' + name);
-    if (target) target.hidden = false;
-
-    document.querySelectorAll('.ck-tabs button').forEach(b => {
-      b.classList.toggle('active', b.dataset.view === name);
-    });
-
-    if (name === 'orders') renderOrdersList();
-    if (name === 'calendar') renderCalendar();
-    if (name === 'prep') renderPrep();
-  }
-
-  function renderOrdersList() {
-    const q = (document.getElementById('ck-search')?.value || '').toLowerCase();
-    const f = document.getElementById('ck-filter')?.value || '';
-
-    const list = orders.filter(o => {
-      const matchesFilter = !f || o.status === f;
-      const searchPool = [o.customer, o.phone, o.kind, o.email, o.notes].join(' ').toLowerCase();
-      const matchesSearch = searchPool.includes(q);
-      return matchesFilter && matchesSearch;
-    }).sort((a, b) => (a.pickup_date || '').localeCompare(b.pickup_date || ''));
-
-    const container = document.getElementById('ck-orders-list');
-    if (container) {
-      container.innerHTML = list.length ? list.map(card).join('') : '<div class="ck-empty">Žádné odpovídající objednávky.</div>';
-      bindCards(container);
-    }
-  }
-
-  function renderCalendar() {
-    const m = document.getElementById('ck-month')?.value || new Date().toISOString().slice(0, 7);
-    const list = orders.filter(o => (o.pickup_date || '').startsWith(m))
-      .sort((a, b) => ((a.pickup_date || '') + (a.pickup_time || '')).localeCompare((b.pickup_date || '') + (b.pickup_time || '')));
-
-    const container = document.getElementById('ck-calendar-list');
-    if (container) {
-      container.innerHTML = list.length ? list.map(card).join('') : '<div class="ck-empty">V tomto měsíci nejsou žádné objednávky.</div>';
-      bindCards(container);
-    }
-  }
-
-  function renderPrep() {
-    const list = orders.filter(o => !['Vydaná', 'Zrušená'].includes(o.status))
-      .sort((a, b) => (a.pickup_date || '').localeCompare(b.pickup_date || ''));
-
-    const rows = document.getElementById('ck-prep-rows');
-    if (!rows) return;
-
-    if (!list.length) {
-      rows.innerHTML = '<tr><td colspan="11" class="ck-empty">Žádné aktivní objednávky k přípravě.</td></tr>';
-      return;
-    }
-
-    rows.innerHTML = list.map(o => {
-      let d = {};
-      try {
-        d = typeof o.details === 'string' ? JSON.parse(o.details || '{}') : (o.details || {});
-      } catch (e) {
-        d = {};
-      }
-
-      const cell = v => esc(v || '—');
-      return `
-        <tr>
-          <td><strong>${dateFmt(o.pickup_date)}</strong><br><small class="text-stone-500">${esc(o.pickup_time)}</small></td>
-          <td><strong>${cell(o.customer)}</strong><br><small>${cell(o.phone)}</small></td>
-          <td><strong class="text-[#AA821C]">${cell(o.kind)}</strong>${o.portions ? ' • ' + esc(o.portions) + ' porcí/ks' : ''}</td>
-          <td>${cell(d.diameter || o.diameter || d.shape || o.shape)}</td>
-          <td>${cell(d.finish || o.finish)}</td>
-          <td>${cell(d.floors || o.floors)}</td>
-          <td>${cell(d.sponge || o.sponge)}</td>
-          <td>${cell(d.filling || o.filling)}${d.cream || o.cream ? ' / ' + esc(d.cream || o.cream) : ''}</td>
-          <td>${cell(d.decor || o.decor)}</td>
-          <td class="text-xs text-stone-600">${cell(o.notes)}</td>
-          <td><button class="ck-smallbtn" data-print="${o.id}">🖨️ Tisk</button></td>
-        </tr>
-      `;
-    }).join('');
-
-    bindCards(rows);
-  }
-
-  function renderAll() {
-    const open = orders.filter(o => !['Vydaná', 'Zrušená'].includes(o.status));
-    const countEl = document.getElementById('ck-count');
-    const openEl = document.getElementById('ck-open');
-    const dueEl = document.getElementById('ck-due');
-
-    if (countEl) countEl.textContent = orders.length;
-    if (openEl) openEl.textContent = open.length;
-    if (dueEl) dueEl.textContent = money(open.reduce((s, o) => s + balance(o), 0));
-
-    const upcoming = open.filter(o => o.pickup_date)
-      .sort((a, b) => a.pickup_date.localeCompare(b.pickup_date))
-      .slice(0, 5);
-
-    const upCont = document.getElementById('ck-upcoming');
-    if (upCont) {
-      upCont.innerHTML = upcoming.length ? upcoming.map(card).join('') : '<div class="ck-empty">Zatím žádné objednávky k vyřízení.</div>';
-      bindCards(upCont);
-    }
-
-    renderOrdersList();
-    renderPrep();
-  }
-
-  const DEFAULT_DEMO_ORDERS = [
-    {
-      id: "1",
-      customer: "Lucie Kratochvílová",
-      phone: "+420 732 114 892",
-      email: "lucie.k@seznam.cz",
-      kind: "Svatební",
-      portions: "45",
-      shape: "Kulatý 3-patrový",
-      diameter: "28 / 20 / 14 cm",
-      floors: "3",
-      sponge: "Vanilka (klasika světlý)",
-      cream: "Vanilkové mascarpone",
-      filling: "Mascarpone (+ ovoce)",
-      finish: "Semi-naked krém",
-      diet: "Standard",
-      decor: "Živé pivoňky a eukalyptus, zlaté plátky",
-      notes: "Nápis: L & M 2026. Vyzvedne svatební koordinátorka dopoledne.",
-      pickup_date: "2026-11-14",
-      pickup_time: "10:30",
-      price: "4800",
-      deposit: "2000",
-      status: "Ve výrobě"
-    },
-    {
-      id: "2",
-      customer: "Tomáš Horák",
-      phone: "+420 608 459 231",
-      email: "tomas.horak@gmail.com",
-      kind: "Narozeninový",
-      portions: "16",
-      shape: "Kulatý",
-      diameter: "24 cm",
-      floors: "1",
-      sponge: "Belgická čokoláda",
-      cream: "Čokoládový ganache",
-      filling: "Pařížská náplň (+ marmeláda, ovoce)",
-      finish: "Čokoládová poleva se stékáním",
-      diet: "Standard",
-      decor: "Čerstvé maliny, borůvky, makronky a zápich '50'",
-      notes: "Text na tabulce: Všechno nejlepší k 50! Táto",
-      pickup_date: "2026-11-15",
-      pickup_time: "11:00",
-      price: "1850",
-      deposit: "1000",
-      status: "Potvrzená"
-    }
-  ];
-
-  async function loadOrders() {
-    try {
-      const res = await fetch('/api/orders');
-      if (!res.ok) throw new Error('API nedostupné');
-      const json = await res.json();
-      if (json.success && Array.isArray(json.data)) {
-        orders = json.data;
-        renderAll();
-        return;
-      }
-    } catch (err) {
-      // Fallback pro statický GitHub Pages hosting
-      const local = JSON.parse(localStorage.getItem('madel_static_orders') || 'null');
-      orders = local || DEFAULT_DEMO_ORDERS;
-      renderAll();
-    }
-  }
-
-  // Edit order
-  function editOrder(id) {
-    const o = orders.find(x => String(x.id) === String(id));
-    const form = document.getElementById('ck-order-form');
-    if (!o || !form) return;
-
-    Object.keys(o).forEach(k => {
-      if (form.elements[k]) form.elements[k].value = o[k] ?? '';
-    });
-
-    let d = {};
-    try {
-      d = typeof o.details === 'string' ? JSON.parse(o.details || '{}') : (o.details || {});
-    } catch (e) {
-      d = {};
-    }
-
-    Object.keys(d).forEach(k => {
-      if (form.elements[k]) form.elements[k].value = d[k] ?? '';
-    });
-
-    document.getElementById('ck-form-title').textContent = `Upravit zakázku #${o.id} – ${o.customer}`;
-    updateFormBalance();
-    view('form');
-  }
-
-  async function removeOrder(id) {
-    if (!confirm('Opravdu si přejete smazat tuto zakázku ze systému?')) return;
-    try {
-      await fetch(`/api/orders?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
-    } catch (e) {}
-    orders = orders.filter(o => String(o.id) !== String(id));
-    localStorage.setItem('madel_static_orders', JSON.stringify(orders));
-    renderAll();
-    showToast('Objednávka byla smazána.', '🗑️');
-  }
-
-  function printOrder(id) {
-    const o = orders.find(x => String(x.id) === String(id)) || wizardLastSubmittedOrder;
-    if (!o) return;
-
-    let d = {};
-    try {
-      d = typeof o.details === 'string' ? JSON.parse(o.details || '{}') : (o.details || {});
-    } catch (e) {
-      d = {};
-    }
-
-    const w = window.open('', '_blank');
-    if (!w) {
-      alert('Povolte vyskakovací okna v prohlížeči pro tisk zakázkového listu.');
-      return;
-    }
-
-    w.document.write(`
-      <!DOCTYPE html>
-      <html lang="cs">
-      <head>
-        <meta charset="utf-8">
-        <title>Zakázkový list #${o.id} - Cukrářství Madel</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 30px; color: #222; }
-          .header { border-bottom: 2px solid #C59B27; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-          h1 { margin: 0; font-size: 24px; color: #3B2820; }
-          .badge { background: #FAF5EB; border: 1px solid #C59B27; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; }
-          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-          .card { background: #fafafa; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-          h2 { margin-top: 0; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 6px; color: #7B6256; text-transform: uppercase; }
-          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-          td { padding: 6px 4px; vertical-align: top; border-bottom: 1px solid #eee; font-size: 14px; }
-          td:first-child { font-weight: bold; color: #555; width: 35%; }
-          .price-box { background: #F7EEDB; border: 1px solid #C59B27; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 16px; }
-          .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 12px; color: #777; text-align: center; }
-          @media print { body { padding: 10px; } }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <div>
-            <h1>🍰 Cukrářství Madel – Zakázkový list</h1>
-            <small>Dolní Benešov - Zábřeh, Opavská 191 • Tel: +420 604 707 646</small>
-          </div>
-          <div class="badge">Objednávka #${esc(o.id)} • ${esc(o.status)}</div>
-        </div>
-
-        <div class="grid">
-          <div class="card">
-            <h2>👤 Zákazník</h2>
-            <table>
-              <tr><td>Jméno:</td><td><strong>${esc(o.customer)}</strong></td></tr>
-              <tr><td>Telefon:</td><td>${esc(o.phone)}</td></tr>
-              <tr><td>E-mail:</td><td>${esc(o.email || '—')}</td></tr>
-            </table>
-          </div>
-
-          <div class="card">
-            <h2>📅 Vyzvednutí</h2>
-            <table>
-              <tr><td>Datum:</td><td><strong>${dateFmt(o.pickup_date)}</strong></td></tr>
-              <tr><td>Čas:</td><td><strong>${esc(o.pickup_time)}</strong></td></tr>
-              <tr><td>Místo:</td><td>Prodejna Cukrářství Madel</td></tr>
-            </table>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>🎂 Specifikace zakázky & dortu</h2>
-          <table>
-            <tr><td>Druh / popis:</td><td><strong>${esc(o.kind)}</strong></td></tr>
-            <tr><td>Počet porcí / ks:</td><td>${esc(o.portions)}</td></tr>
-            <tr><td>Korpus:</td><td><strong>${esc(d.sponge || o.sponge || '—')}</strong></td></tr>
-            <tr><td>Náplň / krém:</td><td><strong>${esc(d.filling || o.filling || '—')}${d.cream || o.cream ? ' (' + esc(d.cream || o.cream) + ')' : ''}</strong></td></tr>
-            <tr><td>Potah a dekorace:</td><td>${esc(d.finish || o.finish || '—')}, ${esc(d.decor || o.decor || '—')}</td></tr>
-            <tr><td>Poznámky & nápis:</td><td><strong>${esc(o.notes || '—')}</strong></td></tr>
-          </table>
-        </div>
-
-        <div class="price-box">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span>Cena celkem:</span>
-            <strong>${money(o.price)}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #555;">
-            <span>Uhrazená záloha:</span>
-            <span>${money(o.deposit)}</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; border-top: 1px solid #C59B27; padding-top: 6px;">
-            <span>Zbývá doplatit:</span>
-            <span style="color: #AA821C;">${money(balance(o))}</span>
-          </div>
-        </div>
-
-        <div class="footer">
-          Vytištěno ze systému Cukrářství Madel • ${new Date().toLocaleString('cs-CZ')}
-        </div>
-
-        <script>
-          window.onload = () => window.print();
-        </script>
-      </body>
-      </html>
-    `);
-    w.document.close();
-  }
-
-  function updateFormBalance() {
-    const form = document.getElementById('ck-order-form');
-    if (!form) return;
-    const p = Number(form.elements.price?.value) || 0;
-    const d = Number(form.elements.deposit?.value) || 0;
-    const balEl = document.getElementById('ck-balance');
-    if (balEl) balEl.textContent = money(Math.max(0, p - d));
-  }
-
-  function setupInternalAppEvents() {
-    const app = document.getElementById('cukrarna-app');
-    if (!app) return;
-
-    app.querySelectorAll('[data-view]').forEach(b => {
-      b.addEventListener('click', () => view(b.dataset.view));
-    });
-
-    app.querySelectorAll('[data-goto]').forEach(b => {
-      b.addEventListener('click', () => {
-        const form = document.getElementById('ck-order-form');
-        if (form) form.reset();
-        document.getElementById('ck-form-title').textContent = 'Nová objednávka dortu';
-        updateFormBalance();
-        view('form');
+  function attachOrderCardEvents() {
+    // 1. Schválení adminem (nevyřízeno -> platné)
+    document.querySelectorAll('.action-approve-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.orderId;
+        await updateOrderStatus(id, 'platné', 'Schváleno administrátorem');
       });
     });
 
-    const form = document.getElementById('ck-order-form');
-    if (form) {
-      form.elements.price?.addEventListener('input', updateFormBalance);
-      form.elements.deposit?.addEventListener('input', updateFormBalance);
-
-      form.onsubmit = async (e) => {
-        e.preventDefault();
-        const fd = new FormData(form);
-        const data = {};
-        fd.forEach((v, k) => data[k] = String(v));
-
-        try {
-          const res = await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-          const json = await res.json();
-          if (!json.success) throw new Error(json.data?.message || 'Uložení se nezdařilo');
-
-          await loadOrders();
-          form.reset();
-          view('orders');
-          showToast('Zakázka byla uložena do systému! 🎂');
-        } catch (err) {
-          alert('Chyba: ' + err.message);
-        }
-      };
-    }
-
-    const cancelBtn = document.getElementById('ck-cancel');
-    if (cancelBtn) {
-      cancelBtn.onclick = () => view('overview');
-    }
-
-    const searchInput = document.getElementById('ck-search');
-    if (searchInput) searchInput.oninput = renderOrdersList;
-
-    const filterSelect = document.getElementById('ck-filter');
-    if (filterSelect) filterSelect.onchange = renderOrdersList;
-
-    const monthInput = document.getElementById('ck-month');
-    if (monthInput) {
-      monthInput.value = new Date().toISOString().slice(0, 7);
-      monthInput.onchange = renderCalendar;
-    }
-
-    loadOrders();
-  }
-
-  // Fallback helpers for cart actions
-  function sendWhatsAppFallback() {
-    const items = Object.values(cart);
-    if (items.length === 0) return showToast('Nejprve přidejte zákusky do košíku!', '⚠️');
-    let text = `*Poptávka zákusků - Cukrářství Madel*\n`;
-    items.forEach((it, idx) => {
-      text += `${idx + 1}. ${it.title} — ${it.qty} ks\n`;
+    // 2. Zamítnutí adminem (nevyřízeno -> neplatné)
+    document.querySelectorAll('.action-reject-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.orderId;
+        await updateOrderStatus(id, 'neplatné', 'Zamítnuto administrátorem');
+      });
     });
-    window.open(`https://api.whatsapp.com/send?phone=420604707646&text=${encodeURIComponent(text)}`, '_blank');
+
+    // 3. Označení jako vyzvednuté
+    document.querySelectorAll('.action-pickup-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.orderId;
+        await updateOrderStatus(id, 'vyzvednuté', 'Předáno zákazníkovi na prodejně');
+      });
+    });
+
+    // 4. Úprava zakázky
+    document.querySelectorAll('.action-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.orderId;
+        promptEditOrder(id);
+      });
+    });
+
+    // 5. Smazání (pouze admin)
+    document.querySelectorAll('.action-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.orderId;
+        if (confirm(`Opravdu si přejete smazat zakázku #${id}? Tato akce je nevratná.`)) {
+          await deleteOrder(id);
+        }
+      });
+    });
+
+    // 6. Zobrazení historie změn (Audit modal)
+    document.querySelectorAll('.view-history-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.orderId;
+        openAuditHistoryModal(id);
+      });
+    });
   }
 
-  function copyListFallback() {
-    const items = Object.values(cart);
-    if (items.length === 0) return showToast('Košík je prázdný!', '⚠️');
-    let text = `Objednávka Cukrářství Madel:\n` + items.map(it => `• ${it.title}: ${it.qty} ks`).join('\n');
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => showToast('Seznam byl zkopírován! 📋'));
+  async function updateOrderStatus(orderId, newStatus, reason) {
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Employee-Role': currentUser.role,
+          'X-Employee-Name': currentUser.name
+        },
+        body: JSON.stringify({
+          id: orderId,
+          status: newStatus,
+          change_note: reason,
+          employee_name: currentUser.name,
+          employee_role: currentUser.role
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Stav zakázky #${orderId} změněn na "${newStatus}"`, '✓');
+        loadOrders();
+      } else {
+        showToast(data.message || 'Chyba změny stavu.', '❌');
+      }
+    } catch (e) {
+      showToast('Chyba komunikace se serverem.', '❌');
     }
   }
 
-  // DOM Ready
-  document.addEventListener('DOMContentLoaded', () => {
-    initCatalog();
-    setupInternalAppEvents();
+  async function promptEditOrder(orderId) {
+    const order = allOrders.find(o => String(o.id) === String(orderId));
+    if (!order) return;
+
+    const newCustomer = prompt('Upravit jméno zákazníka:', order.customer);
+    if (newCustomer === null) return;
+
+    const newPhone = prompt('Upravit telefon zákazníka:', order.phone);
+    if (newPhone === null) return;
+
+    const newPrice = prompt('Upravit cenu objednávky (Kč):', order.price || '0');
+    if (newPrice === null) return;
+
+    const changeReason = prompt('Důvod úpravy (zaznamená se do auditní stopy):', 'Změna údajů na přání zákazníka');
+    if (changeReason === null) return;
+
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Employee-Role': currentUser.role,
+          'X-Employee-Name': currentUser.name
+        },
+        body: JSON.stringify({
+          id: orderId,
+          customer: newCustomer.trim() || order.customer,
+          phone: newPhone.trim() || order.phone,
+          price: newPrice.trim(),
+          change_note: changeReason,
+          employee_name: currentUser.name,
+          employee_role: currentUser.role
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Zakázka #${orderId} byla úspěšně upravena.`, '✏️');
+        loadOrders();
+      } else {
+        showToast(data.message || 'Chyba při ukládání úprav.', '❌');
+      }
+    } catch (e) {
+      showToast('Chyba komunikace se serverem.', '❌');
+    }
+  }
+
+  async function deleteOrder(orderId) {
+    try {
+      const res = await fetch(`/api/orders?id=${orderId}`, {
+        method: 'DELETE',
+        headers: {
+          'X-Employee-Role': currentUser.role,
+          'X-Employee-Name': currentUser.name
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Zakázka #${orderId} byla smazána.`, '🗑️');
+        loadOrders();
+      } else {
+        showToast(data.message || 'Chyba při mazání.', '❌');
+      }
+    } catch (e) {
+      showToast('Chyba komunikace se serverem.', '❌');
+    }
+  }
+
+  // Modál historie změn (Auditní stopa)
+  function openAuditHistoryModal(orderId) {
+    const order = allOrders.find(o => String(o.id) === String(orderId));
+    if (!order) return;
+
+    historyModalTitle.textContent = `Historie změn zakázky #${order.id} (${escapeHtml(order.customer)})`;
+    const hist = order.history || [];
+
+    if (hist.length === 0) {
+      historyModalContent.innerHTML = `<p class="text-stone-400 italic">Žádné dřívější úpravy nebyly zaznamenány.</p>`;
+    } else {
+      historyModalContent.innerHTML = hist.map(h => `
+        <div class="audit-entry">
+          <div class="flex items-center justify-between text-[11px] text-stone-500 mb-0.5">
+            <strong class="text-[#3B2820]">${escapeHtml(h.employee || 'Systém')}</strong>
+            <span>${escapeHtml(h.timestamp)}</span>
+          </div>
+          <p class="text-stone-700 font-medium">${escapeHtml(h.change_text)}</p>
+        </div>
+      `).join('');
+    }
+
+    historyModal.classList.remove('hidden');
+    setTimeout(() => historyModal.classList.remove('opacity-0'), 10);
+  }
+
+  function closeAuditHistoryModal() {
+    historyModal.classList.add('opacity-0');
+    setTimeout(() => historyModal.classList.add('hidden'), 200);
+  }
+
+  closeHistoryBtn.addEventListener('click', closeAuditHistoryModal);
+  historyModal.addEventListener('click', (e) => {
+    if (e.target === historyModal) closeAuditHistoryModal();
   });
+
+  // Filtry databáze - event listeners
+  [filterStatus, filterPickupDate, filterEmployee, filterDiet, filterSearch].forEach(el => {
+    el.addEventListener('input', renderOrdersList);
+    el.addEventListener('change', renderOrdersList);
+  });
+
+  dbResetFilters.addEventListener('click', () => {
+    filterStatus.value = '';
+    filterPickupDate.value = '';
+    filterEmployee.value = '';
+    filterDiet.value = '';
+    filterSearch.value = '';
+    renderOrdersList();
+  });
+
+  dbRefreshBtn.addEventListener('click', () => {
+    loadOrders();
+    showToast('Databáze obnovena.', '🔄');
+  });
+
+  // ------------------------------------------------------------------------
+  // 8. STRANA 3: ROZPIS ZÁKUSKŮ (VÝROBNÍ LIST PRO CUKRÁŘKY - A4 TISK)
+  // ------------------------------------------------------------------------
+  prepWeekSelect.addEventListener('change', renderDessertsPreparationSheet);
+  printDessertsBtn.addEventListener('click', () => {
+    updatePrintTimestamps();
+    window.print();
+  });
+
+  function renderDessertsPreparationSheet() {
+    const period = prepWeekSelect.value;
+    // Vyfiltrovat platné objednávky (ty, které je potřeba upéct!)
+    const validOrders = allOrders.filter(o => o.status === 'platné' && o.desserts && o.desserts.length > 0);
+
+    // Agregace zákusků podle ID / názvu
+    const aggregated = {};
+
+    validOrders.forEach(o => {
+      o.desserts.forEach(item => {
+        const key = item.name;
+        if (!aggregated[key]) {
+          // Najít kategorii z katalogu
+          const prodInfo = allProducts.find(p => p.title.toLowerCase() === item.name.toLowerCase());
+          aggregated[key] = {
+            id: item.id,
+            name: item.name,
+            category: prodInfo ? prodInfo.category : 'Zákusek',
+            totalQty: 0,
+            breakdown: []
+          };
+        }
+        aggregated[key].totalQty += item.qty;
+        aggregated[key].breakdown.push({
+          orderId: o.id,
+          pickupDate: o.pickup_date,
+          pickupTime: o.pickup_time,
+          customer: o.customer,
+          qty: item.qty
+        });
+      });
+    });
+
+    // Seřadit SESTUPNĚ dle celkového množství (jak specifikováno v zadání)
+    const sortedList = Object.values(aggregated).sort((a, b) => b.totalQty - a.totalQty);
+
+    let sumTotalPieces = 0;
+    sortedList.forEach(item => { sumTotalPieces += item.totalQty; });
+
+    prepTotalTypes.textContent = sortedList.length;
+    prepTotalPieces.textContent = `${sumTotalPieces} ks`;
+
+    if (sortedList.length === 0) {
+      prepDessertsRows.innerHTML = `
+        <tr>
+          <td colspan="5" class="py-8 text-center text-stone-400 italic">
+            Žádné platné objednávky zákusků k výrobě.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    prepDessertsRows.innerHTML = sortedList.map((item, idx) => {
+      const breakdownText = item.breakdown.map(b => 
+        `<span class="inline-block bg-stone-50 border border-stone-200 px-1.5 py-0.5 rounded text-[10px] mr-1 mb-1">
+          <strong>${getDayNameCzech(b.pickupDate)} ${formatCzechDate(b.pickupDate)}:</strong> ${b.qty} ks (#${b.orderId} ${escapeHtml(b.customer)})
+        </span>`
+      ).join('');
+
+      return `
+        <tr class="hover:bg-[#FAF7F2] transition">
+          <td class="py-2.5 px-3 text-center font-bold text-stone-400">${idx + 1}</td>
+          <td class="py-2.5 px-3 font-bold text-[#3B2820] text-sm">${escapeHtml(item.name)}</td>
+          <td class="py-2.5 px-3 text-stone-500">${escapeHtml(item.category)}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-base text-[#AA821C]">${item.totalQty} ks</td>
+          <td class="py-2.5 px-3">${breakdownText}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ------------------------------------------------------------------------
+  // 9. STRANA 4: ROZPIS DORTŮ (CHRONOLOGICKÝ PŘEHLED PRO CUKRÁŘKY - A4 TISK)
+  // ------------------------------------------------------------------------
+  prepCakesWeekSelect.addEventListener('change', renderCakesPreparationSheet);
+  printCakesBtn.addEventListener('click', () => {
+    updatePrintTimestamps();
+    window.print();
+  });
+
+  function renderCakesPreparationSheet() {
+    // Filtrovat pouze platné objednávky s dortem
+    const validCakeOrders = allOrders.filter(o => o.status === 'platné' && o.cake);
+
+    // Seřadit CHRONOLOGICKY podle data a času vyzvednutí (dle zadání)
+    validCakeOrders.sort((a, b) => {
+      const dtA = `${a.pickup_date || '9999'}T${a.pickup_time || '10:00'}`;
+      const dtB = `${b.pickup_date || '9999'}T${b.pickup_time || '10:00'}`;
+      return dtA.localeCompare(dtB);
+    });
+
+    prepTotalCakes.textContent = validCakeOrders.length;
+
+    if (validCakeOrders.length === 0) {
+      prepCakesRows.innerHTML = `
+        <tr>
+          <td colspan="6" class="py-8 text-center text-stone-400 italic">
+            Žádné platné dorty k výrobě pro zvolené období.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    prepCakesRows.innerHTML = validCakeOrders.map(o => {
+      const c = o.cake;
+      const cakeSummary = `
+        <strong>${escapeHtml(c.portions)} porcí, ${escapeHtml(c.shape)}</strong><br>
+        <span class="text-stone-500">Korpus:</span> ${escapeHtml(c.sponge)}<br>
+        <span class="text-stone-500">Náplň:</span> ${escapeHtml(c.filling)}<br>
+        <span class="text-stone-500">Potah:</span> ${escapeHtml(c.finish)}
+        ${c.diet && c.diet !== 'Standard' ? `<br><span class="text-emerald-700 font-bold">Dieta: ${escapeHtml(c.diet)}</span>` : ''}
+      `;
+
+      const decorSummary = `
+        ${c.edible_paper === 'ano' ? `<strong class="text-blue-700">Jedlý papír:</strong> ${escapeHtml(c.edible_paper_style)}<br>` : ''}
+        ${c.decor ? `<span>Dekorace:</span> ${escapeHtml(c.decor)}` : 'Klasická dekorace'}
+      `;
+
+      return `
+        <tr class="hover:bg-[#FAF7F2] transition align-top">
+          <td class="py-3 px-3 whitespace-nowrap">
+            <strong class="text-[#3B2820] text-sm">${getDayNameCzech(o.pickup_date)} ${formatCzechDate(o.pickup_date)}</strong><br>
+            <span class="text-stone-500 font-bold">${escapeHtml(o.pickup_time || '10:00')} hod.</span><br>
+            <span class="text-[10px] text-stone-400">Zakázka #${o.id}</span>
+          </td>
+          <td class="py-3 px-3">
+            <strong class="text-sm text-[#3B2820]">${escapeHtml(o.customer)}</strong><br>
+            <span class="text-stone-600 font-medium">${escapeHtml(o.phone)}</span>
+          </td>
+          <td class="py-3 px-3 text-[11px] leading-relaxed">
+            ${cakeSummary}
+          </td>
+          <td class="py-3 px-3 text-[11px] leading-relaxed">
+            ${decorSummary}
+          </td>
+          <td class="py-3 px-3 text-[11px] italic text-stone-700 max-w-xs">
+            ${c.description ? `„${escapeHtml(c.description)}“` : '<span class="text-stone-400">Bez zvláštního nápisu</span>'}
+            ${c.image_url ? `<div class="mt-1"><a href="${c.image_url}" target="_blank" class="text-xs text-[#AA821C] font-bold underline">📷 Foto předlohy</a></div>` : ''}
+          </td>
+          <td class="py-3 px-3 text-right font-bold text-sm text-[#AA821C] whitespace-nowrap">
+            ${o.price ? `${o.price} Kč` : '—'}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function updatePrintTimestamps() {
+    const now = new Date();
+    const d = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const y = now.getFullYear();
+    const h = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const str = `${d}.${m}.${y} ${h}:${min}`;
+
+    document.querySelectorAll('.print-timestamp').forEach(el => {
+      el.textContent = str;
+    });
+  }
+
+  // ------------------------------------------------------------------------
+  // 10. STRANA 5: STÁLÝ KATALOG 114 ZÁKUSKŮ
+  // ------------------------------------------------------------------------
+  let selectedCatalogCategory = 'all';
+
+  async function loadProducts() {
+    try {
+      const res = await fetch('products_data.json');
+      allProducts = await res.json();
+      renderCatalogCategoryTags();
+      renderCatalog();
+    } catch (e) {
+      console.warn('Nelze načíst products_data.json:', e);
+    }
+  }
+
+  function renderCatalogCategoryTags() {
+    const categories = ['Všechny', ...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    catTags.innerHTML = categories.map(cat => `
+      <button class="px-3 py-1.5 rounded-xl border border-stone-200 text-xs font-semibold ${cat === 'Všechny' ? 'bg-[#3B2820] text-white border-[#3B2820]' : 'bg-[#FAF7F2] text-stone-700 hover:bg-stone-200'} transition cat-tag-btn" data-category="${cat}">
+        ${escapeHtml(cat)}
+      </button>
+    `).join('');
+
+    catTags.querySelectorAll('.cat-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        catTags.querySelectorAll('.cat-tag-btn').forEach(b => {
+          b.className = 'px-3 py-1.5 rounded-xl border border-stone-200 text-xs font-semibold bg-[#FAF7F2] text-stone-700 hover:bg-stone-200 transition cat-tag-btn';
+        });
+        btn.className = 'px-3 py-1.5 rounded-xl border border-[#3B2820] text-xs font-semibold bg-[#3B2820] text-white transition cat-tag-btn';
+        selectedCatalogCategory = btn.dataset.category;
+        renderCatalog();
+      });
+    });
+  }
+
+  function renderCatalog() {
+    const query = catSearch.value.trim().toLowerCase();
+    const filtered = allProducts.filter(p => {
+      if (selectedCatalogCategory !== 'Všechny' && selectedCatalogCategory !== 'all' && p.category !== selectedCatalogCategory) {
+        return false;
+      }
+      if (query && !p.title.toLowerCase().includes(query) && !(p.description || '').toLowerCase().includes(query)) {
+        return false;
+      }
+      return true;
+    });
+
+    catCountBadge.textContent = `Zobrazeno ${filtered.length} z ${allProducts.length} zákusků`;
+
+    if (filtered.length === 0) {
+      catalogGrid.innerHTML = `
+        <div class="col-span-full py-12 text-center bg-white rounded-3xl border border-stone-200">
+          <p class="font-bold text-stone-700">Nenalezen žádný zákusek.</p>
+        </div>
+      `;
+      return;
+    }
+
+    catalogGrid.innerHTML = filtered.map(p => `
+      <div class="pastry-card rounded-2xl overflow-hidden shadow-xs flex flex-col justify-between">
+        <div>
+          <div class="h-44 w-full overflow-hidden bg-stone-100 relative">
+            <img src="${p.localImage || 'images/logo-madel.png'}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover" onerror="this.src='images/logo-madel.png'">
+            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-stone-700 shadow-xs">
+              ${escapeHtml(p.category || 'Zákusek')}
+            </span>
+          </div>
+          <div class="p-4">
+            <h4 class="font-serif font-bold text-base text-[#3B2820] mb-1">${escapeHtml(p.title)}</h4>
+            <p class="text-xs text-stone-500 line-clamp-2 mb-3">${escapeHtml(p.description || 'Poctivý řemeslný zákusek z prémiových surovin.')}</p>
+            ${p.allergens && p.allergens.length ? `
+              <div class="text-[10px] text-stone-400">
+                Alergeny: ${p.allergens.map(a => a.split(' ')[0]).join(', ')}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        <div class="p-4 pt-0">
+          <button type="button" class="w-full py-2 px-3 rounded-xl btn-primary text-xs font-bold flex items-center justify-center gap-1.5 add-to-form-btn" data-id="${p.id}" data-title="${escapeHtml(p.title)}">
+            <span>+</span> Přidat do objednávky
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    // Rychlé tlačítko pro přidání z katalogu přímo do objednávkového dotazníku
+    catalogGrid.querySelectorAll('.add-to-form-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.id, 10);
+        const title = btn.dataset.title;
+        
+        // Povolit sekci zákusků
+        const combiRadio = document.querySelector('input[name="product_type"][value="kombinace"]');
+        const zakusekRadio = document.querySelector('input[name="product_type"][value="zakusek"]');
+        const currentType = document.querySelector('input[name="product_type"]:checked').value;
+        
+        if (currentType === 'dort') {
+          combiRadio.checked = true;
+          sectionCakeBox.classList.remove('hidden');
+          sectionDessertsBox.classList.remove('hidden');
+        } else {
+          sectionDessertsBox.classList.remove('hidden');
+        }
+
+        addDessertItemToOrder(title, 10, id);
+        showPage('page-1');
+        sectionDessertsBox.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  }
+
+  catSearch.addEventListener('input', renderCatalog);
+
+  // ------------------------------------------------------------------------
+  // 11. INICIALIZACE APLIKACE PŘI NAČTENÍ
+  // ------------------------------------------------------------------------
+  async function init() {
+    updateAuthUI();
+    await loadProducts();
+    await loadCalendarCapacities();
+    await loadOrders();
+
+    // Výchozí datum na příští sobotu (klasický svatební / oslavový termín v listopadu 2026)
+    selectedDateInput.value = '2026-11-14';
+    selectedPickupDate = '2026-11-14';
+    renderCalendar();
+
+    console.log('🍰 Cukrářství Madel - Systém připraven.');
+  }
+
+  // Spuštění
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
 })();
