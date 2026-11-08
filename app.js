@@ -38,6 +38,8 @@
   // ------------------------------------------------------------------------
   // Navigace & Strany
   const navTabs = document.querySelectorAll('.sys-nav-tab');
+  const staffOnlyTabs = document.querySelectorAll('.staff-only-tab');
+  const brandLogoBtn = document.getElementById('brand-logo-btn');
   const sysPages = document.querySelectorAll('.sys-page');
   const tabPendingBadge = document.getElementById('tab-pending-badge');
   const authToggleBtn = document.getElementById('auth-toggle-btn');
@@ -47,6 +49,7 @@
   const toastIcon = document.getElementById('toast-icon');
 
   // Strana 1: Objednávkový dotazník
+  const modeSwitcherContainer = document.getElementById('mode-switcher-container');
   const modeCustomerBtn = document.getElementById('mode-customer-btn');
   const modeClerkBtn = document.getElementById('mode-clerk-btn');
   const clerkModeBanner = document.getElementById('clerk-mode-banner');
@@ -213,6 +216,16 @@
       currentUserNameEl.textContent = 'Zákazník z webu';
       currentUserNameEl.className = 'font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20';
       authToggleBtn.textContent = 'Přihlásit personál';
+
+      // Zákazník vidí pouze 1 (Dotazník) a Katalog (Mainpage) dle zadání:
+      staffOnlyTabs.forEach(tab => tab.classList.add('hidden'));
+      if (modeSwitcherContainer) modeSwitcherContainer.classList.add('hidden');
+
+      // Pokud byl uživatel na interní straně, přesměrovat na katalog
+      const activeTab = document.querySelector('.sys-nav-tab.active');
+      if (activeTab && ['page-2', 'page-3', 'page-4'].includes(activeTab.dataset.page)) {
+        showPage('page-catalog');
+      }
     } else {
       let roleLabel = 'Prodavačka';
       let badgeClass = 'bg-amber-600/30 border-amber-400 text-amber-200';
@@ -226,6 +239,10 @@
       currentUserNameEl.textContent = `${currentUser.name} (${roleLabel})`;
       currentUserNameEl.className = `font-bold px-2.5 py-0.5 rounded-full border ${badgeClass}`;
       authToggleBtn.textContent = 'Odhlásit se';
+
+      // Přihlášený personál vidí všechny interní strany (Databáze, Rozpis zákusků, Rozpis dortů)
+      staffOnlyTabs.forEach(tab => tab.classList.remove('hidden'));
+      if (modeSwitcherContainer) modeSwitcherContainer.classList.remove('hidden');
     }
 
     // Nastavení výchozího režimu dotazníku dle role
@@ -416,6 +433,12 @@
   });
   if (dbNewOrderGoto) {
     dbNewOrderGoto.addEventListener('click', () => showPage('page-1'));
+  }
+  if (brandLogoBtn) {
+    brandLogoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('page-catalog');
+    });
   }
 
   // ------------------------------------------------------------------------
@@ -1690,12 +1713,15 @@
     await loadCalendarCapacities();
     await loadOrders();
 
+    // Hlavní stránka (Mainpage) je Katalog zákusků dle zadání
+    showPage('page-catalog');
+
     // Výchozí datum na příští sobotu (klasický svatební / oslavový termín v listopadu 2026)
     selectedDateInput.value = '2026-11-14';
     selectedPickupDate = '2026-11-14';
     renderCalendar();
 
-    console.log('🍰 Cukrářství Madel - Systém připraven.');
+    console.log('🍰 Cukrářství Madel - Hlavní strana (katalog) a objednávkový systém připraveny.');
   }
 
   // Spuštění

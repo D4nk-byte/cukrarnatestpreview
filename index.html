@@ -59,8 +59,8 @@
   <header class="sticky top-0 z-40 glass-nav shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
       
-      <!-- Brand Logo -->
-      <a href="#" class="flex items-center gap-3 group">
+      <!-- Brand Logo (Kliknutím se přejde na hlavní stranu - katalog) -->
+      <a href="#" id="brand-logo-btn" class="flex items-center gap-3 group">
         <img src="images/logo-madel.png" alt="Cukrářství Madel" class="h-11 w-auto object-contain transition group-hover:scale-105 duration-200">
         <div>
           <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#3B2820]">
@@ -72,28 +72,29 @@
         </div>
       </a>
 
-      <!-- 4 Hlavní Strany Systému (Tabs) -->
-      <nav class="flex items-center gap-1.5 overflow-x-auto max-w-full p-1 bg-[#FAF7F2] border border-[#E8DFD5] rounded-2xl shadow-inner">
-        <button class="sys-nav-tab active" data-page="page-1">
-          <span>📝</span>
-          <span>1. Objednávkový dotazník</span>
+      <!-- Systémová navigace: Zákazník vidí pouze Katalog (mainpage) a Vlastní objednávku (1) -->
+      <nav id="main-nav-tabs" class="flex items-center gap-1.5 overflow-x-auto max-w-full p-1 bg-[#FAF7F2] border border-[#E8DFD5] rounded-2xl shadow-inner">
+        <button class="sys-nav-tab active" data-page="page-catalog">
+          <span>✨</span>
+          <span>Katalog zákusků</span>
         </button>
-        <button class="sys-nav-tab" data-page="page-2">
+        <button class="sys-nav-tab" data-page="page-1">
+          <span>📝</span>
+          <span>Vlastní objednávka</span>
+        </button>
+        <!-- Sekce 2, 3, 4 vidí POUZE přihlášený personál -->
+        <button class="sys-nav-tab staff-only-tab hidden" data-page="page-2">
           <span>📂</span>
           <span>2. Databáze objednávek</span>
           <span id="tab-pending-badge" class="ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-purple-600 text-white font-bold hidden">0</span>
         </button>
-        <button class="sys-nav-tab" data-page="page-3">
+        <button class="sys-nav-tab staff-only-tab hidden" data-page="page-3">
           <span>🥐</span>
           <span>3. Rozpis zákusků</span>
         </button>
-        <button class="sys-nav-tab" data-page="page-4">
+        <button class="sys-nav-tab staff-only-tab hidden" data-page="page-4">
           <span>🎂</span>
           <span>4. Rozpis dortů</span>
-        </button>
-        <button class="sys-nav-tab" data-page="page-catalog">
-          <span>✨</span>
-          <span>Katalog 114 zákusků</span>
         </button>
       </nav>
 
@@ -109,24 +110,24 @@
   <!-- ========================================================
        PAGE 1: OBJEDNÁVKOVÝ DOTAZNÍK (Zákazník & Prodavačka)
        ======================================================== -->
-  <section id="page-1" class="sys-page max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
+  <section id="page-1" class="sys-page max-w-5xl mx-auto px-4 py-8 flex-grow w-full hidden">
     
     <!-- Header with Customer vs. Staff Switcher -->
     <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFD5] shadow-sm mb-8">
       
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-stone-100">
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C]">1. Strana systému</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#AA821C]">Objednávkový formulář</span>
           <h1 class="font-serif text-3xl font-bold text-[#3B2820] mt-1" id="form-main-heading">
-            Objednávkový dotazník
+            Vlastní objednávka dortu a zákusků
           </h1>
           <p class="text-xs sm:text-sm text-stone-500 mt-1" id="form-sub-heading">
-            Vyplňte prosím údaje pro objednání dortu nebo zákusků.
+            Vyplňte prosím údaje pro nezávazné objednání dortu nebo zákusků.
           </p>
         </div>
 
-        <!-- Mode switcher: Verze pro zákazníka vs. Verze pro prodavačky -->
-        <div class="bg-[#FAF7F2] p-1.5 rounded-2xl border border-stone-200 flex items-center gap-1 shrink-0 text-xs font-bold">
+        <!-- Mode switcher: Verze pro zákazníka vs. Verze pro prodavačky (Zobrazuje se pouze pro přihlášený personál) -->
+        <div id="mode-switcher-container" class="bg-[#FAF7F2] p-1.5 rounded-2xl border border-stone-200 flex items-center gap-1 shrink-0 text-xs font-bold hidden">
           <button id="mode-customer-btn" class="px-3.5 py-2 rounded-xl bg-[#3B2820] text-white shadow-xs transition">
             👤 Verze pro zákazníka
           </button>
@@ -775,20 +776,50 @@
   </section>
 
   <!-- ========================================================
-       PAGE 5: STÁLÝ KATALOG (114 ZÁKUSKŮ)
+       PAGE MAIN / KATALOG: HLAVNÍ STRANA (KATALOG 114 ZÁKUSKŮ)
        ======================================================== -->
-  <section id="page-catalog" class="sys-page max-w-7xl mx-auto px-4 py-8 flex-grow w-full hidden">
+  <section id="page-catalog" class="sys-page max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+    
+    <!-- Hero Banner hlavní strany -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#3B2820] via-[#5A3E31] to-[#2B1B14] text-white p-6 sm:p-10 mb-8 shadow-xl border border-[#C59B27]/30">
+      <div class="relative z-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 bg-[#C59B27]/20 border border-[#C59B27]/40 text-[#F7EEDB] text-xs font-bold px-3 py-1 rounded-full mb-3 backdrop-blur-xs">
+          <span>🍰</span>
+          <span>Cukrářství Madel • Dolní Benešov - Zábřeh</span>
+        </div>
+        <h1 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white mb-3">
+          Tradiční řemeslné cukrářství
+        </h1>
+        <p class="text-xs sm:text-sm text-stone-300 leading-relaxed mb-6 font-normal">
+          Vyberte si ze stálé nabídky 114 druhů čerstvých řemeslných zákusků nebo si vytvořte vlastní zakázkový dort přes náš online objednávkový formulář.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <button class="goto-order-btn px-6 py-3 rounded-2xl btn-primary text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2">
+            <span>📝</span>
+            <span>Vlastní objednávka dortu a zákusků →</span>
+          </button>
+          <a href="#cat-search" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold border border-white/20 backdrop-blur-xs transition flex items-center gap-2">
+            <span>✨</span>
+            <span>Prohlédnout katalog</span>
+          </a>
+        </div>
+      </div>
+      <div class="absolute -right-6 -bottom-8 opacity-10 pointer-events-none text-9xl select-none font-serif">
+        🎂
+      </div>
+    </div>
+
+    <!-- Filter & search bar -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-3">
       <div>
         <span class="text-xs font-semibold uppercase tracking-wider text-[#AA821C]">Stálý sortiment</span>
-        <h2 class="font-serif text-3xl font-bold text-[#3B2820]">Katalog 114 stálých zákusků</h2>
+        <h2 class="font-serif text-3xl font-bold text-[#3B2820]">Katalog stálých zákusků</h2>
       </div>
-      <button class="goto-order-btn px-4 py-2 rounded-full btn-primary text-xs font-bold shadow-xs">
-        📝 Otevřít objednávkový dotazník →
+      <button class="goto-order-btn px-4 py-2 rounded-full btn-primary text-xs font-bold shadow-xs flex items-center gap-1.5">
+        <span>📝</span> Přejít na objednávku →
       </button>
     </div>
 
-    <!-- Filter bar -->
     <div class="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8DFD5] shadow-sm mb-8">
       <div class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-4">
         <input type="text" id="cat-search" placeholder="Hledat zákusek (větrník, harlekýn, sacher...)" class="form-input-madel max-w-md text-xs">
