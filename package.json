@@ -1,0 +1,17 @@
+{
+  "name": "cukrarstvi-madel-web",
+  "version": "1.0.0",
+  "description": "Moderní webová aplikace Cukrářství Madel - Zákusky pro localhost",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "cukrarstvi",
+    "madel",
+    "zakusky",
+    "localhost"
+  ],
+  "author": "Antigravity",
+  "license": "ISC"
+}

@@ -1,0 +1,2055 @@
+[
+  {
+    "id": 1,
+    "title": "Mrkvový dortík",
+    "slug": "mrkvov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/1.-Mrkvovy-dortik-qnqcck951kinpgyr24ipqg1z4nf3t922esy6uukofs.jpg",
+    "localImage": "images/001-mrkvov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 2,
+    "title": "Harlekýn",
+    "slug": "harlek-n",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/2.-Harlekyn-qnqcdoo77g1zkpc1i3zo7nuso7vw08iiwd02hqwr08.jpg",
+    "localImage": "images/002-harlek-n.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 3,
+    "title": "Raffaello",
+    "slug": "raffaello",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/3.-Raffaello-qnqcdv92jaaztz2hfou27470twzgi48n99kguomzso.jpg",
+    "localImage": "images/003-raffaello.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 4,
+    "title": "Sacher",
+    "slug": "sacher",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/4.-Sacher-qnqcdzy9hghfg0vno8v71l0bsucaklraxwtw92g0xk.jpg",
+    "localImage": "images/004-sacher.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 5,
+    "title": "Opilý dort",
+    "slug": "opil-dort",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S likérem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/5.-Opily-dort-qnqce7gz04rq0wkqgc47lj40jxb8a6l5my1s3a4vjs.jpg",
+    "localImage": "images/005-opil-dort.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 6,
+    "title": "Čoko-višeň",
+    "slug": "oko-vi-e",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/6.-Coko-visen-qnqcee1ubz0qa6b6dwylkzg8pmess2b9zum6g7v4c8.jpg",
+    "localImage": "images/006-oko-vi-e.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 7,
+    "title": "Míša dort",
+    "slug": "m-a-dort",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/7.-Misa-dort-qnqcl4k7b88phkix1tscga95z17hxz20x6xg9lvjqw.jpg",
+    "localImage": "images/007-m-a-dort.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 8,
+    "title": "Schwarzwaldský dort",
+    "slug": "schwarzwa-ldsk-dort",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/8.-Schwarzwaldsky-dort-qnqcla78g8gff8aq4w83v8txjcfp85oexyud59n6pk.jpg",
+    "localImage": "images/008-schwarzwa-ldsk-dort.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 9,
+    "title": "Perníkový s mascarpone",
+    "slug": "pern-kov-s-mascarpone",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/9.-Pernikovy-s-mascarpone-qnqclfu9l8o5cw2j7ynva7ep3nnwicasyqra0xeto8.jpg",
+    "localImage": "images/009-pern-kov-s-mascarpone.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 10,
+    "title": "Cheesecake",
+    "slug": "cheesecake",
+    "category": "Cheesecakes",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Jemný smetanovo-tvarohový krém na křupavém korpusu s lahodnou polevou a vyváženou chutí.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/10.-Cheesecake-qnqclkjgjeukyxvpgip04o802l0qkttgne0pfb7ut4.jpg",
+    "localImage": "images/010-cheesecake.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 11,
+    "title": "Ovocný cheesecake",
+    "slug": "ovocn-cheesecake",
+    "category": "Cheesecakes",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Jemný smetanovo-tvarohový krém na křupavém korpusu s lahodnou polevou a vyváženou chutí.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/11.-Ovocny-cheesecake-qnqclq6hof2awlnijl4rjmsrmw8xv0fuo5xmayzhrs.jpg",
+    "localImage": "images/011-ovocn-cheesecake.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 12,
+    "title": "Lotus cheesecake",
+    "slug": "lotus-cheesecake",
+    "category": "Cheesecakes",
+    "tags": [
+      "Bestseller",
+      "Karamel",
+      "Oblíbené"
+    ],
+    "description": "Jemný smetanovo-tvarohový krém na křupavém korpusu s lahodnou polevou a vyváženou chutí.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/12.-Lotus-cheesecake-qnqcluvoml8qingos55we3m2ltlrxhyict71pcsiwo.jpg",
+    "localImage": "images/012-lotus-cheesecake.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 13,
+    "title": "Oreový cheesecake",
+    "slug": "oreov-cheesecake",
+    "category": "Cheesecakes",
+    "tags": [],
+    "description": "Jemný smetanovo-tvarohový krém na křupavém korpusu s lahodnou polevou a vyváženou chutí.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/13.-Oreovy-cheesecake-qnqcm0iprlgggb8hv7lnt26u64tz7okwdl3yl0k5vc.jpg",
+    "localImage": "images/013-oreov-cheesecake.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 14,
+    "title": "Likérový dortík",
+    "slug": "lik-rov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S likérem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/14.-Likerovy-dortik-qnqcm65qwlo6dz0aya1f80rlqg26hv7aed0vgobsu0.jpg",
+    "localImage": "images/014-lik-rov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 15,
+    "title": "Toffi",
+    "slug": "toffi",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Karamel"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/15.-Toffi-qnqcmemam3zrago0kvp2cgmr2wwhf54vfiw8s5z9a0.jpg",
+    "localImage": "images/015-toffi.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 16,
+    "title": "Crispy",
+    "slug": "crispy",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/16.-Crispy-qnqcmn2ubmbc6ybq7hcpgwhwfdqscf2ggorm3nmpq0.jpg",
+    "localImage": "images/016-crispy.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 17,
+    "title": "Pistáciový dortík",
+    "slug": "pist-ciov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Oříškové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/17.-Pistaciovy-dortik-qnqcmtnpngkcg8265273gcu4l2ucuasktlc0glcyig.jpg",
+    "localImage": "images/017-pist-ciov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 18,
+    "title": "Arašídový dortík",
+    "slug": "ara-dov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Oříškové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/18.-Arasidovy-dortik-qnqcn249cyvxcppvrnuqksp9xjonrkq5ur7ds30eyg.jpg",
+    "localImage": "images/018-ara-dov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)",
+      "5 (Jádra podzemnice olejné / arašídy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 19,
+    "title": "Makový dortík",
+    "slug": "makov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/19.-Makovy-dortik-qnqd05z8nstv8yoh8btgchmo4z2x3mrezmp4ozks6w.jpg",
+    "localImage": "images/019-makov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 20,
+    "title": "Red velvet",
+    "slug": "red-velvet",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/20.-Red-Velvet-qnqd0aoflz0av0hngvul6yfz3wfr64a2o9yk3ddtbs.jpg",
+    "localImage": "images/020-red-velvet.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 21,
+    "title": "Mecháček",
+    "slug": "mech-ek",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/21.-Mechacek-qnqd0gbgqz80so9gjyaclx0qo7nygawgp1vgz15gag.jpg",
+    "localImage": "images/021-mech-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 22,
+    "title": "Piňa colada",
+    "slug": "pi-a-colada",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/22.-Pina-Colada-qnqd0mwc2th11xzwhj4qldcytwriy6ml1yfvbyvp2w.jpg",
+    "localImage": "images/022-pi-a-colada.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 23,
+    "title": "Pečené jablko",
+    "slug": "pe-en-jablko",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/23.-Pecene-jablko-qnqd0sjd7toqzlrpklki0bxqe7zq8d8z2qcs7mnc1k.jpg",
+    "localImage": "images/023-pe-en-jablko.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 24,
+    "title": "Tygřík",
+    "slug": "tyg-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Tygrik-qp5p0un9cxl1721wfpv5a7h89vnr4x1361s120tz20.jpg",
+    "localImage": "images/024-tyg-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 25,
+    "title": "Pařížský dortík",
+    "slug": "pa-sk-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/24.-Parizsky-dortik-qnqd0z48jnxr8vi5i6evzs9yjx3aq8z3fmx6kkdku0.jpg",
+    "localImage": "images/025-pa-sk-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 26,
+    "title": "Bounty řez",
+    "slug": "bounty-ez",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/25.-Bounty-rez-qnqd13tfhu46uxbbqqg0u939iug4sqhr4a6lyy6lyw.jpg",
+    "localImage": "images/026-bounty-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 27,
+    "title": "Dortový řez",
+    "slug": "dortov-ez",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/26.-Dortovy-rez-qnqd19ggmubwsl34tsvs97o135oc2x45523iuly8xk.jpg",
+    "localImage": "images/027-dortov-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 28,
+    "title": "Kubánský dort",
+    "slug": "kub-nsk-dort",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Kubansky-dort-qp5p0p087xdb9ea3cnfdv8wgpkfjuqep59v46d2c3c.jpg",
+    "localImage": "images/028-kub-nsk-dort.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 29,
+    "title": "Karamelový větrník",
+    "slug": "karamelov-v-trn-k",
+    "category": "Větrníky & Odpalované",
+    "tags": [
+      "Bestseller",
+      "Karamel",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "Tradiční klasika"
+    ],
+    "description": "Tradiční nadýchané odpalované těsto plněné lahodným žloutkovým krémem a karamelovou šlehačkou s lesklou polevou.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/27.-Karamelovy-vetrnik-qnqd1e5nl0icemwb2cwx3ohc23165emstpcy8zra2g.jpg",
+    "localImage": "images/029-karamelov-v-trn-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 30,
+    "title": "Větrník maxi king",
+    "slug": "v-trn-k-maxi-king",
+    "category": "Větrníky & Odpalované",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "Tradiční klasika"
+    ],
+    "description": "Tradiční nadýchané odpalované těsto plněné lahodným žloutkovým krémem a karamelovou šlehačkou s lesklou polevou.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/29.-Vetrnik-maxi-king-qnqd1qdk1uz2lkek3072i3ebs3cxxgzb7du9hl95tk.jpg",
+    "localImage": "images/030-v-trn-k-maxi-king.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 31,
+    "title": "Lotus větrníček",
+    "slug": "lotus-v-trn-ek",
+    "category": "Větrníky & Odpalované",
+    "tags": [
+      "Karamel"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/28.-Lotus-vetrnicek-qnqd1jsoq0q2cao45fcoin23me9dfl96uh9v4nix14.jpg",
+    "localImage": "images/031-lotus-v-trn-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 32,
+    "title": "Věneček",
+    "slug": "v-ne-ek",
+    "category": "Větrníky & Odpalované",
+    "tags": [
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/30.-Venecek-qnqd1yu3rdani229plupmj9h4k78uqww8jpmt2wm9k.jpg",
+    "localImage": "images/032-v-ne-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 33,
+    "title": "Věneček se šlehačkou",
+    "slug": "v-ne-ek-se-leha-kou",
+    "category": "Větrníky & Odpalované",
+    "tags": [
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/31.-Venecek-se-slehackou-qnqd25ez37jnrbspn6p3lzlpa9atcmn0lga160mv20.jpg",
+    "localImage": "images/033-v-ne-ek-se-leha-kou.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 34,
+    "title": "Malinový banánek",
+    "slug": "malinov-ban-nek",
+    "category": "Větrníky & Odpalované",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/32.-Malinovy-bananek-qnqd2hmvk20dy9ayntz90eip09ml4oziz4rcem4qt4.jpg",
+    "localImage": "images/034-malinov-ban-nek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 35,
+    "title": "Borůvková slza",
+    "slug": "bor-vkov-slza",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/33.-Boruvkova-slza-qnqd2n9wp283vx2rqwf0fd3gkkusevlwzwo9a9wdrs.jpg",
+    "localImage": "images/035-bor-vkov-slza.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 36,
+    "title": "Mango dortík",
+    "slug": "mango-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/34.-Mango-dortik-qnqd2swxu2fttkuktyurubo84w2zp28b0ol65xo0qg.jpg",
+    "localImage": "images/036-mango-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 37,
+    "title": "Jahodový dortík",
+    "slug": "jahodov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/35.-Jahodovy-dortik-qnqd347042v9owe703qao8tr9ije9fh328ezx97ans.jpg",
+    "localImage": "images/037-jahodov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 38,
+    "title": "Hruškový dortík",
+    "slug": "hru-kov-dort-k",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/36.-Hruskovy-dortik-qnqd3arvfx49y64mxokonp5zf7myrb77f4zea6xjg8.jpg",
+    "localImage": "images/038-hru-kov-dort-k.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 39,
+    "title": "Ovocná jogurtová kostka",
+    "slug": "ovocn-jogurtov-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/37.-Ovocna-jogurtova-kostka-qnqd3hcqrrda7fv2v9f2n5i7kwqj96xbs1jsn4ns8o.jpg",
+    "localImage": "images/039-ovocn-jogurtov-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 40,
+    "title": "Čoko-malina",
+    "slug": "oko-malina",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/38.-Coko-malina-qnqd3mzrwrl053mvybuu242z57yqjdjpstgpisff7c.jpg",
+    "localImage": "images/040-oko-malina.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 41,
+    "title": "Jahodová jogurtová kostka",
+    "slug": "jahodov-jogurtov-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/39.-Jahodova-jogurtova-kostka-qnqd3tkn8lu0eddbvwp81kf7ax2b199u5q13vq5nzs.jpg",
+    "localImage": "images/041-jahodov-jogurtov-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 42,
+    "title": "Mandarinková kostka",
+    "slug": "mandarinkov-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/40.-Mandarinkova-kostka-qnqd4216y45lav11iicv60acndwlyj7f6vwh77t4fs.jpg",
+    "localImage": "images/042-mandarinkov-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 43,
+    "title": "Scarlett",
+    "slug": "scarlett",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/41.-Scarlett-qnqd4g4rsmow50gk86g9peq9k5z45zre8tored87ug.jpg",
+    "localImage": "images/043-scarlett.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 44,
+    "title": "Višňová kostka",
+    "slug": "vi-ov-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/42.-Visnova-kostka-qnqd4olbi50h1i49us3wtulewmtf39oz9zk4puvoag.jpg",
+    "localImage": "images/044-vi-ov-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 45,
+    "title": "Duo jahoda s bílou čokoládou",
+    "slug": "duo-jahoda-s-b-lou-okol-dou",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/43.-Duo-jahoda-s-bilou-cokoladou-qnqd4yxjlbeml7p96ekt39zhfvegfxu0zeqgzwgce0.jpg",
+    "localImage": "images/045-duo-jahoda-s-b-lou-okol-dou.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 46,
+    "title": "Panna cotta",
+    "slug": "panna-cotta",
+    "category": "Pohárky & Nepečené",
+    "tags": [
+      "Bestseller",
+      "Oblíbené"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/44.-Panna-Cotta-qnqd5c3a8zwn3r651k9l26nxr9llfpa9p7v9prwtyw.jpg",
+    "localImage": "images/046-panna-cotta.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 47,
+    "title": "Čoko-višeň pohárek",
+    "slug": "oko-vi-e-poh-rek",
+    "category": "Pohárky & Nepečené",
+    "tags": [
+      "S ovocem",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/45.-Coko-visen-poharek-qnqd74y5ckdfcujxiuauc8aqqupx6tfqy4vrtv8o1k.jpg",
+    "localImage": "images/047-oko-vi-e-poh-rek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 48,
+    "title": "Tiramisu pohárek",
+    "slug": "tiramisu-poh-rek",
+    "category": "Pohárky & Nepečené",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/46.-Tiramisu-poharek-qnqd7al6hkl5aibqlwqlr6vib5y4h024ywsopj0b08.jpg",
+    "localImage": "images/048-tiramisu-poh-rek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 49,
+    "title": "Lotus pohárek",
+    "slug": "lotus-poh-rek",
+    "category": "Pohárky & Nepečené",
+    "tags": [
+      "Karamel"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/47.-Lotus-poharek-qnqd7mt2yf1vhftzmk0r5lsi169w92encl9zy4i6rc.jpg",
+    "localImage": "images/049-lotus-poh-rek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 50,
+    "title": "Krtek v pohárku",
+    "slug": "krtek-v-poh-rku",
+    "category": "Pohárky & Nepečené",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/48.-Krtek-v-poharku-qnqd7sg43f9lf3lspmgikkd9lhi3j911dd6wts9tq0.jpg",
+    "localImage": "images/050-krtek-v-poh-rku.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 51,
+    "title": "Svěží roláda",
+    "slug": "sv-rol-da",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/49.-Svezi-rolada-qnqd7y358fhbcrdlsow9ziy15sqatfnfe53tpg1goo.jpg",
+    "localImage": "images/051-sv-rol-da.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 52,
+    "title": "Roláda de luxe",
+    "slug": "rol-da-de-luxe",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/50.-Rolada-de-Luxe-qnqd84o0k9qbm141q9qnyza9bhtvbbdjr1o82drph4.jpg",
+    "localImage": "images/052-rol-da-de-luxe.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 53,
+    "title": "Malinová roláda",
+    "slug": "malinov-rol-da",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/51.-Malinova-rolada-qnqd89d7ifwr82x7ytrstg3kaf6pdsw7foxngrkqm0.jpg",
+    "localImage": "images/053-malinov-rol-da.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 54,
+    "title": "Roláda bez mouky",
+    "slug": "rol-da-bez-mouky",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Bezlepkové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/52.-Rolada-bez-mouky-qnqd8e2egm36u4qe7dsxnwwv9cjjgaev4c72v5drqw.jpg",
+    "localImage": "images/054-rol-da-bez-mouky.jpg",
+    "allergens": [
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 55,
+    "title": "Kokosová roláda",
+    "slug": "kokosov-rol-da",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Oříškové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/53.-Kokosova-rolada-qnqd8miy64erqme3tzgkscs0ltdudkcg5i2g6n186w.jpg",
+    "localImage": "images/055-kokosov-rol-da.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 56,
+    "title": "Ořechová roláda",
+    "slug": "o-echov-rol-da",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Oříškové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/53.-Orechova-rolada-qnqd8s5zb4mhoa5wx1wc7bcs64m1nqyu69zd2asv5k.jpg",
+    "localImage": "images/056-o-echov-rol-da.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 57,
+    "title": "Amaretto",
+    "slug": "amaretto",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S likérem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/54.-Amaretto-qnqd8xt0g4u7lxxq04c3m9xjqfu8xxl871w9xyki48.jpg",
+    "localImage": "images/057-amaretto.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 58,
+    "title": "Broskvový tunel",
+    "slug": "broskvov-tunel",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Broskvovy-tunel-qp5p0o2e13c0xsbgi50rar5046k6n1ayt57mp33q9k.jpg",
+    "localImage": "images/058-broskvov-tunel.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 59,
+    "title": "Čoko-banán tunel",
+    "slug": "oko-ban-n-tunel",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/56.-Coko-banan-tunel-qnqd9p2bybviymu4ky4a4l1wym3w55lfystcuzg33s.jpg",
+    "localImage": "images/059-oko-ban-n-tunel.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 60,
+    "title": "Malina mascarpone řez",
+    "slug": "malina-mascarpone-ez",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/57.-Malina-mascarpone-rez-qnqd9vn7a64j7wkkiiyo41e54b7gn1bkbpdr7x6bw8.jpg",
+    "localImage": "images/060-malina-mascarpone-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 61,
+    "title": "Knoflíček",
+    "slug": "knofl-ek",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/58.-Knoflicek-qnqdpioizxjaebuq6sc73lb8y44bpqes545lonzid4.jpg",
+    "localImage": "images/061-knofl-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 62,
+    "title": "Punčový řez",
+    "slug": "pun-ov-ez",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/59.-Puncovy-rez-qnqdpobk4xr0bzmj9uryijw0ifcizx165w2ikbr5bs.jpg",
+    "localImage": "images/062-pun-ov-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 63,
+    "title": "Řez duha",
+    "slug": "ez-duha",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/60.-Rez-duha-qnqdptyl9xyq9neccx7pxigs2qkqa3nk6nzffzisag.jpg",
+    "localImage": "images/063-ez-duha.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 64,
+    "title": "Karamelové pokušení",
+    "slug": "karamelov-poku-en",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Karamel"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/61.-Karamelove-pokuseni-qnqdpzlmey6g7b65fznhch1jn1sxka9y7fwcbnaf94.jpg",
+    "localImage": "images/064-karamelov-poku-en.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 65,
+    "title": "Banánový řez",
+    "slug": "ban-nov-ez",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/62.-Bananovy-rez-qnqdq66hqsfggkwldkhvbxdrsqwi2602kcgqol0o1k.jpg",
+    "localImage": "images/065-ban-nov-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 66,
+    "title": "Eskymáček",
+    "slug": "eskym-ek",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/63.-Eskymacek-qnqdqbtivsn6e8oegmxmqvyjd24pccmgl4dnk8sb08.jpg",
+    "localImage": "images/066-eskym-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 67,
+    "title": "Nugátek",
+    "slug": "nug-tek",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/64.-Nugatek-qnqdqka2layraqc438l9vbtopiz09mk1ma90vqfrg8.jpg",
+    "localImage": "images/067-nug-tek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 68,
+    "title": "Florida",
+    "slug": "florida",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/65.-Florida-qnqdqquxx57rk02k0tfnus5wv82kria5z6tf8o608o.jpg",
+    "localImage": "images/068-florida.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 69,
+    "title": "Řez madel",
+    "slug": "ez-madel",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/66.-Rez-Madel-qnqdqwhz25fhhnud3vvf9qqofjas1owjzyqc4bxn7c.jpg",
+    "localImage": "images/069-ez-madel.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 70,
+    "title": "Citronový řez",
+    "slug": "citronov-ez",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/67.-Citronovy-rez-qnqdr32udzohqxkt1gpt972wl8ecjkmocvaqh9nvzs.jpg",
+    "localImage": "images/070-citronov-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 71,
+    "title": "Krtkův řez",
+    "slug": "krtk-v-ez",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/68.-Krtkuv-rez-qnqdr9npptxi07b8z1k78nf4qxhx1gcsprv4u7e4s8.jpg",
+    "localImage": "images/071-krtk-v-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 72,
+    "title": "Beze karamelová kostka",
+    "slug": "beze-karamelov-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Karamel"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/69.-Beze-karamelova-kostka-qnqds5m86758yy0tsfdilfcsy14eb5vo661n5m2qwo.jpg",
+    "localImage": "images/072-beze-karamelov-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 73,
+    "title": "Čoko-pomeranč",
+    "slug": "oko-pomeran",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "S ovocem",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/70.-Coko-pomeranc-qnqdsd4xovfjjtpwkimj5dghp43c0qpiv79iztrliw.jpg",
+    "localImage": "images/073-oko-pomeran.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 74,
+    "title": "Kitkat",
+    "slug": "kitkat",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/71.-KitKat-qnqdsgwag7kou9kfyk91fcic2nksvj4g7pvgwxm0u0.jpg",
+    "localImage": "images/074-kitkat.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 75,
+    "title": "Tiramisu kostka",
+    "slug": "tiramisu-kostka",
+    "category": "Pohárky & Nepečené",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/72.-Tiramisu-kostka-qnqdsllhedr4gbdm74a69tbn1kxmy0n3wd4wbbf1yw.jpg",
+    "localImage": "images/075-tiramisu-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 76,
+    "title": "Marcipánová kostka",
+    "slug": "marcip-nov-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Marcipanova-kostka--qp5p0py2erell08q75u0fqnxayax2fifheilnn0xx4.jpg",
+    "localImage": "images/076-marcip-nov-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 77,
+    "title": "Pařížská kostka",
+    "slug": "pa-sk-kostka",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/73.-Parizska-kostka-qnqdsqaocjxk2d6sfobb4a4y0iah0i5rl0ebpp833s.jpg",
+    "localImage": "images/077-pa-sk-kostka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 78,
+    "title": "Kinder tartaletka",
+    "slug": "kinder-tartaletka",
+    "category": "Tartaletky & Košíčky",
+    "tags": [
+      "Sweet bar"
+    ],
+    "description": "Křehký máslový korpus naplněný delikátním krémem a dozdobený čerstvým ovocem nebo oříšky.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/74.-Kinder-tartaletka-qnqdsuzvaq3zoezyo8cfyqy8zfnb2zof9nnr43148o.jpg",
+    "localImage": "images/078-kinder-tartaletka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 79,
+    "title": "Tartaletky různé druhy",
+    "slug": "tartaletky-r-zn-druhy",
+    "category": "Tartaletky & Košíčky",
+    "tags": [
+      "Sweet bar"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/75.-Tartaletky-ruzne-druhy-qnqdt2ikteea9ap1gblgip1xqim8ski9yovmyapyuw.jpg",
+    "localImage": "images/079-tartaletky-r-zn-druhy.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 80,
+    "title": "Čokoládový dortík s višní",
+    "slug": "okol-dov-dort-k-s-vi-n",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/76.-Cokoladovy-dortik-s-visni-qnqdt69xkqjfjqjkud7yso3s423pncx7b7hkveke60.jpg",
+    "localImage": "images/080-okol-dov-dort-k-s-vi-n.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "6 (Sójové boby)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 81,
+    "title": "Cylindr slaný karamel",
+    "slug": "cylindr-slan-karamel",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Karamel"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/77.-Cylindr-slany-karamel-qnqdtbwypqr5hebdxfnq7mojodbwxjjlbzehr2c14o.jpg",
+    "localImage": "images/081-cylindr-slan-karamel.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 82,
+    "title": "Pavlova",
+    "slug": "pavlova",
+    "category": "Pohárky & Nepečené",
+    "tags": [
+      "Bestseller",
+      "Oblíbené",
+      "Sweet bar"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/78.-Pavlova-qnqdtgm5nwxl3g4k5zov23hunaor01290mnx5g529k.jpg",
+    "localImage": "images/082-pavlova.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 83,
+    "title": "Nepečený mimoň",
+    "slug": "nepe-en-mimo",
+    "category": "Pohárky & Nepečené",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/79.-Nepeceny-mimon-qnqdtm96sx5b13wd924mh22m7lwya7on1eku13wp88.jpg",
+    "localImage": "images/083-nepe-en-mimo.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 84,
+    "title": "Ledový obláček",
+    "slug": "ledov-obl-ek",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/79-qnqdtrw7xxd0yro6c4kdw0ndrx55keb126hqwroc6w.jpg",
+    "localImage": "images/084-ledov-obl-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 85,
+    "title": "Nepečená mléčná koule",
+    "slug": "nepe-en-ml-n-koule",
+    "category": "Pohárky & Nepečené",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/80.-Nepecena-mlecna-koule-qnqdtwlew3jgkthckoliqhgoquhzmvtoqtr6b5hdbs.jpg",
+    "localImage": "images/085-nepe-en-ml-n-koule.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 86,
+    "title": "Kubánské šodó",
+    "slug": "kub-nsk-od",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/81.-Kubanske-sodo-qnqdu1alu9pw6vait8mnky9zprutpdccfh0lpjaego.jpg",
+    "localImage": "images/086-kub-nsk-od.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 87,
+    "title": "Indiánek",
+    "slug": "indi-nek",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "Tradiční klasika"
+    ],
+    "description": "Křehký piškotový základ se sněhovou bílkovou pěnou přelitý kvalitní hořkou čokoládou.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/82.-Indianek-qnqdu6xmz9xm4j2bwb2ezwura330zjyqg8xil721fc.jpg",
+    "localImage": "images/087-indi-nek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 88,
+    "title": "Meruňkový indiánek",
+    "slug": "meru-kov-indi-nek",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Oblíbená klasika",
+      "S ovocem",
+      "Tradiční klasika"
+    ],
+    "description": "Křehký piškotový základ se sněhovou bílkovou pěnou přelitý kvalitní hořkou čokoládou.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/83.-Merunkovy-indianek-qnqdudiib46mdssrtvwszd6zfs6lhfout5hwy4sa7s.jpg",
+    "localImage": "images/088-meru-kov-indi-nek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 89,
+    "title": "Likérová špička",
+    "slug": "lik-rov-pi-ka",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "S likérem",
+      "Tradiční klasika"
+    ],
+    "description": "Oblíbená klasika s jemným tekutým vaječným likérem v křehkém čokoládovém plášti na piškotu.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/84.-Likerova-spicka-qnqdui7p9ad1zuly2fxxtu0aepjfjx7ihsrccilbco.jpg",
+    "localImage": "images/089-lik-rov-pi-ka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 90,
+    "title": "Jádrový rohlíček",
+    "slug": "j-drov-rohl-ek",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Oblíbená klasika",
+      "Oříškové",
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/85.-Jadrovy-rohlicek-qnqdunuqeakrxidr5idp8sl1z0rmu3twiko986cybc.jpg",
+    "localImage": "images/090-j-drov-rohl-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 91,
+    "title": "Jádrová tyčinka",
+    "slug": "j-drov-ty-inka",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Oříškové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/86.-Jadrovy-tycinka-qnqduvdfwyv2ie2txlmpsqoqq3qkjonr7lw52e1sxk.jpg",
+    "localImage": "images/091-j-drov-ty-inka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 92,
+    "title": "Kokosová laskonka",
+    "slug": "kokosov-laskonka",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Oblíbená klasika",
+      "Oříškové",
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/87.-Kokosova-laskonka-qnqdv02mv51i4fw065nun7i1p13em66ew95kgruu2g.jpg",
+    "localImage": "images/092-kokosov-laskonka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 93,
+    "title": "Ořechová laskonka",
+    "slug": "o-echov-laskonka",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Bestseller",
+      "Oblíbená klasika",
+      "Oblíbené",
+      "Oříškové",
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/88.-Orechova-laskonka-qnqdv4rttb7xqhp6epozhobcnyg8onp2kwezv5nv7c.jpg",
+    "localImage": "images/093-o-echov-laskonka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 94,
+    "title": "Medový krémeš",
+    "slug": "medov-kr-me",
+    "category": "Dorty & Řezy",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/89.-Medovy-kremes--qnqdvaeuybfno5gzhs4qwmw489ofyubglobwqtfi60.jpg",
+    "localImage": "images/094-medov-kr-me.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 95,
+    "title": "Kávová štafetka",
+    "slug": "k-vov-tafetka",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/90.-Kavova-stafetka-qnqdvf41whm3a7a5qc5vr3pf771a1bu4ablc578jaw.jpg",
+    "localImage": "images/095-k-vov-tafetka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 96,
+    "title": "Pařížská trubička",
+    "slug": "pa-sk-trubi-ka",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Tradiční klasika",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/91.-Parizska-trubicka-qnqdvkr31htt7v1yteln62a6ri9hbigib3i90v069k.jpg",
+    "localImage": "images/096-pa-sk-trubi-ka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 97,
+    "title": "Ovocná lodička",
+    "slug": "ovocn-lodi-ka",
+    "category": "Tartaletky & Košíčky",
+    "tags": [
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/93.-Ovocna-lodicka-qnqdw0qc9ofop8er83iaug90v22pyd7y1ali6kchbs.jpg",
+    "localImage": "images/097-ovocn-lodi-ka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 98,
+    "title": "Ovocný košíček",
+    "slug": "ovocn-ko-ek",
+    "category": "Tartaletky & Košíčky",
+    "tags": [
+      "Bestseller",
+      "Oblíbené",
+      "S ovocem"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/94.-Ovocny-kosicek-qnqdw96vz6r9lq2gup5xyw467ix0vn5j2ggvi1zxrs.jpg",
+    "localImage": "images/098-ovocn-ko-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 99,
+    "title": "Linecká květinka",
+    "slug": "lineck-kv-tinka",
+    "category": "Tradiční české zákusky",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/95.-Linecka-kvetinka-qnqdxib538h1308xj8o1akqaq0qn544n8ns6jc51h4.jpg",
+    "localImage": "images/099-lineck-kv-tinka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 100,
+    "title": "Třená tyčinka",
+    "slug": "t-en-ty-inka",
+    "category": "Tradiční české zákusky",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/96.-Trena-tycinka-qnqdxn0c1engp223rsp651jloy3h7lnaxb1lxpy2m0.jpg",
+    "localImage": "images/100-t-en-ty-inka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 101,
+    "title": "Pařížský rohlíček",
+    "slug": "pa-sk-rohl-ek",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Oblíbená klasika",
+      "Tradiční klasika",
+      "Čokoládové"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/325.-Parizsky-rohlicek-qnqd2b2087rdozkiq94v0y6gukj0mt9em86y1oei0o.jpg",
+    "localImage": "images/101-pa-sk-rohl-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 102,
+    "title": "Listový šáteček",
+    "slug": "listov-te-ek",
+    "category": "Tradiční české zákusky",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/97.-Listovy-satecek-qnqdxqrosqslzhwn5ubof0lg2hky2e289tnjutshx4.jpg",
+    "localImage": "images/102-listov-te-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 103,
+    "title": "Listová trubička",
+    "slug": "listov-trubi-ka",
+    "category": "Tradiční české zákusky",
+    "tags": [
+      "Tradiční klasika"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/98.-Listova-trubicka-qnqdxxck4l1m8rn33f62egxo86oik9scmq7y7riqpk.jpg",
+    "localImage": "images/103-listov-trubi-ka.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 104,
+    "title": "Žloutkový řez",
+    "slug": "loutkov-ez",
+    "category": "Tradiční české zákusky",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/99.-Zloutkovy-rez-qnqdy13wvx6rj7hmhgskofzilq5zf279z8tw4vd60o.jpg",
+    "localImage": "images/104-loutkov-ez.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 105,
+    "title": "Cupcake",
+    "slug": "cupcake",
+    "category": "Makronky & Mini dezerty",
+    "tags": [
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/100.-Cupcake-qnqdy4v9n9bwtnc5vif2yf1cz9ng9um7brfu1z7lbs.jpg",
+    "localImage": "images/105-cupcake.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 106,
+    "title": "Muffin",
+    "slug": "muffin",
+    "category": "Makronky & Mini dezerty",
+    "tags": [
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Muffin-unicorn--qp5p0srkz9igju4mqp1w57yb33x0pitmhsh23gwreg.jpg",
+    "localImage": "images/106-muffin.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 107,
+    "title": "Makronky",
+    "slug": "makronky",
+    "category": "Makronky & Mini dezerty",
+    "tags": [
+      "Bestseller",
+      "Oblíbené",
+      "Sweet bar"
+    ],
+    "description": "Křehké mandlové skořápky s vláčným středem a bohatou ganache z pravé čokolády.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/102.-Makronky-qnqdy9kglficfp5c42g7svuny70acc4v0ep9gd0mgo.jpg",
+    "localImage": "images/107-makronky.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)",
+      "8 (Skořápkové plody / ořechy)"
+    ],
+    "popular": true
+  },
+  {
+    "id": 108,
+    "title": "Pečený nanuk",
+    "slug": "pe-en-nanuk",
+    "category": "Makronky & Mini dezerty",
+    "tags": [
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/104.-Peceny-nanuk-qnqdye9njlos1qyicmhcncnyx4d4etnip1youqtnlk.jpg",
+    "localImage": "images/108-pe-en-nanuk.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 109,
+    "title": "Red velvet cake pops",
+    "slug": "red-velvet-cake-pops",
+    "category": "Dorty & Řezy",
+    "tags": [
+      "Sweet bar",
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/105.-Red-Velvet-Cake-pops-qnqdyjwoolwhzeqbfox42b8qhflbp09wptvlqelak8.jpg",
+    "localImage": "images/109-red-velvet-cake-pops.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 110,
+    "title": "Mini bábovičky",
+    "slug": "mini-b-bovi-ky",
+    "category": "Makronky & Mini dezerty",
+    "tags": [
+      "Sweet bar",
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Mini-babovicky--qp5p0qvwllfvwm7d1o8n08fdwc6aa4m5tj634wzjqw.jpg",
+    "localImage": "images/110-mini-b-bovi-ky.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 111,
+    "title": "Sněhové pusinky",
+    "slug": "sn-hov-pusinky",
+    "category": "Makronky & Mini dezerty",
+    "tags": [
+      "Vhodné pro děti"
+    ],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Snehlove-pusinky-qp5p0tpf63jqvg39l7gippprohsdx7xctx4jkqvd88.jpg",
+    "localImage": "images/111-sn-hov-pusinky.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 112,
+    "title": "Duo koláček",
+    "slug": "duo-kol-ek",
+    "category": "Tradiční české zákusky",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/108.-Duo-kolacek-qnqdyolvms2xlgjho8y8ws21gcy5rhskeh514sebp4.jpg",
+    "localImage": "images/112-duo-kol-ek.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 113,
+    "title": "Maková bábovka a jablečný závin",
+    "slug": "makov-b-bovka-a-jable-n-z-vin",
+    "category": "Tradiční české zákusky",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/109.-Makova-babovka-a-jablecny-zavin-qnqdytb2ky9d7icnwszdr8vcfaaztzb834egj67cu0.jpg",
+    "localImage": "images/113-makov-b-bovka-a-jable-n-z-vin.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  },
+  {
+    "id": 114,
+    "title": "Modelovaný marcipán",
+    "slug": "modelovan-marcip-n",
+    "category": "Makronky & Mini dezerty",
+    "tags": [],
+    "description": "Poctivý řemeslný zákusek z prémiových surovin, pečený podle tradičních rodinných receptur Cukrářství Madel.",
+    "originalImage": "https://cukrarstvimadel.cz/wp-content/uploads/elementor/thumbs/Modelovany-marcipan-qp5p0rtqsfh6885zw6n9kq6uhq1nhtpw5ntkm6y5ko.jpg",
+    "localImage": "images/114-modelovan-marcip-n.jpg",
+    "allergens": [
+      "1 (Obiloviny obsahující lepek)",
+      "3 (Vejce)",
+      "7 (Mléko)"
+    ],
+    "popular": false
+  }
+]
